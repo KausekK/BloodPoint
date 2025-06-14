@@ -8,16 +8,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
 @RestController
+@RequestMapping("api/slots")
 @RequiredArgsConstructor
-@RequestMapping("/slots")
 public class DonationTimeSlotController {
 
     private final IDonationTimeSlotRepository donationTimeSlotRepository;
 
-
     @GetMapping("/available")
-    public Page<SlotDTO> getAvailableSlots(@RequestParam String city, Pageable pageable) {
-        return donationTimeSlotRepository.findAvailableSlotsForCity(city ,pageable);
+    public Page<SlotDTO> getAvailableSlots(@RequestParam String city, @RequestParam LocalDate date, Pageable pageable) {
+        LocalDateTime from = date.atStartOfDay();
+        LocalDateTime to = from.plusDays(1);
+        return donationTimeSlotRepository.findAvailableSlotsForCityAndDay(city, from, to, pageable);
+
     }
+
 }

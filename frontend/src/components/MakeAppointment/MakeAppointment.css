@@ -1,0 +1,212 @@
+
+html, body { height: 100%; margin: 0; padding: 0; }
+#root      { height: 100%; margin: 0; padding: 0; max-width: none; }
+
+:root {
+  --color-primary: #e11b1e;
+  --color-primary-dark: #bd1015;
+  --color-bg-light: #fff5f5;
+  --color-text: #374151;
+  --color-helper: #6b7280;
+  --color-border: #e5e7eb;
+  --radius-lg: 12px;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 4%);
+}
+
+.make-appointment {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--color-bg-light);
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+}
+
+.make-appointment__top-bar {
+  background: var(--color-primary);
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.make-appointment__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px;
+  width: 100%;
+}
+
+.make-appointment__heading {
+  margin: 0 0 32px;
+  font-size: 2rem;
+  text-align: center;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--color-primary);
+}
+
+@media (min-width: 768px) {
+  .make-appointment__heading { font-size: 3rem; }
+  .desktop-break            { display: block; }
+}
+
+@media (max-width: 767px) {
+  .desktop-break            { display: none; }
+}
+
+.make-appointment__wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  width: 100%;
+  padding: 0 24px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .make-appointment__wrapper {
+    flex-direction: row;
+    padding: 0 48px;
+  }
+}
+
+.make-appointment__left {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;      
+  max-width: 600px;  
+  flex-shrink: 0;
+}
+
+.text-helper {
+  color: var(--color-helper);
+  font-size: 14px;
+}
+
+.date-grid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+@media (max-width: 639px) {
+  .date-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+.date-btn {
+  width: 100%;        
+  height: 80px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: #ffffff;
+  color: var(--color-text);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  font-weight: 500;
+  box-shadow: var(--shadow-sm);
+}
+
+.date-btn:hover            { background: #f3f4f6; }
+.date-btn--selected {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.date-btn__day     { font-size: 18px; font-weight: 600; }
+.date-btn__weekday { font-size: 11px; }
+
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.time-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;                
+  justify-content: center;
+  padding: 12px 16px;
+  min-height: 72px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: #ffffff;
+  box-shadow: var(--shadow-sm);
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+}
+
+.time-btn:hover {
+  background: #fafafa;
+  transform: translateY(-2px); 
+}
+
+.time-btn--selected {
+  border-color: var(--color-primary);
+  background: #fff1f1; 
+}
+
+.appointment-btn {
+  margin-top: 32px;
+  width: 100%;
+  background: var(--color-primary);
+  color: #ffffff;
+  font-weight: 600;
+  padding: 12px 0;
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.appointment-btn:hover { background: var(--color-primary-dark); }
+
+.make-appointment__right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.illustration {
+  width: 256px;
+  max-width: 100%;
+}
+
+@media (min-width: 768px) {
+  .illustration { width: 320px; }
+}
+
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--color-border);
+  border-top-color: var(--color-primary); 
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 40px auto;                     
+}
+
+
+.time-btn__time {
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+.time-btn__loc {
+  font-size: 12px;
+  color: var(--color-helper);
+  line-height: 1.2;
+  white-space: normal;       
+}
