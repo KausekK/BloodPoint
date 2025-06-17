@@ -1,4 +1,4 @@
-package com.point.blood.MenageDonationPoint;
+package com.point.blood.menageDonationPoint;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -39,7 +39,7 @@ public class BloodDonationPoint {
     @Column(name = "phone", nullable = false, length = 15)
     private String phone;
 
-
+    //TODO Jak bedzie encja Donation
 //       @ManyToOne(fetch = LAZY, optional = false)
 //        @JoinColumn(name = "DONATION", nullable = false)
 //        private Donation donation;

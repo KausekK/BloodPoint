@@ -1,4 +1,4 @@
-package com.point.blood.ReserveDonationAppointment;
+package com.point.blood.reserveDonationAppointment;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
