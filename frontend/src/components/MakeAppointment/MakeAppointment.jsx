@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import "./MakeAppointment.css";
-import { getSlotsForDayPaged } from "../../services/MakeAppointmentService";
+import { getSlotsForDayPaged, addAppointment } from "../../services/MakeAppointmentService";
 import Pagination from "@mui/material/Pagination";
-import Stack      from "@mui/material/Stack";
+import Stack from "@mui/material/Stack";
 
-const TODAY = new Date(); 
+const TODAY = new Date();
 const daysArray = Array.from({ length: 7 }).map((_, i) => {
   const d = new Date(TODAY);
-  d.setDate(d.getDate() + i + 1); 
+  d.setDate(d.getDate() + i);
   return d.toISOString().slice(0, 10);
 });
 
@@ -24,17 +24,17 @@ function formatMonthYear(dateIso) {
   return txt.charAt(0).toUpperCase() + txt.slice(1);
 }
 
+
 export default function MakeAppointment() {
   const [city] = useState("Warszawa"); // TODO: dodac filtrowanie po mieście
-
+  const [user] = useState({ id: 1 }); // TODO: dodac zalogowanego usera
+  const [selectedSlot, setSelectedSlot] = useState(null);
   const [days] = useState(daysArray);
   const [selectedDate, setSelectedDate] = useState(null);
   const [times, setTimes] = useState([]);
-  const [selectedTime, setSelectedTime] = useState(null);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [pageInfo, setPageInfo] = useState({ totalPages: 0 });
-
 
   useEffect(() => {
     if (!selectedDate) return;
@@ -42,16 +42,45 @@ export default function MakeAppointment() {
 
     getSlotsForDayPaged(city, selectedDate, page)
       .then((resPage) => {
-        setTimes(resPage.content || []); 
-        setPageInfo(resPage); 
+        setTimes(resPage.content || []);
+        setPageInfo(resPage);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [city, selectedDate, page]);
 
+
+  const handleSubmit = async () => {
+    if (!selectedDate || !selectedSlot) return;
+
+    const appointment = {
+      userId: user.id,
+      slotId: selectedSlot.id
+    };
+
+    try {
+      const res = await addAppointment(appointment);
+    
+   if (res.messages?.length) {
+     const { msg, type } = res.messages[0];
+
+     if (type === "SUCCESS") { //TODO dodac alerty TOASTR
+       alert(msg);                      
+     } else if (type === "ERROR") {
+       alert(msg);                      
+
+     }
+   } else {
+     alert("Nieoczekiwana odpowiedź serwera");
+   }
+   } catch (error) {
+     console.log("Błąd podczas umawiania wizyty:", error);
+   }
+  }
+
   const handleDateClick = (iso) => {
     setSelectedDate(iso);
-    setSelectedTime(null);
+    setSelectedSlot(null);
     setPage(0);
   };
 
@@ -69,13 +98,11 @@ export default function MakeAppointment() {
         {!loading && (
           <div className="make-appointment__wrapper">
             <div className="make-appointment__left">
-              <p className="text-helper">
-                {formatMonthYear(selectedDate)}
-              </p>
+              <p className="text-helper">{formatMonthYear(selectedDate)}</p>
 
               <div className="date-grid">
                 {days.map((iso) => {
-                  const day     = iso.slice(8);
+                  const day = iso.slice(8);
                   const weekday = new Date(iso)
                     .toLocaleDateString("pl-PL", { weekday: "short" })
                     .toUpperCase();
@@ -94,18 +121,23 @@ export default function MakeAppointment() {
                 })}
               </div>
 
-              <p className="text-helper">Dostępne godziny</p>
+              {times.length !== 0 && !loading && (
+                <p className="text-helper">Dostępne godziny</p>
+              )}
 
               <div className="time-grid">
+                {times.length === 0 && !loading && (
+                  <p className="text-helper">Brak wolnych terminów</p>
+                )}
                 {times.map((slot) => {
                   const time = slot.startTime.slice(11, 16);
                   const addr = `${slot.city}, ${slot.street}`;
                   return (
                     <button
                       key={`${slot.id}-${time}`}
-                      onClick={() => setSelectedTime(time)}
+                      onClick={() => setSelectedSlot(slot)}
                       className={`time-btn ${
-                        selectedTime === time ? "time-btn--selected" : ""
+                        selectedSlot?.id === slot.id ? "time-btn--selected" : ""
                       }`}
                     >
                       <span className="time-btn__time">{time}</span>
@@ -131,12 +163,8 @@ export default function MakeAppointment() {
 
               <button
                 className="appointment-btn"
-                disabled={!selectedDate || !selectedTime}
-                onClick={() =>
-                  alert(
-                    `Zarezerwowano wizytę: ${selectedDate} o ${selectedTime}`
-                  )
-                }
+                disabled={!selectedSlot}
+                onClick={handleSubmit}
               >
                 Umów
               </button>
