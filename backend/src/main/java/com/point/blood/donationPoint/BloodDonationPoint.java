@@ -1,4 +1,4 @@
-package com.point.blood.menageDonationPoint;
+package com.point.blood.donationPoint;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

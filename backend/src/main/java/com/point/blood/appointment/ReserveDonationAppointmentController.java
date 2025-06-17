@@ -1,5 +1,7 @@
-package com.point.blood.reserveDonationAppointment;
+package com.point.blood.appointment;
 
+import com.point.blood.appointment.dto.AppointmentDTO;
+import com.point.blood.appointment.dto.SlotDTO;
 import com.point.blood.shared.EditResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,7 +17,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class ReserveDonationAppointmentController {
 
-    private final IDonationTimeSlotRepository donationTimeSlotRepository;
+    private final DonationTimeSlotRepository donationTimeSlotRepository;
     private final AppointmentService appointmentService;
     @GetMapping("/available")
     public Page<SlotDTO> getAvailableSlots(@RequestParam String city, @RequestParam LocalDate date, Pageable pageable) {

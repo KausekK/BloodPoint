@@ -1,6 +1,7 @@
-package com.point.blood.reserveDonationAppointment;
+package com.point.blood.appointment;
 
-import com.point.blood.menageUser.User;
+import com.point.blood.appointment.dto.AppointmentDTO;
+import com.point.blood.user.User;
 import com.point.blood.shared.EntityMapper;
 import org.springframework.stereotype.Component;
 

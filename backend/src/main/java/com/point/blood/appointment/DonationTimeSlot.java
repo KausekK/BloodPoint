@@ -1,8 +1,7 @@
-package com.point.blood.reserveDonationAppointment;
+package com.point.blood.appointment;
 
-import com.point.blood.menageDonationPoint.BloodDonationPoint;
+import com.point.blood.donationPoint.BloodDonationPoint;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

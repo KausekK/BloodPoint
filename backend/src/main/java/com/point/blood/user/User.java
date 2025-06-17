@@ -1,4 +1,4 @@
-package com.point.blood.menageUser;
+package com.point.blood.user;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

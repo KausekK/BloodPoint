@@ -1,4 +1,4 @@
-package com.point.blood.reserveDonationAppointment;
+package com.point.blood.appointment;
 
 public enum AppointmentStatusEnum {
     SCHEDULED

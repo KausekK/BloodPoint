@@ -1,8 +1,8 @@
-package com.point.blood.reserveDonationAppointment;
+package com.point.blood.appointment;
 
+import com.point.blood.appointment.dto.AppointmentDTO;
 import com.point.blood.shared.EditResult;
 import com.point.blood.shared.MessageDTO;
-import jakarta.persistence.NoResultException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -15,8 +15,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AppointmentService {
 
-    private final IAppointmentRepository appointmentRepository;
-    private final IDonationTimeSlotRepository timeSlotRepository;
+    private final AppointmentRepository appointmentRepository;
+    private final DonationTimeSlotRepository timeSlotRepository;
     private final AppointmentMapper appointmentMapper;
 
 

@@ -1,5 +1,6 @@
-package com.point.blood.reserveDonationAppointment;
+package com.point.blood.appointment;
 
+import com.point.blood.appointment.dto.SlotDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,10 +12,10 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
-public interface IDonationTimeSlotRepository extends JpaRepository<DonationTimeSlot, Long> {
+public interface DonationTimeSlotRepository extends JpaRepository<DonationTimeSlot, Long> {
 
     @Query("""
-                    select new com.point.blood.reserveDonationAppointment.SlotDTO(
+                    select new com.point.blood.appointment.SlotDTO(
                             s.id, s.startTime, s.endTime, p.city, p.province, p.street)
                  from   DonationTimeSlot s
                  join s.bloodDonationPoint p
