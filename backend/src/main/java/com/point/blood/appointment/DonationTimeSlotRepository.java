@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface DonationTimeSlotRepository extends JpaRepository<DonationTimeSlot, Long> {
 
     @Query("""
-                    select new com.point.blood.appointment.SlotDTO(
+                    select new com.point.blood.appointment.dto.SlotDTO(
                             s.id, s.startTime, s.endTime, p.city, p.province, p.street)
                  from   DonationTimeSlot s
                  join s.bloodDonationPoint p
