@@ -1,6 +1,7 @@
 package com.point.blood.appointment;
 
-import com.point.blood.appointment.dto.AppointmentDTO;
+import com.point.blood.donationTimeSlot.DonationTimeSlot;
+import com.point.blood.donationTimeSlot.DonationTimeSlotRepository;
 import com.point.blood.shared.EditResult;
 import com.point.blood.shared.MessageDTO;
 import jakarta.transaction.Transactional;
