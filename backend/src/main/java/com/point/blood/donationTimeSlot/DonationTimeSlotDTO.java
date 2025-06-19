@@ -1,4 +1,4 @@
-package com.point.blood.appointment.dto;
+package com.point.blood.donationTimeSlot;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
-public class SlotDTO {
+public class DonationTimeSlotDTO {
     private Long id;
     private LocalDateTime startTime;
     private LocalDateTime endTime;

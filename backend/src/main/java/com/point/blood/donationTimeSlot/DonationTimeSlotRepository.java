@@ -1,6 +1,5 @@
-package com.point.blood.appointment;
+package com.point.blood.donationTimeSlot;
 
-import com.point.blood.appointment.dto.SlotDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,7 +14,7 @@ import java.util.Optional;
 public interface DonationTimeSlotRepository extends JpaRepository<DonationTimeSlot, Long> {
 
     @Query("""
-                    select new com.point.blood.appointment.dto.SlotDTO(
+                    select new com.point.blood.donationTimeSlot.DonationTimeSlotDTO(
                             s.id, s.startTime, s.endTime, p.city, p.province, p.street)
                  from   DonationTimeSlot s
                  join s.bloodDonationPoint p
@@ -24,8 +23,8 @@ public interface DonationTimeSlotRepository extends JpaRepository<DonationTimeSl
                  and  s.startTime >= :from
               and  s.startTime <  :to
             """)
-    Page<SlotDTO> findAvailableSlotsForCityAndDay(@Param("city") String city, @Param("from") LocalDateTime from,
-                                                  @Param("to") LocalDateTime to, Pageable pageable);
+    Page<DonationTimeSlotDTO> findAvailableSlotsForCityAndDay(@Param("city") String city, @Param("from") LocalDateTime from,
+                                                              @Param("to") LocalDateTime to, Pageable pageable);
 
     Optional<DonationTimeSlot> findById(Long id);
 

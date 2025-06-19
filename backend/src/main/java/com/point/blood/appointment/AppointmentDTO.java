@@ -1,4 +1,4 @@
-package com.point.blood.appointment.dto;
+package com.point.blood.appointment;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

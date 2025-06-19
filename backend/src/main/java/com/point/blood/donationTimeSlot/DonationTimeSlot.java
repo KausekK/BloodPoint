@@ -1,4 +1,4 @@
-package com.point.blood.appointment;
+package com.point.blood.donationTimeSlot;
 
 import com.point.blood.donationPoint.BloodDonationPoint;
 import jakarta.persistence.*;

@@ -1,6 +1,7 @@
 package com.point.blood.appointment;
 
-import com.point.blood.user.User;
+import com.point.blood.donationTimeSlot.DonationTimeSlot;
+import com.point.blood.users.Users;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,8 +30,8 @@ public class Appointment {
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "User_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "Users_id", nullable = false)
+    private Users users;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "Donation_Time_Slot_id", nullable = false)
