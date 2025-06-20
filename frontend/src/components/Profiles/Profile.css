@@ -85,14 +85,16 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
-  max-width: 768px; 
 }
 .card {
   border: 1px solid #e5e7eb; 
   border-radius: 8px;
   padding: 24px;
   background: #ffffff;
+  width: 100%;
+  margin: 0 auto;
 }
+
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -144,6 +146,107 @@
 
 .tab.active {
   border-bottom: 2px solid #dc2626;
+  color: #dc2626;
+  font-weight: 500;
+}
+
+
+.visit-history {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  max-width: 100%;
+}
+
+.visit-history .card-title {
+  margin-bottom: 16px;
+  color: #1f2937;
+}
+
+.visit-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.visit-table th,
+.visit-table td {
+  padding: 12px 8px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.visit-table th {
+  background: #f9fafb;
+  color: #374151;
+  font-weight: 600;
+}
+
+.visit-table tr.striped {
+  background: #f3f4f6;
+}
+
+.visit-table tr:hover {
+  background: #fdecea; 
+}
+
+.visit-table td:first-child {
+  color: #dc2626; 
+  font-weight: 500;
+}
+
+.filter-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.filter-bar .MuiFormControl-root {
+  background: #f9fafb;
+  border-radius: 4px;
+}
+
+.filter-bar .MuiButton-containedError {
+  text-transform: none;
+}
+
+.visit-history .card-title {
+  margin-bottom: 12px;
+}
+
+.visit-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.visit-table th,
+.visit-table td {
+  padding: 12px 8px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.visit-table th {
+  background: #f9fafb;
+  color: #374151;
+  font-weight: 600;
+}
+
+.visit-table tr.striped {
+  background: #f3f4f6;
+}
+
+.visit-table tr:hover {
+  background: #fdecea;
+}
+
+.visit-table td:first-child {
   color: #dc2626;
   font-weight: 500;
 }
