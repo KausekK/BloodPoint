@@ -4,10 +4,7 @@ import com.point.blood.bloodType.BloodType;
 import com.point.blood.donation.Donation;
 import com.point.blood.users.Users;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -18,6 +15,8 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = {"users", "donations"})
+@EqualsAndHashCode(exclude = {"users", "donations"})
 public class Donor {
 
         @Id

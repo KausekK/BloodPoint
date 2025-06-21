@@ -30,7 +30,7 @@ public class Appointment {
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "Users_id", nullable = false)
+    @JoinColumn(name = "User_id", nullable = false)
     private Users users;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

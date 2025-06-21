@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -45,6 +47,12 @@ public class AppointmentService {
         } catch (ObjectOptimisticLockingFailureException e) {
             return buildError("Termin jest już zajęty. Wybierz inny.");
         }
+    }
+
+    public Optional<ScheduledAppointmentForUserDTO> getScheduledAppointmentForUser(Long userId) {
+        LocalDateTime now = LocalDateTime.now();
+        System.out.println(">> getScheduledAppointmentForUser – teraz = " + now);
+        return appointmentRepository.findScheduledAppointmentForUserByUserId(userId, now);
     }
 
     private EditResult<AppointmentDTO> buildError(String msg) {

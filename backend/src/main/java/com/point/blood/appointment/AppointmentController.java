@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("api/appointment")
@@ -31,4 +32,8 @@ public class AppointmentController {
         return ResponseEntity.ok(appointmentService.insertAppointment(dto));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<ScheduledAppointmentForUserDTO>> getScheduledAppointmentForUser(@PathVariable Long id){
+        return ResponseEntity.ok(appointmentService.getScheduledAppointmentForUser(id));
+    }
 }

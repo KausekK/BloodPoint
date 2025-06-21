@@ -1,5 +1,6 @@
 import "./Home.css";
 import Footer from "../Footer/Footer";
+import BloodStock from '../BloodStock/BloodStock';
 
 export default function Home() {
   const handlePause = (e) => e.target.play();
@@ -49,6 +50,8 @@ export default function Home() {
           aplikacji.
         </p>
       </div>
+       <h2>Stan zapasów krwi</h2>
+      <BloodStock />
       <Footer />
     </div>
   );
