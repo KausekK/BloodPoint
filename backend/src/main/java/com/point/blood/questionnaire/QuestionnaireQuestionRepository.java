@@ -20,5 +20,5 @@ public interface QuestionnaireQuestionRepository extends JpaRepository<Questionn
     WHERE qq.questionnaire.id = :qid
     ORDER BY qq.orderIndex
   """)
-    List<QuestionDTO> findByQuestionnaireId(@Param("qid") Integer questionnaireId);
+    List<QuestionDTO> findByQuestionnaireId(@Param("qid") Long questionnaireId);
 }

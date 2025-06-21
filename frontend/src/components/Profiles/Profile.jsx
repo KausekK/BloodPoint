@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate, Routes, Route } from "react-router-dom";
-import { getProfile, getDonations } from "../../services/ProfileService";
+import { getProfile, getDonations, getScheduledAppointmentForUser } from "../../services/ProfileService";
 import "./Profile.css";
-import { LocalizationProvider, DatePicker} from "@mui/x-date-pickers";
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Box, TextField, Button } from "@mui/material";
-import {CalendarToday, Person, Logout, Edit} from "@mui/icons-material";
+import { CalendarToday, Person, Logout, Edit } from "@mui/icons-material";
+import Documents from './Documents/Documents';
+
 
 // Element nawigacji w sidebarze
 function NavItem({ to, icon, label, end = false }) {
@@ -21,7 +23,6 @@ function NavItem({ to, icon, label, end = false }) {
   );
 }
 
-// Pojedynczy wiersz szczegółu
 function Detail({ label, value }) {
   return (
     <div className="detail-item">
@@ -31,7 +32,6 @@ function Detail({ label, value }) {
   );
 }
 
-// Sekcja profilu dawcy
 function ProfileInfo() {
   const [profile, setProfile] = useState(null);
   const [donation, setDonation] = useState(null);
@@ -108,55 +108,64 @@ function ProfileInfo() {
   );
 }
 
-function VisitHistory() {
+ function VisitHistory() {
   const [visits, setVisits] = useState([]);
+  const [scheduledAppointment, setScheduledAppointment] = useState(null);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-    const userId = 10; // TODO use logged-in user ID
+  const userId = 10; // TODO: podciągnąć z kontekstu zalogowanego użytkownika
 
-
-  const fetchVisits = () => {
+  const fetchAll = () => {
     setLoading(true);
     setError(null);
-    getDonations(userId,
-      fromDate ? fromDate.toISOString() : undefined,
-      toDate   ? toDate.toISOString()   : undefined
-    )
-      .then(data => setVisits(data))
-      .catch(err => {
+    Promise.all([
+      getDonations(
+        userId,
+        fromDate ? fromDate.toISOString() : undefined,
+        toDate ? toDate.toISOString() : undefined
+      ),
+      getScheduledAppointmentForUser(userId)
+    ])
+      .then(([donations, scheduled]) => {
+        setVisits(donations);
+        setScheduledAppointment(scheduled || null);
+      })
+      .catch((err) => {
         console.error(err);
-        setError(err.message || "Błąd ładowania historii wizyt");
+        setError(err.message || "Błąd ładowania danych");
       })
       .finally(() => setLoading(false));
   };
 
   useEffect(() => {
-    setLoading(true);
-    setError(null);
-    getDonations(userId,
-      fromDate ? fromDate.toISOString() : undefined,
-      toDate   ? toDate.toISOString()   : undefined
-    )
-      .then(data => setVisits(data))
-      .catch(err => {
-        console.error(err);
-        setError(err.message || "Błąd ładowania historii wizyt");
-      })
-      .finally(() => setLoading(false));
+    fetchAll();
   }, []);
 
-  if (loading)
-    return <div className="loading">Ładowanie historii wizyt...</div>;
+  if (loading) return <div className="loading">Ładowanie historii wizyt...</div>;
   if (error) return <div className="error">Błąd: {error}</div>;
-  if (!visits.length) return <div className="no-data">Brak historii wizyt</div>;
 
   return (
     <section className="visit-history">
-      <h2 className="card-title">Historia wizyt</h2>
+      {scheduledAppointment && (
+        <section className="scheduled-appointment">
+          <h2 className="card-title">Zaplanowana wizyta</h2>
+          <div className="details-grid">
+            <Detail
+              label="Data"
+              value={new Date(scheduledAppointment.appointmentTime).toLocaleString()}
+            />
+            <Detail
+              label="Adres"
+              value={scheduledAppointment.appointmentCity + ", " + scheduledAppointment.appointmentStreet}
+            />
+          </div>
+        </section>
+      )}
 
+      <h2 className="card-title">Historia wizyt</h2>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <Box className="filter-bar">
           <DatePicker
@@ -174,38 +183,42 @@ function VisitHistory() {
           <Button
             variant="contained"
             color="error"
-            onClick={fetchVisits}
+            onClick={fetchAll}
           >
             Filtruj
           </Button>
         </Box>
       </LocalizationProvider>
 
-      <table className="visit-table">
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Typ donacji</th>
-            <th>Ilość krwi</th>
-            <th>Miasto</th>
-            <th>Ulica</th>
-          </tr>
-        </thead>
-        <tbody>
-          {visits.map((v, idx) => {
-            const date = new Date(v.donationDate).toLocaleDateString();
-            return (
-              <tr key={v.id} className={idx % 2 === 0 ? "" : "striped"}>
-                <td>{date}</td>
-                <td>{v.donationType.replace("_", " ").toLowerCase()}</td>
-                <td>{v.amountOfBlood} ml</td>
-                <td>{v.city}</td>
-                <td>{v.street}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      {visits.length === 0 ? (
+        <div className="no-data">Brak historii wizyt</div>
+      ) : (
+        <table className="visit-table">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Typ donacji</th>
+              <th>Ilość krwi</th>
+              <th>Miasto</th>
+              <th>Ulica</th>
+            </tr>
+          </thead>
+          <tbody>
+            {visits.map((v, idx) => {
+              const date = new Date(v.donationDate).toLocaleDateString();
+              return (
+                <tr key={v.id} className={idx % 2 === 0 ? "" : "striped"}>
+                  <td>{date}</td>
+                  <td>{v.donationType.replace("_", " ").toLowerCase()}</td>
+                  <td>{v.amountOfBlood} ml</td>
+                  <td>{v.city}</td>
+                  <td>{v.street}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      )}
     </section>
   );
 }
@@ -227,6 +240,11 @@ export default function Profile() {
           icon={<CalendarToday fontSize="small" />}
           label="Wizyty"
         />
+        <NavItem
+          to="/profile/documents"
+          icon={<Edit fontSize="small" />}
+          label="Dokumenty"
+        />
         <div className="spacer" />
         <button className="nav-item" onClick={() => navigate("/logout")}>
           <Logout fontSize="small" />
@@ -238,6 +256,7 @@ export default function Profile() {
         <Routes>
           <Route index element={<ProfileInfo />} />
           <Route path="appointments" element={<VisitHistory />} />
+          <Route path="documents" element={<Documents />} />
           <Route path="*" element={<ProfileInfo />} />
         </Routes>
       </main>

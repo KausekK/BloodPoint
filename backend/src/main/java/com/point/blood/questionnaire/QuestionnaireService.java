@@ -10,7 +10,7 @@ import java.util.List;
 public class QuestionnaireService {
     private final QuestionnaireQuestionRepository qqRepo;
 
-    public List<QuestionDTO> getQuestionsFor(Integer questionnaireId) {
+    public List<QuestionDTO> getQuestionsFor(Long questionnaireId) {
         return qqRepo.findByQuestionnaireId(questionnaireId);
     }
 }

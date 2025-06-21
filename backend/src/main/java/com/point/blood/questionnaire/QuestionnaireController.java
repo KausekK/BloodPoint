@@ -15,7 +15,7 @@ public class QuestionnaireController {
     private final QuestionnaireService service;
 
     @GetMapping("/{id}/questions")
-    public List<QuestionDTO> getQuestions(@PathVariable Integer id) {
+    public List<QuestionDTO> getQuestions(@PathVariable Long id) {
         return service.getQuestionsFor(id);
     }
 }

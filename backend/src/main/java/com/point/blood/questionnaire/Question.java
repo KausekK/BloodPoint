@@ -1,10 +1,7 @@
 package com.point.blood.questionnaire;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +12,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table
+@ToString(exclude = "questionnaireLinks")
+@EqualsAndHashCode(exclude = "questionnaireLinks")
 public class Question {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     @Column(name = "question", nullable = false)

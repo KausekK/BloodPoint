@@ -1,16 +1,15 @@
 package com.point.blood.questionnaire;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = "question")
+@EqualsAndHashCode(exclude = "question")
 @Table(name = "Questionnaire_Question")
 public class QuestionnaireQuestion {
     @EmbeddedId

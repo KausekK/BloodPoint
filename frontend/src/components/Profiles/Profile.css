@@ -1,8 +1,7 @@
 .container {
   display: flex;
   min-height: 100vh;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
-    sans-serif;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: #111827; 
   background: #ffffff;
 }
@@ -249,4 +248,12 @@
 .visit-table td:first-child {
   color: #dc2626;
   font-weight: 500;
+}
+
+.visit-history .scheduled-appointment {
+  border: 2px solid #dc2626;
+  background: #fef2f2;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
 }
