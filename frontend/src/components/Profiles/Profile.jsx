@@ -46,6 +46,7 @@ function ProfileInfo() {
         console.error(err);
         setError(err.message || "Błąd ładowania profilu");
       });
+
     getDonations(userId)
       .then((data) => setDonation(data))
       .catch((err) => {
