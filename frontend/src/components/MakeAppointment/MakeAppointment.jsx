@@ -3,6 +3,9 @@ import "./MakeAppointment.css";
 import { getSlotsForDayPaged, addAppointment } from "../../services/MakeAppointmentService";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
+import { showMessage, showError } from "../shared/services/MessageService";
+import CustomModal from './CustomModal';
+import { MessageType } from "../shared/const/MessageType.model";
 
 const TODAY = new Date();
 const daysArray = Array.from({ length: 7 }).map((_, i) => {
@@ -24,10 +27,9 @@ function formatMonthYear(dateIso) {
   return txt.charAt(0).toUpperCase() + txt.slice(1);
 }
 
-
 export default function MakeAppointment() {
   const [city] = useState("Warszawa"); // TODO: dodac filtrowanie po mieście
-  const [user] = useState({ id: 1 }); // TODO: dodac zalogowanego usera
+  const [user] = useState({ id: 10 }); // TODO: dodac zalogowanego usera
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [days] = useState(daysArray);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -35,6 +37,9 @@ export default function MakeAppointment() {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [pageInfo, setPageInfo] = useState({ totalPages: 0 });
+  const [isOpen, setIsOpen] = useState(false);
+  const [modalData, setModalData] = useState({ dateString: "", timeString: "" });
+
 
   useEffect(() => {
     if (!selectedDate) return;
@@ -49,34 +54,35 @@ export default function MakeAppointment() {
       .finally(() => setLoading(false));
   }, [city, selectedDate, page]);
 
-
   const handleSubmit = async () => {
     if (!selectedDate || !selectedSlot) return;
 
     const appointment = {
       userId: user.id,
-      slotId: selectedSlot.id
+      slotId: selectedSlot.id,
     };
 
     try {
       const res = await addAppointment(appointment);
-    
-   if (res.messages?.length) {
-     const { msg, type } = res.messages[0];
 
-     if (type === "SUCCESS") { //TODO dodac alerty TOASTR
-       alert(msg);                      
-     } else if (type === "ERROR") {
-       alert(msg);                      
-
-     }
-   } else {
-     alert("Nieoczekiwana odpowiedź serwera");
-   }
-   } catch (error) {
-     console.log("Błąd podczas umawiania wizyty:", error);
-   }
-  }
+      if (res.messages?.length) {
+        res.messages.forEach(({ msg, type }) => {
+          showMessage(msg, type);
+        });
+        if (res.messages.some(m => m.type === MessageType.ERROR)) {
+          setIsOpen(false);
+        } else if (res.messages.some(m => m.type === MessageType.SUCCESS)) {
+          setIsOpen(true);
+        }
+      } else {
+        showError("Nieoczekiwana odpowiedź serwera");
+      }
+      const timeString = selectedSlot.startTime.slice(11, 16);
+      setModalData({ dateString: selectedDate, timeString });
+    } catch (error) {
+      showError(error);
+    }
+  };
 
   const handleDateClick = (iso) => {
     setSelectedDate(iso);
@@ -110,9 +116,8 @@ export default function MakeAppointment() {
                     <button
                       key={iso}
                       onClick={() => handleDateClick(iso)}
-                      className={`date-btn ${
-                        selectedDate === iso ? "date-btn--selected" : ""
-                      }`}
+                      className={`date-btn ${selectedDate === iso ? "date-btn--selected" : ""
+                        }`}
                     >
                       <span className="date-btn__day">{day}</span>
                       <span className="date-btn__weekday">{weekday}</span>
@@ -136,9 +141,8 @@ export default function MakeAppointment() {
                     <button
                       key={`${slot.id}-${time}`}
                       onClick={() => setSelectedSlot(slot)}
-                      className={`time-btn ${
-                        selectedSlot?.id === slot.id ? "time-btn--selected" : ""
-                      }`}
+                      className={`time-btn ${selectedSlot?.id === slot.id ? "time-btn--selected" : ""
+                        }`}
                     >
                       <span className="time-btn__time">{time}</span>
                       <span className="time-btn__loc">{addr}</span>
@@ -168,6 +172,13 @@ export default function MakeAppointment() {
               >
                 Umów
               </button>
+
+              <CustomModal
+                open={isOpen}
+                onClose={() => setIsOpen(false)}
+                dateString={modalData.dateString}
+                timeString={modalData.timeString}
+              />
             </div>
 
             <div className="make-appointment__right">

@@ -32,6 +32,11 @@ public class AppointmentController {
         return ResponseEntity.ok(appointmentService.insertAppointment(dto));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<EditResult<AppointmentDTO>> removeAppointment(@PathVariable Long id){
+        return ResponseEntity.ok(appointmentService.deleteAppointment(id));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Optional<ScheduledAppointmentForUserDTO>> getScheduledAppointmentForUser(@PathVariable Long id){
         return ResponseEntity.ok(appointmentService.getScheduledAppointmentForUser(id));
