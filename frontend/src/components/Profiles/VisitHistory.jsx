@@ -1,9 +1,8 @@
-// src/components/Profiles/VisitHistory.jsx
 import React, { useState, useEffect } from "react";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Box, TextField, Button } from "@mui/material";
-import Detail from "./Detail";
+import ScheduledAppointment from "./ScheduledAppointment";
 import {
   getDonations,
   getScheduledAppointmentForUser,
@@ -43,9 +42,7 @@ export default function VisitHistory() {
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => {
-    fetchAll();
-  }, [fromDate, toDate]);
+  useEffect(fetchAll, [fromDate, toDate]);
 
   const handleDelete = (id) => {
     deleteScheduledAppointment(id)
@@ -61,26 +58,10 @@ export default function VisitHistory() {
   return (
     <section className="visit-history">
       {scheduledAppointment && (
-        <section className="scheduled-appointment">
-          <h2 className="card-title">Zaplanowana wizyta</h2>
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => handleDelete(scheduledAppointment.appointmentId)}
-          >
-            Odwołaj wizytę
-          </Button>
-          <div className="details-grid">
-            <Detail
-              label="Data"
-              value={new Date(scheduledAppointment.appointmentTime).toLocaleString()}
-            />
-            <Detail
-              label="Adres"
-              value={`${scheduledAppointment.appointmentCity}, ${scheduledAppointment.appointmentStreet}`}
-            />
-          </div>
-        </section>
+        <ScheduledAppointment
+          appointment={scheduledAppointment}
+          onCancel={handleDelete}
+        />
       )}
 
       <h2 className="card-title">Historia wizyt</h2>

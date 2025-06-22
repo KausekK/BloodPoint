@@ -100,6 +100,7 @@ export default function Documents() {
                 fullWidth
                 multiline
                 minRows={3}
+                length={4000}
                 variant="outlined"
                 size="small"
                 value={answers[q.id]}
