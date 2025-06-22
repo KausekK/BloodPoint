@@ -12,7 +12,6 @@ import java.util.Optional;
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
 
-
     @Query("""
             SELECT new com.point.blood.appointment.ScheduledAppointmentForUserDTO(
             a.id, u.id, d.startTime, b.city, b.street)
@@ -24,4 +23,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             AND d.startTime >= :now
             """)
     Optional<ScheduledAppointmentForUserDTO> findScheduledAppointmentForUserByUserId(@Param("userId") Long userId, @Param("now") LocalDateTime now);
+
+    boolean existsByUsers_Id(Long userId);
 }

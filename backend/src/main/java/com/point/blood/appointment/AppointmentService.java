@@ -4,6 +4,7 @@ import com.point.blood.donationTimeSlot.DonationTimeSlot;
 import com.point.blood.donationTimeSlot.DonationTimeSlotRepository;
 import com.point.blood.shared.EditResult;
 import com.point.blood.shared.MessageDTO;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -21,11 +22,21 @@ public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final DonationTimeSlotRepository timeSlotRepository;
     private final AppointmentMapper appointmentMapper;
+    private final DonationTimeSlotRepository donationTimeSlotRepository;
 
+
+    private Boolean validateAppointment(AppointmentDTO dto) {
+        return appointmentRepository.existsByUsers_Id(dto.getUserId());
+    }
 
     public EditResult<AppointmentDTO> insertAppointment(AppointmentDTO dto) {
 
+        if (validateAppointment(dto)) {
+            return buildError("Masz już wcześniej umówioną wizytę, odwołaj ją aby umówić nową.");
+        }
+
         try {
+
             DonationTimeSlot slot = timeSlotRepository.getReferenceById(dto.getSlotId());
 
             if (!slot.isAvailableSlot()) {
@@ -49,6 +60,21 @@ public class AppointmentService {
         }
     }
 
+    public EditResult<AppointmentDTO> deleteAppointment(Long appointmentId) {
+        Appointment appt = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new EntityNotFoundException("Nie znaleziono wizyty"));
+
+        DonationTimeSlot slot = appt.getDonationTimeSlot();
+        slot.setAvailableSlot(true);
+        donationTimeSlotRepository.saveAndFlush(slot);
+
+        appointmentRepository.delete(appt);
+
+        return EditResult.<AppointmentDTO>builder()
+                .messages(List.of(MessageDTO.createSuccessMessage("Wizyta została odwołana")))
+                .build();
+    }
+
     public Optional<ScheduledAppointmentForUserDTO> getScheduledAppointmentForUser(Long userId) {
         LocalDateTime now = LocalDateTime.now();
         System.out.println(">> getScheduledAppointmentForUser – teraz = " + now);
@@ -60,4 +86,6 @@ public class AppointmentService {
                 .messages(List.of(MessageDTO.createErrorMessage(msg)))
                 .build();
     }
+
+
 }

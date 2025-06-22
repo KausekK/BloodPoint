@@ -16,6 +16,10 @@ export function getScheduledAppointmentForUser(id) {
   return axios.get(`/api/appointment/${id}`).then((r) => r.data);
 }
 
+export function deleteScheduledAppointment(id) {
+  return axios.delete(`/api/appointment/${id}`).then((r) => r.data);
+}
+
 export function updateProfileContactInfo(data) {//TODO podlaczyc do edycji
   return axios.put(`/api/user/profile`, data).then((r) => r.data);
 }

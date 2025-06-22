@@ -31,7 +31,7 @@ public class DonationTimeSlot {
     @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
 
-    @Column(name = "available_slot", nullable = false, length = 1)
+    @Column(name = "available_slot", nullable = false   )
     private boolean availableSlot;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

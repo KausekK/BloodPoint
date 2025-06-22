@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import "./MakeAppointment.css";
-import { getSlotsForDayPaged, addAppointment } from "../../services/MakeAppointmentService";
+import {getSlotsForDayPaged,addAppointment} from "../../services/MakeAppointmentService";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
+import { showMessage, showError } from "../shared/services/MessageService";
 
 const TODAY = new Date();
 const daysArray = Array.from({ length: 7 }).map((_, i) => {
@@ -24,10 +25,9 @@ function formatMonthYear(dateIso) {
   return txt.charAt(0).toUpperCase() + txt.slice(1);
 }
 
-
 export default function MakeAppointment() {
   const [city] = useState("Warszawa"); // TODO: dodac filtrowanie po mieście
-  const [user] = useState({ id: 1 }); // TODO: dodac zalogowanego usera
+  const [user] = useState({ id: 10 }); // TODO: dodac zalogowanego usera
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [days] = useState(daysArray);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -49,34 +49,28 @@ export default function MakeAppointment() {
       .finally(() => setLoading(false));
   }, [city, selectedDate, page]);
 
-
   const handleSubmit = async () => {
     if (!selectedDate || !selectedSlot) return;
 
     const appointment = {
       userId: user.id,
-      slotId: selectedSlot.id
+      slotId: selectedSlot.id,
     };
 
     try {
       const res = await addAppointment(appointment);
-    
-   if (res.messages?.length) {
-     const { msg, type } = res.messages[0];
 
-     if (type === "SUCCESS") { //TODO dodac alerty TOASTR
-       alert(msg);                      
-     } else if (type === "ERROR") {
-       alert(msg);                      
-
-     }
-   } else {
-     alert("Nieoczekiwana odpowiedź serwera");
-   }
-   } catch (error) {
-     console.log("Błąd podczas umawiania wizyty:", error);
-   }
-  }
+      if (res.messages?.length) {
+        res.messages.forEach(({ msg, type }) => {
+          showMessage(msg, type);
+        });
+      } else {
+        showError("Nieoczekiwana odpowiedź serwera");
+      }
+    } catch (error) {
+      console.log("Błąd podczas umawiania wizyty:", error);
+    }
+  };
 
   const handleDateClick = (iso) => {
     setSelectedDate(iso);
