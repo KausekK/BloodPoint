@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -40,5 +41,10 @@ public class AppointmentController {
     @GetMapping("/{id}")
     public ResponseEntity<Optional<ScheduledAppointmentForUserDTO>> getScheduledAppointmentForUser(@PathVariable Long id){
         return ResponseEntity.ok(appointmentService.getScheduledAppointmentForUser(id));
+    }
+
+    @GetMapping("/point/all/{id}")
+    public ResponseEntity<List<AllAppointmentsDetailsDTO>> getAllTodayAppointmentsForBloodPoint(@PathVariable Long id){
+        return ResponseEntity.ok(appointmentService.getAllAppointmentsForBloodPoint(id));
     }
 }

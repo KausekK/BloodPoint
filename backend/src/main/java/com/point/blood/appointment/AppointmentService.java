@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -77,8 +78,15 @@ public class AppointmentService {
 
     public Optional<ScheduledAppointmentForUserDTO> getScheduledAppointmentForUser(Long userId) {
         LocalDateTime now = LocalDateTime.now();
-        System.out.println(">> getScheduledAppointmentForUser – teraz = " + now);
         return appointmentRepository.findScheduledAppointmentForUserByUserId(userId, now);
+    }
+
+    public List<AllAppointmentsDetailsDTO> getAllAppointmentsForBloodPoint(Long bloodDonationPointId) {
+        LocalDateTime today = LocalDate.now().atStartOfDay();
+        LocalDateTime tomorrow = today.plusDays(2);
+
+        return appointmentRepository.findAllTodayAppointmentsForBloodPoint(
+                bloodDonationPointId, today, tomorrow);
     }
 
     private EditResult<AppointmentDTO> buildError(String msg) {

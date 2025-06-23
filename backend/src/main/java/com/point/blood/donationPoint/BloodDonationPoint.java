@@ -1,10 +1,13 @@
 package com.point.blood.donationPoint;
 
+import com.point.blood.donation.Donation;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 @Data
 @Entity
@@ -39,9 +42,8 @@ public class BloodDonationPoint {
     @Column(name = "phone", nullable = false, length = 15)
     private String phone;
 
-    //TODO Jak bedzie encja Donation
-//       @ManyToOne(fetch = LAZY, optional = false)
-//        @JoinColumn(name = "DONATION", nullable = false)
-//        private Donation donation;
+    @ManyToOne(fetch = LAZY, optional = false)
+    @JoinColumn(name = "donation", nullable = false)
+    private Donation donation;
 
 }

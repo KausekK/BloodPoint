@@ -4,7 +4,8 @@ import NavItem from "./NavItem";
 import ProfileInfo from "./ProfileInfo";
 import VisitHistory from "./VisitHistory";
 import Documents from "./Documents/Documents";
-import { Person, CalendarToday, Edit, Logout } from "@mui/icons-material";
+import TodayAppointments from "./TodayAppointments/TodayAppointments";
+import { Person, CalendarToday, Edit, Logout, Dashboard } from "@mui/icons-material";
 import "./Profile.css"; 
 
 export default function Profile() {
@@ -16,6 +17,7 @@ export default function Profile() {
         <NavItem to="/profile" icon={<Person />} label="Profil" end />
         <NavItem to="/profile/appointments" icon={<CalendarToday />} label="Wizyty" />
         <NavItem to="/profile/documents" icon={<Edit />} label="Dokumenty" />
+        <NavItem to="/profile/manage-appointments" icon={<Dashboard />} label="Obsługa wizyt" />
         <div className="spacer" />
         <button className="nav-item" onClick={() => navigate("/logout")}>
           <Logout />
@@ -28,6 +30,7 @@ export default function Profile() {
           <Route index element={<ProfileInfo />} />
           <Route path="appointments" element={<VisitHistory />} />
           <Route path="documents" element={<Documents />} />
+          <Route path="manage-appointments" element={<TodayAppointments />} />
         </Routes>
       </main>
     </div>
