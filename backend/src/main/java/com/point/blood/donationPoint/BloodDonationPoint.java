@@ -2,6 +2,8 @@ package com.point.blood.donationPoint;
 
 import com.point.blood.donation.Donation;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -37,7 +39,20 @@ public class BloodDonationPoint {
     private String street;
 
     @Column(name = "open_hours", nullable = false, length = 100)
-    private String openHours;
+    private String openHours; //TODO usunac
+
+    //TODO odkomentowac
+//    @Min(value = 0)
+//    @Max(value = 24)
+//    @Column(name = "open_hour", nullable = false)
+//    private Double openHour;
+//
+//    @Min(value = 0)
+//    @Max(value = 24)
+//    @Column(name = "close_hour", nullable = false)
+//    private Double closeHour;
+
+
 
     @Column(name = "phone", nullable = false, length = 15)
     private String phone;
