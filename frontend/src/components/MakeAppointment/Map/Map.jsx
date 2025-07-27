@@ -38,19 +38,19 @@ export default function Map({ city }) {
       popup: "Regionalne Centrum Krwiodawstwa i Krwiolecznictwa , Kraków",
     },
   ];
-
+  
   const citiesCoords = {
     Warszawa: [52.2297, 21.0122],
-    Krakow: [50.0614, 19.9366],
-    Wroclaw: [51.1079, 17.0385],
-    Gdansk: [54.352, 18.6466],
-    Poznan: [52.4064, 16.9252],
-    Lodz: [51.7592, 19.455],
-    Rzeszow: [50.0413, 21.999],
+    Kraków: [50.0614, 19.9366],
+    Wrocław: [51.1079, 17.0385],
+    Gdańsk: [54.352, 18.6466],
+    Poznań: [52.4064, 16.9252],
+    Łódź: [51.7592, 19.455],
+    Rzeszów: [50.0413, 21.999],
     Szczecin: [53.4289, 14.553],
-    Torun: [53.0138, 18.5984],
+    Toruń: [53.0138, 18.5984],
     Bydgoszcz: [53.1235, 18.0084],
-    Bialystok: [53.1325, 23.1688],
+    Białystok: [53.1325, 23.1688],
     Katowice: [50.2649, 19.0238],
     Olsztyn: [53.7784, 20.4801],
   };
