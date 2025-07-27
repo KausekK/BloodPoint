@@ -2,12 +2,16 @@ package com.point.blood.donationPoint;
 
 import com.point.blood.donation.Donation;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -41,7 +45,7 @@ public class BloodDonationPoint {
     @Column(name = "open_hours", nullable = false, length = 100)
     private String openHours; //TODO usunac
 
-    //TODO odkomentowac
+    //TODO odkomentowac jak beda pola w bazie
 //    @Min(value = 0)
 //    @Max(value = 24)
 //    @Column(name = "open_hour", nullable = false)
@@ -52,6 +56,13 @@ public class BloodDonationPoint {
 //    @Column(name = "close_hour", nullable = false)
 //    private Double closeHour;
 
+//    @Column(precision = 9, scale = 6, nullable = false)
+//    @DecimalMin("-90.0") @DecimalMax("90.0")
+//    private BigDecimal latitude;
+//
+//    @Column(precision = 10, scale = 6, nullable = false)
+//    @DecimalMin("-180.0") @DecimalMax("180.0")
+//    private BigDecimal longitude;
 
 
     @Column(name = "phone", nullable = false, length = 15)

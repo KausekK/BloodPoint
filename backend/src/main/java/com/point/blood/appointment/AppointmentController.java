@@ -62,4 +62,5 @@ public class AppointmentController {
     public ResponseEntity<List<AllAppointmentsDetailsDTO>> getAllTodayAppointmentsForBloodPoint(@PathVariable Long id) {
         return ResponseEntity.ok(appointmentService.getAllAppointmentsForBloodPoint(id));
     }
+
 }
