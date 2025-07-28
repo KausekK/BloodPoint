@@ -13,7 +13,6 @@ export default function ProfileInfo() {
 
   return (
     <div className="cards">
-      {/* Dane podstawowe */}
       <section className="card">
         <header className="card-header">
           <h2 className="card-title">Dane profilu</h2>
@@ -34,7 +33,6 @@ export default function ProfileInfo() {
         </div>
       </section>
 
-      {/* Informacje o dawcy */}
       <section className="card">
         <h2 className="card-title">Informacje o dawcy</h2>
         <div className="details-grid">
@@ -53,7 +51,6 @@ export default function ProfileInfo() {
         </div>
       </section>
 
-      {/* Ogólne */}
       <section className="card">
         <h2 className="card-title">Ogólne</h2>
         <div className="row-between">

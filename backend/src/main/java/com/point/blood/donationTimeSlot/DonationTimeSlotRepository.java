@@ -14,17 +14,20 @@ import java.util.Optional;
 public interface DonationTimeSlotRepository extends JpaRepository<DonationTimeSlot, Long> {
 
     @Query("""
-                    select new com.point.blood.donationTimeSlot.DonationTimeSlotDTO(
-                            s.id, s.startTime, s.endTime, p.city, p.province, p.street)
-                 from   DonationTimeSlot s
-                 join s.bloodDonationPoint p
-                 where  s.availableSlot = true
-                 and p.city = :city
-                 and  s.startTime >= :from
-              and  s.startTime <  :to
-            """)
-    Page<DonationTimeSlotDTO> findAvailableSlotsForCityAndDay(@Param("city") String city, @Param("from") LocalDateTime from,
-                                                              @Param("to") LocalDateTime to, Pageable pageable);
+        select new com.point.blood.donationTimeSlot.DonationTimeSlotDTO(
+                s.id, s.startTime, s.endTime, p.city, p.province, p.street)
+        from DonationTimeSlot s
+        join s.bloodDonationPoint p
+        where s.availableSlot = true
+          and p.city = :city
+          and s.startTime >= :from and s.startTime < :to
+    """)
+    Page<DonationTimeSlotDTO> findAvailableSlotsForCityAndDay(
+            @Param("city") String city,
+            @Param("from") LocalDateTime from,
+            @Param("to") LocalDateTime to,
+            Pageable pageable
+    );
 
     Optional<DonationTimeSlot> findById(Long id);
 

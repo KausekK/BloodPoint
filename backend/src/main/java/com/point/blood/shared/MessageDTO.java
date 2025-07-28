@@ -24,7 +24,13 @@ public class MessageDTO {
         return createMessage(msg, MessageTypeEnum.SUCCESS);
     }
 
+    public static MessageDTO createInfoMessage(String msg) {
+        return createMessage(msg, MessageTypeEnum.INFO);
+    }
+
     private static MessageDTO createMessage(String msg, MessageTypeEnum type) {
         return MessageDTO.builder().msg(msg).type(type).build();
     }
+
+
 }

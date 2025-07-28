@@ -1,0 +1,31 @@
+.today-appointments-card {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.today-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.today-table th,
+.today-table td {
+  padding: 12px 8px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.today-table th {
+  background: #f9fafb;
+  color: #374151;
+  font-weight: 600;
+}
+
+.today-table tr.striped {
+  background: #f3f4f6;
+}
+
+.today-table tr:hover {
+  background: #fdecea;
+}

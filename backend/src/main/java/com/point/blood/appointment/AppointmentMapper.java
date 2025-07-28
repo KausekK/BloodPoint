@@ -12,7 +12,7 @@ public class AppointmentMapper implements EntityMapper<AppointmentDTO, Appointme
     @Override
     public Appointment toEntity(AppointmentDTO dto) {
         return Appointment.builder()
-                .status(AppointmentStatusEnum.SCHEDULED)
+                .status(AppointmentStatusEnum.UMOWIONA)
                 .createdAt(LocalDateTime.now())
                 .users(Users.builder().id(dto.getUserId()).build())
                 .build();

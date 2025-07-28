@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
 import "./MakeAppointment.css";
-import { getSlotsForDayPaged, addAppointment } from "../../services/MakeAppointmentService";
+import Map from "./Map/Map";
+import {
+  getSlotsForDayPaged,
+  addAppointment,
+} from "../../services/MakeAppointmentService";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import { showMessage, showError } from "../shared/services/MessageService";
-import CustomModal from './CustomModal';
+import CustomModal from "./CustomModal";
 import { MessageType } from "../shared/const/MessageType.model";
+import { getCities } from "../../services/BloodDonationPointService";
+import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 
 const TODAY = new Date();
 const daysArray = Array.from({ length: 7 }).map((_, i) => {
@@ -28,7 +34,8 @@ function formatMonthYear(dateIso) {
 }
 
 export default function MakeAppointment() {
-  const [city] = useState("Warszawa"); // TODO: dodac filtrowanie po mieście
+  const [city, setCity] = useState("");
+  const [cities, setCities] = useState([]);
   const [user] = useState({ id: 10 }); // TODO: dodac zalogowanego usera
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [days] = useState(daysArray);
@@ -38,8 +45,20 @@ export default function MakeAppointment() {
   const [page, setPage] = useState(0);
   const [pageInfo, setPageInfo] = useState({ totalPages: 0 });
   const [isOpen, setIsOpen] = useState(false);
-  const [modalData, setModalData] = useState({ dateString: "", timeString: "" });
+  const [modalData, setModalData] = useState({
+    dateString: "",
+    timeString: "",
+  });
 
+  useEffect(() => {
+    getCities()
+      .then((data) => {
+        setCities(data);
+      })
+      .catch(() => {
+        showError("Błąd przy pobieraniu miast");
+      });
+  }, []);
 
   useEffect(() => {
     if (!selectedDate) return;
@@ -53,6 +72,10 @@ export default function MakeAppointment() {
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [city, selectedDate, page]);
+
+  const handleCityChange = (event) => {
+    setCity(event.target.value);
+  };
 
   const handleSubmit = async () => {
     if (!selectedDate || !selectedSlot) return;
@@ -69,9 +92,9 @@ export default function MakeAppointment() {
         res.messages.forEach(({ msg, type }) => {
           showMessage(msg, type);
         });
-        if (res.messages.some(m => m.type === MessageType.ERROR)) {
+        if (res.messages.some((m) => m.type === MessageType.ERROR)) {
           setIsOpen(false);
-        } else if (res.messages.some(m => m.type === MessageType.SUCCESS)) {
+        } else if (res.messages.some((m) => m.type === MessageType.SUCCESS)) {
           setIsOpen(true);
         }
       } else {
@@ -101,7 +124,23 @@ export default function MakeAppointment() {
 
         {loading && <Spinner />}
 
-        {!loading && (
+        <FormControl size="small" sx={{ minWidth: 200 }}>
+          <InputLabel id="cat-label">Miasto</InputLabel>
+          <Select
+            labelId="cat-label"
+            value={city}
+            label="Miasto"
+            onChange={handleCityChange}
+          >
+            {cities.map((c, index) => (
+              <MenuItem key={index} value={c}>
+                {c}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        {!loading && city && (
           <div className="make-appointment__wrapper">
             <div className="make-appointment__left">
               <p className="text-helper">{formatMonthYear(selectedDate)}</p>
@@ -116,8 +155,9 @@ export default function MakeAppointment() {
                     <button
                       key={iso}
                       onClick={() => handleDateClick(iso)}
-                      className={`date-btn ${selectedDate === iso ? "date-btn--selected" : ""
-                        }`}
+                      className={`date-btn ${
+                        selectedDate === iso ? "date-btn--selected" : ""
+                      }`}
                     >
                       <span className="date-btn__day">{day}</span>
                       <span className="date-btn__weekday">{weekday}</span>
@@ -141,8 +181,9 @@ export default function MakeAppointment() {
                     <button
                       key={`${slot.id}-${time}`}
                       onClick={() => setSelectedSlot(slot)}
-                      className={`time-btn ${selectedSlot?.id === slot.id ? "time-btn--selected" : ""
-                        }`}
+                      className={`time-btn ${
+                        selectedSlot?.id === slot.id ? "time-btn--selected" : ""
+                      }`}
                     >
                       <span className="time-btn__time">{time}</span>
                       <span className="time-btn__loc">{addr}</span>
@@ -182,11 +223,7 @@ export default function MakeAppointment() {
             </div>
 
             <div className="make-appointment__right">
-              <img
-                src="/src/assets/makeApopointment.png"
-                alt="Ilustracja serca z krwią"
-                className="illustration"
-              />
+              <Map key={city} city={city} />
             </div>
           </div>
         )}
