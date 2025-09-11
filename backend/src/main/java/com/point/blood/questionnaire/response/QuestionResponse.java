@@ -27,6 +27,6 @@ public class QuestionResponse {
     @Column(name = "answer_text", length = 4000)
     private String answerText;
 
-    @Column(name = "answer_flag", length = 1) //TODO usawic na boolean
-    private String answerFlag;
+    @Column(name = "answer_flag")
+    private Boolean answerFlag;
 }

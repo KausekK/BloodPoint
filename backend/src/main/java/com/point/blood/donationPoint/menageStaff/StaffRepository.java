@@ -16,7 +16,7 @@ SELECT new com.point.blood.donationPoint.menageStaff.StaffDTO(
 s.id, u.firstName, u.lastName, u.email,
  u.pesel, s.employmentStartDay, s.position, bd.id)
 FROM Staff s
-JOIN s.user u
+JOIN s.users u
 JOIN s.bloodDonationPoint bd
 WHERE bd.id = :id
 

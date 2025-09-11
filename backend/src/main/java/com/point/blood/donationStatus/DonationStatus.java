@@ -18,8 +18,7 @@ public class DonationStatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //TODO jak smieni sie baza to zmienic nazwe na type
-    @Column(name = "type", nullable = false)
+    @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private DonationStatusEnum status;
 }

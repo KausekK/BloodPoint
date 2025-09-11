@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "Appointment")
+@Table
 public class Appointment {
 
     @Id
@@ -30,10 +30,10 @@ public class Appointment {
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "User_id", nullable = false)
+    @JoinColumn(name = "USERS_ID", nullable = false)
     private Users users;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "Donation_Time_Slot_id", nullable = false)
+    @JoinColumn(name = "DONATION_TIME_SLOT_ID", nullable = false)
     private DonationTimeSlot donationTimeSlot;
 }

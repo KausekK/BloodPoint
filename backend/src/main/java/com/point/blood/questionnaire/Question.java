@@ -27,6 +27,7 @@ public class Question {
     private String type;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<QuestionnaireQuestion> questionnaireLinks = new ArrayList<>();
 }
 

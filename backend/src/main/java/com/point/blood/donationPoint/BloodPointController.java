@@ -1,9 +1,9 @@
 package com.point.blood.donationPoint;
 
+import com.point.blood.shared.EditResult;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,8 +20,8 @@ public class BloodPointController {
     }
 
 
-//    @PutMapping("/open_hours/{id}") //TODO nie podlaczony
-//    public ResponseEntity<EditResult<BloodDonationPoint>> setOpenHours(@PathVariable Long id, @RequestParam Double openHour, @RequestParam Double closeHour) {
-//        return ResponseEntity.ok(bloodPointService.editOpenHours(id, openHour, closeHour));
-//    }
+    @PutMapping("/open_hours/{id}") //TODO nie podlaczony, zastanowic sie czy na pewno chcemy to miec
+    public ResponseEntity<EditResult<BloodDonationPoint>> setOpenHours(@PathVariable Long id, @RequestParam Double openHour, @RequestParam Double closeHour) {
+        return ResponseEntity.ok(bloodPointService.editOpenHours(id, openHour, closeHour));
+    }
 }

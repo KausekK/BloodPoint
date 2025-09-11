@@ -17,6 +17,9 @@ public class UsersProfileDTO {
     private String lastName;
     private String email;
     private String pesel;
+    private LocalDate birthDate;
+    private String phone;
+    private String gender;
     private String bloodGroup;
     private Character rhFactor;
     private LocalDate lastDonationDate;

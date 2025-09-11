@@ -43,16 +43,15 @@ public class QuestionnaireResponseService {
                     .orElseThrow(() -> ApplicationException.createWithMessage(
                             "Nie znaleziono pytania o id=" + a.questionId()));
 
-            //TODO temp -> zmienic na BOOLEAN
-            String flag = null;
+            Boolean flag = null;
             if (a.answerFlag() != null) {
-                flag = a.answerFlag() ? "T" : "N";
+                flag = a.answerFlag();
             }
 
             QuestionResponse qr = QuestionResponse.builder()
                     .question(question)
                     .answerText(a.answerText())
-                    .answerFlag(flag) //TODO TEMP
+                    .answerFlag(flag)
                     .questionnaireResponse(session)
                     .build();
 
