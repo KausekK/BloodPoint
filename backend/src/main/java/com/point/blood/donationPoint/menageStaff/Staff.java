@@ -25,7 +25,7 @@ public class Staff {
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "user_id")
-    private Users user;
+    private Users users;
 
     @Column(name = "employment_start_day", nullable = false)
     private LocalDate employmentStartDay;

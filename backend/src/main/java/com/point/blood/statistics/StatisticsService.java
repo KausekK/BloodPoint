@@ -13,7 +13,7 @@ public class StatisticsService {
 
     private final DonationRepository donationRepository;
 
-//    public List<DonationStatsView> getStatistics(LocalDate from, LocalDate to) {
-//       return  donationRepository.getStats(from, to);
-//    }
+    public List<DonationStatsView> getStatistics(LocalDate from, LocalDate to) {
+       return  donationRepository.getStats(from, to);
+    }
 }

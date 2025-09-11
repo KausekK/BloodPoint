@@ -12,7 +12,7 @@ public class StaffMapper implements EntityMapper<StaffDTO, Staff> {
     public Staff toEntity(StaffDTO dto) {
         return Staff.builder()
                 .id(dto.getUserId())
-                .user(Users.builder().id(dto.getUserId()).build())
+                .users(Users.builder().id(dto.getUserId()).build())
                 .employmentStartDay(dto.getEmploymentStartDay())
                 .position(dto.getPosition())
                 .bloodDonationPoint(BloodDonationPoint.builder()
@@ -25,10 +25,10 @@ public class StaffMapper implements EntityMapper<StaffDTO, Staff> {
     public StaffDTO toDto(Staff entity) {
         return new StaffDTO(
                 entity.getId(),
-                entity.getUser().getFirstName(),
-                entity.getUser().getLastName(),
-                entity.getUser().getEmail(),
-                entity.getUser().getPesel(),
+                entity.getUsers().getFirstName(),
+                entity.getUsers().getLastName(),
+                entity.getUsers().getEmail(),
+                entity.getUsers().getPesel(),
                 entity.getEmploymentStartDay(),
                 entity.getPosition(),
                 entity.getBloodDonationPoint().getId()

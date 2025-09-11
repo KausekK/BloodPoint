@@ -17,6 +17,9 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
                 u.lastName,
                 u.email,
                 u.pesel,
+                u.dateOfBirth,
+                u.phone,
+                u.gender,
                 bt.bloodGroup,
                 bt.rhFactor,
                 d.lastDonationDate,
@@ -33,13 +36,13 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
                 u.lastName,
                 u.email,
                 u.pesel,
+                u.dateOfBirth,
+                u.phone,
+                u.gender,
                 bt.bloodGroup,
                 bt.rhFactor,
                 d.lastDonationDate
             """)
     Optional<UsersProfileDTO> findProfileById(@Param("id") Long id);
-
-
-    //TODO dodac date urodzenia
 
 }

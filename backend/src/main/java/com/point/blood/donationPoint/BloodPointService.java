@@ -17,23 +17,23 @@ public class BloodPointService {
 
     private final BloodDonationPointRepository bloodDonationPointRepository;
 
-//    public EditResult<BloodDonationPoint> editOpenHours(Long id, double openHour, double closeHour) {
-//
-//        var validationError = validateHours(openHour, closeHour);
-//        if (validationError.isPresent()) {
-//            return buildError(validationError.get());
-//        }
-//
-//        return bloodDonationPointRepository.findById(id)
-//                .map(point -> {
-//                    point.setOpenHour(openHour);
-//                    point.setCloseHour(closeHour);
-//                    return EditResult.<BloodDonationPoint>builder()
-//                            .messages(List.of(MessageDTO.createSuccessMessage("Godziny otwarcia zostały zmienione.")))
-//                            .build();
-//                })
-//                .orElseGet(() -> buildError("Punkt o podanym id nie istnieje."));
-//    }
+    public EditResult<BloodDonationPoint> editOpenHours(Long id, double openHour, double closeHour) {
+
+        var validationError = validateHours(openHour, closeHour);
+        if (validationError.isPresent()) {
+            return buildError(validationError.get());
+        }
+
+        return bloodDonationPointRepository.findById(id)
+                .map(point -> {
+                    point.setOpenHour(openHour);
+                    point.setCloseHour(closeHour);
+                    return EditResult.<BloodDonationPoint>builder()
+                            .messages(List.of(MessageDTO.createSuccessMessage("Godziny otwarcia zostały zmienione.")))
+                            .build();
+                })
+                .orElseGet(() -> buildError("Punkt o podanym id nie istnieje."));
+    }
 
     private Optional<String> validateHours(double openHour, double closeHour) {
         if (openHour < 0 || closeHour < 0) {

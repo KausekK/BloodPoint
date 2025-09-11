@@ -43,7 +43,7 @@ export default function Home() {
           />
         </div>
 
-        <h2>Umów wizytę</h2>
+        <h2>Umów wizytę - (dodaj przycisk przejścia do strony rezerwacji)</h2>
         <p>Wybierz miasto i datę, aby zobaczyć dostępne terminy wizyt.</p>
         <p>
           Skorzystaj z menu nawigacyjnego, aby uzyskać dostęp do różnych funkcji

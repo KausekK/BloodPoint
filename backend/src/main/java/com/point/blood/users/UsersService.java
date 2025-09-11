@@ -30,14 +30,14 @@ public class UsersService {
                 .orElseThrow(() -> ApplicationException.createWithMessage("Brak użytkownika o podanym id: {}", dto.getId()));
 
         userEnitty.setEmail(dto.getEmail());
-//       userEnitty.setPhone(dto.getPhone()); TODO
+       userEnitty.setPhone(dto.getPhone());
 
 
         var savedUserEntity = usersRepository.save(userEnitty);
         var resultDto = UsersProfileDTO.builder()
                 .id(savedUserEntity.getId())
                 .email(savedUserEntity.getEmail())
-//                .phone(savedUserEntity.getPhone()) TODO
+                .phone(savedUserEntity.getPhone())
                 .build();
 
         return EditResult.<UsersProfileDTO>builder()

@@ -42,27 +42,23 @@ public class BloodDonationPoint {
     @Column(name = "street", nullable = false)
     private String street;
 
-    @Column(name = "open_hours", nullable = false, length = 100)
-    private String openHours; //TODO usunac
+    @Min(value = 0)
+    @Max(value = 24)
+    @Column(name = "open_hour", nullable = false)
+    private Double openHour;
 
-    //TODO odkomentowac jak beda pola w bazie
-//    @Min(value = 0)
-//    @Max(value = 24)
-//    @Column(name = "open_hour", nullable = false)
-//    private Double openHour;
-//
-//    @Min(value = 0)
-//    @Max(value = 24)
-//    @Column(name = "close_hour", nullable = false)
-//    private Double closeHour;
+    @Min(value = 0)
+    @Max(value = 24)
+    @Column(name = "close_hour", nullable = false)
+    private Double closeHour;
 
-//    @Column(precision = 9, scale = 6, nullable = false)
-//    @DecimalMin("-90.0") @DecimalMax("90.0")
-//    private BigDecimal latitude;
-//
-//    @Column(precision = 10, scale = 6, nullable = false)
-//    @DecimalMin("-180.0") @DecimalMax("180.0")
-//    private BigDecimal longitude;
+    @Column(precision = 9, scale = 6, nullable = false)
+    @DecimalMin("-90.0") @DecimalMax("90.0")
+    private BigDecimal latitude;
+
+    @Column(precision = 10, scale = 6, nullable = false)
+    @DecimalMin("-180.0") @DecimalMax("180.0")
+    private BigDecimal longitude;
 
 
     @Column(name = "phone", nullable = false, length = 15)

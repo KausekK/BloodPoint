@@ -15,7 +15,6 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table
 @ToString(exclude = "donor")
 @EqualsAndHashCode(exclude = "donor")
 public class Users {
@@ -43,10 +42,10 @@ public class Users {
     @Size(max = 255)
     @Column(name = "last_name", nullable = false)
     private String lastName;
-//TODO
-//    @Pattern(regexp = "[MK]")
-//    @Column(name = "gender", nullable = false, length = 1)
-//    private String gender;
+
+    @Pattern(regexp = "[MK]")
+    @Column(name = "gender", nullable = false, length = 1)
+    private String gender;
 
     @Pattern(regexp = "\\d{11}")
     @Column(name = "pesel", nullable = false, length = 11)
@@ -57,16 +56,15 @@ public class Users {
     @Size(max = 255)
     @Column(name = "email", nullable = false)
     private String email;
-//TODO
-//    @Pattern(regexp = "^[0-9]{9}$")
-//    @Column(name = "phone", nullable = false, length = 9)
-//    private String phone;
 
-//    @Column(name = "date_of_birth", nullable = false)
-//    private LocalDate dateOfBirth;
+    @Pattern(regexp = "^[0-9]{9}$")
+    @Column(name = "phone", nullable = false, length = 9)
+    private String phone;
+
+    @Column(name = "date_of_birth", nullable = false)
+    private LocalDate dateOfBirth;
 
     @OneToOne(mappedBy = "users", cascade = CascadeType.ALL)
     private Donor donor;
 
-    //TODO dodac role
 }

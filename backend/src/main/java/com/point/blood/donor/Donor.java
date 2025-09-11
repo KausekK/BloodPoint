@@ -15,17 +15,17 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"users", "donations"})
-@EqualsAndHashCode(exclude = {"users", "donations"})
+@ToString(exclude = {"USERS", "donations"})
+@EqualsAndHashCode(exclude = {"USERS", "donations"})
 public class Donor {
 
         @Id
-        @Column(name = "User_id")
+        @Column(name = "USERS_ID")
         private Long userId;
 
         @OneToOne(fetch = FetchType.LAZY)
         @MapsId
-        @JoinColumn(name = "User_id")
+        @JoinColumn(name = "USERS_ID")
         private Users users;
 
         @ManyToOne(fetch = FetchType.LAZY)
