@@ -47,9 +47,13 @@ export default function BloodStock() {
 
   if (!stock.length) return null;
 
+  const today = new Date().toLocaleDateString('pl-PL');
+
   return (
-    <div className="stock-container">
-      {stock.map(({ bloodGroup, totalAvailable, totalFree }) => {
+      <>
+        <p className="stock-date">Stan na dzień: {today}</p>
+        <div className="stock-container">
+    {stock.map(({ bloodGroup, totalAvailable, totalFree }) => {
         const fillPercent = totalAvailable > 0
           ? Math.round((totalFree / totalAvailable) * 100)
           : 0;
@@ -66,5 +70,6 @@ export default function BloodStock() {
         );
       })}
     </div>
+  </>
   );
 }

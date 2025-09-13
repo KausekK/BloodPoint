@@ -1,0 +1,11 @@
+.section-heading{
+    margin:24px auto 12px;
+    font-size:2rem;
+    text-align:center;
+    font-weight:700;
+    line-height:1.2;
+    color:var(--color-primary);
+}
+@media (min-width:768px){
+    .section-heading{ font-size:2.4rem; }
+}

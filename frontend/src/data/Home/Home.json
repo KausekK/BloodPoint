@@ -1,0 +1,16 @@
+{
+  "hero": {
+    "title": "Umów wizytę",
+    "subtitle": "Wybierz miasto i datę, aby zobaczyć dostępne terminy wizyt.",
+    "note": "Skorzystaj z menu nawigacyjnego, aby uzyskać dostęp do różnych funkcji aplikacji.",
+    "cta": {
+      "label": "Przejdź do rezerwacji",
+      "to": "/appointment",
+      "ariaLabel": "Przejdź do strony rezerwacji"
+    },
+    "videoSrc": "src/assets/video/rckik_warszawa_animacja1.mp4"
+  },
+  "bloodStock": {
+    "title": "Stan zapasów krwi"
+  }
+}

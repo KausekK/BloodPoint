@@ -1,0 +1,25 @@
+:root {
+    --color-primary: #e11b1e;
+    --color-primary-dark: #bd1015;
+    --color-bg-light: #fff5f5;
+    --color-text: #374151;
+    --color-helper: #6b7280;
+    --color-border: #e5e7eb;
+
+    --font-body: "Roboto", "Helvetica Neue", Arial, sans-serif;
+    --font-heading: "Poppins", "Helvetica Neue", Arial, sans-serif;
+
+    --radius-lg: 12px;
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 4%);
+
+
+}
+/* dark mode */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-bg-light: #0f0f0f;
+        --color-text: #e5e7eb;
+        --color-border: #27272a;
+    }
+}
+

@@ -1,0 +1,39 @@
+{
+  "brand": { "labelMain": "Krew", "labelAccent": "Razem", "link": "/" },
+
+  "common": [
+    { "label": "Informacje", "to": "/informacje" },
+    { "label": "Punkty krwiodawstwa", "to": "/punkty" }
+  ],
+
+  "roles": {
+    "guest": [
+      { "label": "Krwiodawca", "to": "/" },
+      { "label": "Dla dawcy", "to": "/dla-dawcy" }
+    ],
+    "donor": [
+      { "label": "Moje wizyty", "to": "/moje-wizyty" },
+      { "label": "Umów wizytę", "to": "/rezerwacja" }
+    ],
+    "admin": [
+      { "label": "Panel", "to": "/admin" },
+      { "label": "Zarządzaj wizytami", "to": "/admin/wizyty" }
+    ]
+  },
+
+  "actions": {
+    "guest": { "type": "link", "label": "Zaloguj się", "to": "/login" },
+    "auth": [
+      { "type": "link", "label": "Profil", "to": "/profil" },
+      { "type": "button", "label": "Wyloguj", "action": "logout" }
+    ]
+  },
+
+  "featureFlags": {
+    "showBooking": true
+  },
+
+  "visibilityRules": [
+    { "ifFlag": "showBooking", "show": ["/rezerwacja"] }
+  ]
+}

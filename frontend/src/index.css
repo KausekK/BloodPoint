@@ -1,39 +1,12 @@
-
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
-:root {
-  --font-family-base: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  --color-text: #213547;
-  --color-bg:   #ffffff;
-}
-
 html, body, #root {
-  height: 100%;   
-  width:  100%;   
+  height: 100%;
+  width: 100%;
   margin: 0;
   padding: 0;
-}
-
-body {
-  font-family: var(--font-family-base);
-  line-height: 1.5;
-  font-weight: 400;
-  color: var(--color-text);
-  background: var(--color-bg);
-  display: block;
-}
-
-a {
-  color: #e11b1e;         
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.2s;
-}
-
-a:hover {
-  color: #bd1015;
 }
 
 button {
@@ -46,14 +19,6 @@ button {
 }
 
 button:focus-visible {
-  outline: 3px solid #646cff; 
+  outline: 3px solid #646cff;
   outline-offset: 2px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-text: #ececec;
-    --color-bg:   #121212;
-  }
-  body { color: var(--color-text); background: var(--color-bg); }
 }

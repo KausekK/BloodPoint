@@ -1,24 +1,9 @@
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-#root {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  max-width: none;
-}
-
-/* Wspólne style stron */
 .page {
   display: flex;
   flex-direction: column;
   width: 100%;
   min-height: 100vh;
   background: var(--color-bg-light);
-  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
 }
 
 .page__top-bar {
@@ -36,7 +21,6 @@ html, body {
   width: 100%;
 }
 
-/* Przykładowe wspólne style nagłówka */
 .page__heading {
   margin: 0 0 32px;
   font-size: 2rem;
@@ -44,15 +28,11 @@ html, body {
   font-weight: 600;
   line-height: 1.2;
   color: var(--color-primary);
+  font-family: var(--font-heading);
 }
 
 @media (min-width: 768px) {
   .page__heading {
     font-size: 3rem;
   }
-}
-
-:root {
-  --color-primary: #e11b1e;
-  --color-bg-light: #fff5f5;
 }

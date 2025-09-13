@@ -1,0 +1,33 @@
+{
+  "brand": {
+    "designer": "Designed by Ola and Kuba",
+    "subtitle": "Regionalny System Krwiodawstwa i Krwiolecznictwa"
+  },
+  "faqsTitle": "FAQs",
+  "faqs": [
+    {
+      "question": "Gdzie oddać krew?",
+      "answer": "Możesz oddać krew w najbliższym punkcie krwiodawstwa. Sprawdź listę punktów na naszej stronie."
+    },
+    {
+      "question": "W jakich odstępach czasu mogę oddać krew?",
+      "answer": "Mężczyźni mogą oddawać krew co 8 tygodni, kobiety co 12 tygodni."
+    },
+    {
+      "question": "Czy będąc w ciąży mogę oddać krew?",
+      "answer": "Nie – pobranie krwi nie jest dozwolone w czasie ciąży ani przez 6 miesięcy po porodzie."
+    },
+    {
+      "question": "Jak się przygotować do oddania krwi?",
+      "answer": "Dzień wcześniej zjedz lekki, bogaty w żelazo posiłek i zadbaj o odpowiednie nawodnienie."
+    },
+    {
+      "question": "Od jakiego wieku mogę oddać krew?",
+      "answer": "Musisz mieć skończone 18 lat i wagę powyżej 50 kg."
+    },
+    {
+      "question": "Jakie przywileje przysługują krwiodawcom?",
+      "answer": "Prawo do zwolnienia od pracy, zniżki na leki, bezpłatne badania profilaktyczne i inne."
+    }
+  ]
+}
