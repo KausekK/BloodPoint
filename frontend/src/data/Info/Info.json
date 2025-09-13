@@ -1,0 +1,73 @@
+{
+  "hero": {
+    "title": "Oddaj krew. Pomóż pacjentom.",
+    "accent": "Zaplanuj wizytę online.",
+    "lead": "Jeden portal dla wszystkich: dawcy rezerwują wygodnie terminy, a placówki i szpitale monitorują stany magazynowe i zgłaszają zapotrzebowanie.",
+    "ctas": [
+      { "to": "/rezerwuj", "label": "Zarezerwuj wizytę", "ariaLabel": "Zarezerwuj wizytę jako dawca" },
+      { "to": "/zaloguj", "label": "Zaloguj się do panelu", "ariaLabel": "Zaloguj jako placówka lub szpital" }
+    ]
+  },
+  "demand": {
+    "label": "Aktualne zapotrzebowanie:",
+    "groups": [
+      { "key": "0-",  "label": "0 Rh−" },
+      { "key": "0+",  "label": "0 Rh+" },
+      { "key": "A-",  "label": "A Rh−" },
+      { "key": "A+",  "label": "A Rh+" },
+      { "key": "B-",  "label": "B Rh−" },
+      { "key": "B+",  "label": "B Rh+" },
+      { "key": "AB-", "label": "AB Rh−" },
+      { "key": "AB+", "label": "AB Rh+" }
+    ],
+    "thresholds": { "highMax": 30, "mediumMax": 60 },
+    "labels": { "high": "pilnie", "medium": "średnie", "low": "niskie" },
+    "layout": { "chipsPerRowDesktop": 4, "minChipWidth": 110, "gapPx": 8 }
+  },
+  "audience": {
+    "heading": "Wybierz swoją ścieżkę",
+    "cards": [
+      {
+        "title": "Dla Dawców",
+        "subtitle": "Szybka rezerwacja i wygoda",
+        "items": [
+          "⏰ Rezerwacja terminu w najbliższym punkcie pobrań",
+          "🧭 Wybór lokalizacji i godzin, powiadomienia SMS/e-mail",
+          "🩺 Wstępna kwalifikacja online (ankieta)",
+          "💳 Historia donacji"
+        ],
+        "ctas": [
+          { "to": "/rezerwuj", "label": "Zarezerwuj wizytę" },
+          { "to": "/logowanie-dawcy", "label": "Zaloguj się" }
+        ]
+      },
+      {
+        "title": "Dla Placówek i Szpitali",
+        "subtitle": "Operacje i logistyka krwi",
+        "items": [
+          "📊 Dashboard stanów magazynowych i zużycia",
+          "📝 Zgłaszanie zapotrzebowania wg grup i składników",
+          "🚚 Śledzenie realizacji i SLA dostaw",
+          "👥 Zarządzanie grafikiem i obłożeniem punktu pobrań"
+        ],
+        "ctas": [
+          { "to": "/rejestracja-placowki", "label": "Zarejestruj placówkę" },
+          { "to": "/zaloguj", "label": "Zaloguj do panelu" }
+        ]
+      }
+    ]
+  },
+  "how": {
+    "heading": "Jak to działa",
+    "steps": [
+      { "badge": "1", "title": "Wybierz rolę", "text": "Dawca rezerwuje termin. Placówka/szpital loguje się do panelu." },
+      { "badge": "2", "title": "Ustal szczegóły", "text": "Dawca wybiera lokalizację i godzinę. Placówki monitorują stany i zgłaszają zapotrzebowanie." },
+      { "badge": "3", "title": "Potwierdzenie i powiadomienia", "text": "Automatyczne przypomnienia, statusy realizacji i przejrzysty podgląd historii." }
+    ],
+    "assurance": ["🔐 Zgodność z RODO", "✅ Bezpieczne logowanie", "📄 Ścieżki audytu i uprawnienia"],
+    "bottomCtas": [
+      { "to": "/rezerwuj", "label": "Umów wizytę jako dawca" },
+      { "to": "/zaloguj", "label": "Zaloguj do panelu" }
+    ]
+  }
+}

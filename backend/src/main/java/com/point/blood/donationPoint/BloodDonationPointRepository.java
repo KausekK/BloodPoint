@@ -11,4 +11,6 @@ public interface BloodDonationPointRepository extends JpaRepository<BloodDonatio
 
     @Query("SELECT DISTINCT b.city FROM BloodDonationPoint b")
     List<String> getDonationPointCities();
+
+    List<BloodDonationPoint> findByCityIgnoreCaseOrderByStreetAsc(String city);
 }

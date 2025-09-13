@@ -3,7 +3,7 @@
 
   "common": [
     { "label": "Informacje", "to": "/informacje" },
-    { "label": "Punkty krwiodawstwa", "to": "/punkty" }
+    { "label": "Punkty krwiodawstwa", "to": "/punkty-krwiodawstwa" }
   ],
 
   "roles": {

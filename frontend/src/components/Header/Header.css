@@ -6,7 +6,6 @@
     height: 60px;
     box-shadow: var(--shadow-sm);
 }
-
 .header__container {
     max-width: 1200px;
     margin: 0 auto;
@@ -16,7 +15,6 @@
     gap: 24px;
     padding: 0 24px;
 }
-
 .header__brand {
     color: #fff;
     text-decoration: none;
@@ -25,10 +23,7 @@
     font-size: 1.1rem;
     font-family: var(--font-heading);
 }
-
-.header__brand-accent {
-    color: #ffe2e2;
-}
+.header__brand-accent { color: #ffe2e2; }
 
 .header__nav {
     display: flex;
@@ -36,7 +31,6 @@
     flex: 1;
     justify-content: center;
 }
-
 .header__link {
     color: #fff;
     text-decoration: none;
@@ -45,26 +39,9 @@
     transition: color .2s ease, opacity .2s ease;
     font-family: var(--font-body);
 }
+.header__link:hover { opacity: 0.9; color: #ffa5a5; }
 
-.header__link:hover {
-    opacity: 0.9;
-    color: #ffa5a5;
-}
-
-/* .header__link.active – możesz włączyć, jeśli chcesz underline aktywnego NavLinka */
-/*
-.header__link.active {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-  font-weight: 600;
-}
-*/
-
-.header__actions {
-    display: flex;
-    align-items: center;
-}
-
+.header__actions { display: flex; align-items: center; }
 .header__btn {
     background: #fff;
     color: var(--color-primary);
@@ -77,25 +54,123 @@
     transition: transform 0.06s ease, background 0.2s ease;
     font-family: var(--font-heading);
 }
+.header__btn:hover { background: #f7f7f7; }
+.header__btn:active { transform: translateY(1px); }
 
-.header__btn:hover {
-    background: #f7f7f7;
+.header__toggle {
+    display: none;
+    background: transparent;
+    border: 0;
+    width: 44px;
+    height: 44px;
+    padding: 8px;
+    margin-left: auto;
+    cursor: pointer;
+    color: #fff;
+    z-index: 1001;
+}
+.header__toggle:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+.header__toggle-icon {
+    width: 28px;
+    height: 28px;
+    display: block;
 }
 
-.header__btn:active {
-    transform: translateY(1px);
+/* Drawer */
+.header__drawer {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease;
+}
+.header__drawer.is-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+.header__drawer-inner {
+    position: absolute;
+    top: 0; right: 0;
+    width: min(88vw, 360px);
+    height: 100%;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -8px 0 24px rgba(0,0,0,.18);
+    transform: translateX(100%);
+    transition: transform .3s ease;
+}
+.header__drawer.is-open .header__drawer-inner {
+    transform: translateX(0);
 }
 
+.header__drawer-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--color-border, #eee);
+}
+.header__drawer-title {
+    font-weight: 800;
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+}
+.header__drawer-close {
+    background: transparent;
+    border: 0;
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.header__drawer-body {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 8px;
+    overflow-y: auto;
+}
+.header__drawer-link {
+    padding: 12px 12px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--color-text, #222);
+    font-weight: 600;
+    margin: 4px 4px;
+    background: #f8f8f8;
+}
+.header__drawer-link:hover { background: #f1f1f1; }
+
+.header__drawer-actions {
+    margin-top: auto;
+    padding: 12px 16px 16px;
+    border-top: 1px solid var(--color-border, #eee);
+}
+
+/* Mobile */
 @media (max-width: 768px) {
-    .header__container {
-        gap: 12px;
-        padding: 0 12px;
+    .header__container { gap: 12px; padding: 0 12px; }
+
+    .header__toggle {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
     }
-    .header__nav {
-        gap: 12px;
-        font-size: 0.95rem;
-    }
-    .header__brand {
-        font-size: 1rem;
-    }
+    .header__nav { display: none !important; }
+    .header__actions { display: none !important; }
+
+    .header__brand { font-size: 1rem; }
 }
+
+.header__toggle[aria-expanded="true"] {
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+/* Blokada scrolla, gdy menu otwarte */
+.no-scroll { overflow: hidden; }
