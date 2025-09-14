@@ -1,5 +1,6 @@
 package com.point.blood.donationPoint;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.point.blood.donation.Donation;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMax;
@@ -66,6 +67,7 @@ public class BloodDonationPoint {
 
     @ManyToOne(fetch = LAZY, optional = false)
     @JoinColumn(name = "donation", nullable = false)
+    @JsonIgnore
     private Donation donation;
 
 }

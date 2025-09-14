@@ -54,6 +54,7 @@ export default function BloodStock() {
 
   if (!stock.length) return null;
 
+  //TODO update stanu co X godzin
   const today = new Date().toLocaleDateString('pl-PL');
 
   return (

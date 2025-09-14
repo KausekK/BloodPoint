@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./MakeAppointment.css";
-import Map from "./Map/Map";
+import Map from "../Map/Map";
 import {
   getSlotsForDayPaged,
   addAppointment,

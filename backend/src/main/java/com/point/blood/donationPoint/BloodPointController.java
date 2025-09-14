@@ -20,13 +20,9 @@ public class BloodPointController {
     }
 
     @GetMapping("/points")
-    public List<BloodDonationPoint> getPoints(@RequestParam(required = false) String city) {
-        if(city == null || city.isBlank()) {
-            return bloodDonationPointRepository.findAll();
-        }
-        else {
-            return bloodDonationPointRepository.findByCityIgnoreCaseOrderByStreetAsc(city);
-        }
+    public ResponseEntity<List<BloodDonationPointDTO>> getPoints(
+            @RequestParam(required = false) String city) {
+        return ResponseEntity.ok(bloodDonationPointRepository.findPoints(city));
     }
 
 
