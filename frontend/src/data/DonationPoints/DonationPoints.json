@@ -3,15 +3,19 @@
   "lead": "Kliknij kafelek, aby zobaczyć lokalizację na mapie.",
   "labels": {
     "address": "Adres",
-    "hours": "Godziny"
+    "hours": "Godziny",
+    "cityFilter": "Miasto"
   },
   "buttons": {
     "showOnMap": "Pokaż na mapie",
-    "openInGoogleMaps": "Otwórz w Google Maps"
+    "openInGoogleMaps": "Otwórz w Google Maps",
+    "prev": "Poprzednia",
+    "next": "Następna"
   },
   "emptyState": "Brak danych do wyświetlenia.",
   "mapPlaceholder": "Wybierz punkt, aby zobaczyć mapę",
   "hoursFixedStart": "08:00",
   "hoursFixedEnd": "16:00",
-  "hoursSeparator": " – "
+  "hoursSeparator": " – ",
+  "allCities": "Wszystkie miasta"
 }

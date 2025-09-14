@@ -160,3 +160,123 @@
     height: 100%;
     border-radius: 1px;
 }
+
+/* ===== Filtr miasta (ładny select) ===== */
+.points__filters {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    margin: 14px 0 4px;
+    flex-wrap: wrap;
+}
+
+.points__filter-group {
+    display: grid;
+    gap: 6px;
+}
+
+.points__filter-label {
+    font-weight: 700;
+    color: var(--color-text);
+    font-size: .95rem;
+}
+
+.points__select-wrap {
+    position: relative;
+    display: inline-block;
+}
+
+/* strzałka selecta */
+.points__select-wrap::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-35%) rotate(45deg);
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid var(--color-helper);
+    border-bottom: 2px solid var(--color-helper);
+    transition: border-color .15s ease;
+}
+
+/* sam select */
+.points__select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: #fff;
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 10px 36px 10px 12px; /* miejsce na strzałkę */
+    font-size: .95rem;
+    box-shadow: var(--shadow-sm);
+    outline: none;
+    min-width: 220px;
+}
+
+.points__select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(225,27,30,.08);
+}
+
+.points__select:hover {
+    border-color: color-mix(in oklab, var(--color-border) 40%, var(--color-primary) 60%);
+}
+
+.points__clear {
+    padding: 8px 12px;
+    font-size: .9rem;
+}
+
+/* mobile */
+@media (max-width: 560px) {
+    .points__filters { align-items: stretch; }
+    .points__filter-group { width: 100%; }
+    .points__select { width: 100%; min-width: 0; }
+}
+
+/* ===== Paginacja ===== */
+.points__pagination {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.pagination__pages {
+    list-style: none;
+    display: flex;
+    gap: 8px;
+    padding: 0;
+    margin: 0;
+}
+
+.pagination__page {
+    background: #fff;
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: transform .1s ease, filter .15s ease, border-color .15s ease;
+}
+
+.pagination__page:hover { filter: brightness(1.02); }
+.pagination__page.is-active {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+.pagination__page:active { transform: translateY(1px); }
+
+.bp-btn[disabled],
+.pagination__page[disabled] {
+    opacity: .55;
+    cursor: not-allowed;
+}
