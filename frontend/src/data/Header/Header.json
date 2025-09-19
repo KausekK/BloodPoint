@@ -8,7 +8,7 @@
 
   "roles": {
     "guest": [
-      { "label": "Krwiodawca", "to": "/" },
+      { "label": "Krwiodawca", "to": "/krwiodawca" },
       { "label": "Dla dawcy", "to": "/dla-dawcy" }
     ],
     "donor": [
