@@ -7,6 +7,7 @@ import InfoPage from './components/Info/InfoPage.jsx';
 import DonationPointsPage from './components/DonationPoints/DonationPointsPage.jsx';
 import DonorInfoPage from  './components/DonorInfo/DonorInfoPage.jsx';
 import DonorTipsPage from './components/DonorInfo/DonorTipsPage.jsx';
+import PointStaffPage from "./components/Staff/PointStaffPage.jsx";
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
                 <Route path="/punkty-krwiodawstwa" element={<DonationPointsPage />} />
                 <Route path="/krwiodawca" element={<DonorInfoPage />} />
                 <Route path="/dla-dawcy" element={<DonorTipsPage />} />
+                <Route path="/panel/staff" element={<PointStaffPage />} />
             </Routes>
         </Router>
     );

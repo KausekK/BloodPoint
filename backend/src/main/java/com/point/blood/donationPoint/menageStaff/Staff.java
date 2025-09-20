@@ -19,12 +19,12 @@ import java.time.LocalDate;
 public class Staff {
 
     @Id
-    @Column(name = "user_id")
+    @Column(name = "users_id")
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "users_id")
     private Users users;
 
     @Column(name = "employment_start_day", nullable = false)
