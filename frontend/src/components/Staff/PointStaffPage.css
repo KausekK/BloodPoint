@@ -1,0 +1,125 @@
+.staff {
+    background: var(--color-bg-light);
+}
+
+.staff-head {
+    margin: 0 0 16px;
+}
+
+.staff-title {
+    margin: 0 0 6px;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+    color: var(--color-text);
+}
+
+.staff-lead {
+    color: var(--color-helper);
+    margin: 0;
+}
+
+.staff-toolbar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: end;
+    margin-top: 12px;
+}
+
+.staff-search {
+    flex: 1 1 300px;
+}
+
+.staff-input,
+.staff-select {
+    width: 100%;
+    background: #fff;
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.staff-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.staff-table-wrap {
+    margin-top: 10px;
+}
+
+.staff-empty,
+.staff-error {
+    padding: 18px;
+    color: var(--color-helper);
+    text-align: center;
+}
+
+.staff-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.staff-table th,
+.staff-table td {
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--color-border);
+    text-align: left;
+    vertical-align: top;
+}
+
+.staff-table th {
+    font-weight: 800;
+    color: var(--color-text);
+}
+
+.staff-actions-cell {
+    white-space: nowrap;
+}
+
+.staff-row-actions {
+    display: inline-flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.staff-name {
+    display: grid;
+    gap: 2px;
+}
+
+.staff-name-main {
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.staff-id {
+    color: var(--color-helper);
+    font-size: 0.85rem;
+}
+
+@media (max-width: 700px) {
+    .staff-table thead {
+        display: none;
+    }
+    .staff-table tr {
+        display: grid;
+        grid-template-columns: 1fr;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--color-border);
+    }
+    .staff-table td {
+        border: 0;
+        padding: 6px 0;
+    }
+    .staff-table td::before {
+        content: attr(data-label) ": ";
+        font-weight: 700;
+        color: var(--color-helper);
+        margin-right: 6px;
+    }
+}

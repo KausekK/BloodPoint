@@ -19,6 +19,12 @@ public class BloodPointController {
         return bloodDonationPointRepository.getDonationPointCities();
     }
 
+    @GetMapping("/points")
+    public ResponseEntity<List<BloodDonationPointDTO>> getPoints(
+            @RequestParam(required = false) String city) {
+        return ResponseEntity.ok(bloodDonationPointRepository.findPoints(city));
+    }
+
 
     @PutMapping("/open_hours/{id}") //TODO nie podlaczony, zastanowic sie czy na pewno chcemy to miec
     public ResponseEntity<EditResult<BloodDonationPoint>> setOpenHours(@PathVariable Long id, @RequestParam Double openHour, @RequestParam Double closeHour) {

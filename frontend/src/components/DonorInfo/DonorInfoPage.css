@@ -1,0 +1,152 @@
+.donor {
+    background: var(--color-bg-light);
+}
+
+.donor-head {
+    text-align: left;
+    margin: 0 0 18px;
+}
+
+.donor-title {
+    margin: 0 0 6px;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    letter-spacing: .2px;
+    line-height: 1.15;
+    font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+    color: var(--color-text);
+}
+
+.donor-lead {
+    color: var(--color-helper);
+    margin: 0;
+}
+
+.donor-cta {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+
+.donor-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    align-content: start;
+    margin: 16px 0 20px;
+}
+
+.donor-card .donor-card-title {
+    margin: 0 0 8px;
+    font-weight: 800;
+    font-family: var(--font-heading);
+    color: var(--color-primary);
+}
+
+.donor-card .donor-card-desc {
+    color: var(--color-text);
+    margin: 0 0 10px;
+}
+
+.donor-two-col {
+    display: grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap: 24px;
+    margin: 10px 0 22px;
+}
+
+@media (min-width: 980px) {
+    .donor-two-col {
+        gap: 28px;
+    }
+}
+@media (max-width: 980px) {
+    .donor-two-col {
+        grid-template-columns: 1fr;
+    }
+}
+
+.donor-box {
+    padding: 18px;
+}
+
+.donor-box-title {
+    margin: 0 0 10px;
+    font-weight: 800;
+    font-family: var(--font-heading);
+    color: var(--color-text);
+}
+
+.donor-checklist {
+    display: grid;
+    gap: 10px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.donor-checklist-item {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    align-items: start;
+    gap: 8px;
+    color: var(--color-text);
+    font-size: .95rem;
+}
+
+.donor-checklist-bullet {
+    display: inline-grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    font-weight: 800;
+    border: 1px solid var(--color-border);
+    background: #fff;
+    color: var(--color-primary);
+}
+
+.donor-checklist-warn .donor-checklist-bullet {
+    background: #fff5f5;
+    border-color: #ffcdd2;
+    color: #b71c1c;
+}
+
+.donor-steps {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    margin: 4px 0 22px;
+}
+
+.donor-step-title {
+    margin: 0 0 8px;
+    font-weight: 800;
+    font-family: var(--font-heading);
+    color: var(--color-primary);
+}
+
+.donor-step-list {
+    padding-left: 18px;
+    margin: 0;
+}
+.donor-step-list li {
+    margin: 0 0 6px;
+}
+
+.donor-final {
+    margin: 8px 0 0;
+    text-align: center;
+}
+
+.donor-final-title {
+    margin: 0 0 6px;
+    font-weight: 800;
+    font-family: var(--font-heading);
+}
+
+.donor-final-text {
+    color: var(--color-helper);
+    margin: 0 0 10px;
+}

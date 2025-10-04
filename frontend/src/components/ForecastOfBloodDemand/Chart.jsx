@@ -1,22 +1,12 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { LineChart } from "@mui/x-charts/LineChart";
-import {
-  Box,
-  Paper,
-  Typography,
-  CircularProgress,
-  Alert,
-  Stack,
-} from "@mui/material";
+import { Box, Paper, Typography, CircularProgress, Alert, Stack } from "@mui/material";
 import { getForecastOfBloodDemand } from "../../services/ForecastOfBloodDemandService";
 
 function buildDataset(history, forecast) {
   const map = new Map();
 
-  history.forEach((h) =>
-    map.set(h.date, { date: new Date(h.date), history: h.value })
-  );
-
+  history.forEach((h) => map.set(h.date, { date: new Date(h.date), history: h.value }));
   forecast.forEach((f) => {
     const prev = map.get(f.date) || { date: new Date(f.date) };
     map.set(f.date, {
@@ -28,7 +18,6 @@ function buildDataset(history, forecast) {
   });
 
   const rows = Array.from(map.values()).sort((a, b) => +a.date - +b.date);
-
   rows.forEach((r) => {
     if (r.lower_ci != null && r.upper_ci != null) {
       r.ci_base = r.lower_ci;
@@ -38,7 +27,6 @@ function buildDataset(history, forecast) {
       r.ci_span = null;
     }
   });
-
   return rows;
 }
 
@@ -48,105 +36,81 @@ export default function ForecastChart({ bloodType, province }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const loadData = useCallback(async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const res = await getForecastOfBloodDemand(bloodType, province);
-      setMeta(res.meta);
-      setRows(buildDataset(res.history, res.forecast));
-    } catch (e) {
-      console.error(e);
-      setError("Nie udało się pobrać danych.");
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    let mounted = true;
+
+    async function load() {
+      setLoading(true);
+      setError("");
+      try {
+        const res = await getForecastOfBloodDemand(bloodType, province);
+        if (!mounted) return;
+        setMeta(res.meta || null);
+        setRows(buildDataset(res.history || [], res.forecast || []));
+      } catch (e) {
+        if (!mounted) return;
+        setError("Nie udało się pobrać danych.");
+      } finally {
+        if (mounted) setLoading(false);
+      }
     }
+
+    load();
+    return () => { mounted = false; };
   }, [bloodType, province]);
 
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
-
   return (
-    <Paper elevation={2} sx={{ p: 3, width: "100%", mb: 3 }}>
-      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
-        <Typography variant="h6">
-          Prognoza zapotrzebowania: {bloodType} / {province}
-        </Typography>
-        {meta && (
-          <Typography variant="body2" color="text.secondary">
-            Przedział niepewności: {Math.round(meta.interval_width * 100)}%
+      <Paper elevation={2} sx={{ p: 3, width: "100%", mb: 3 }}>
+        <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
+          <Typography variant="h6">
+            Prognoza zapotrzebowania: {bloodType} / {province}
           </Typography>
-        )}
-      </Stack>
+          {meta ? (
+              <Typography variant="body2" color="text.secondary">
+                Przedział niepewności: {Math.round((meta.interval_width || 0) * 100)}%
+              </Typography>
+          ) : null}
+        </Stack>
 
-      {loading && (
-        <Box py={8} textAlign="center">
-          <CircularProgress />
-        </Box>
-      )}
+        {loading ? (
+            <Box py={8} textAlign="center">
+              <CircularProgress />
+            </Box>
+        ) : null}
 
-      {!loading && error && <Alert severity="error">{error}</Alert>}
+        {!loading && error ? <Alert severity="error">{error}</Alert> : null}
 
-      {!loading && !error && !rows.length && (
-        <Alert severity="info">Brak danych dla wybranych parametrów.</Alert>
-      )}
+        {!loading && !error && rows.length === 0 ? (
+            <Alert severity="info">Brak danych dla wybranych parametrów.</Alert>
+        ) : null}
 
-      {!loading && !error && rows.length > 0 && (
-        <Box sx={{ height: 420 }}>
-          <LineChart
-            height={400}
-            dataset={rows}
-            xAxis={[
-              {
-                dataKey: "date",
-                scaleType: "time",
-                label: "Data",
-                valueFormatter: (v) =>
-                  v instanceof Date ? v.toISOString().slice(0, 7) : v,
-              },
-            ]}
-            series={[
-              {
-                dataKey: "history",
-                label: "Historia",
-                showMark: false,
-                color: "#FFA500",
-              },
-              {
-                dataKey: "forecast",
-                label: "Prognoza",
-                showMark: false,
-                strokeDasharray: "6 4",
-                color: "#1f77b4",
-              },
-              {
-                dataKey: "ci_base",
-                area: true,
-                color: "transparent",
-                showMark: false,
-                stack: "ci",
-              },
-              {
-                dataKey: "ci_span",
-                label: "Przedział ufności",
-                area: true,
-                color: "rgba(100,149,237,0.15)",
-                showMark: false,
-                stack: "ci",
-              },
-            ]}
-            margin={{ top: 10, right: 20, bottom: 40, left: 50 }}
-            grid={{ horizontal: true, vertical: true }}
-            slotProps={{
-              legend: {
-                direction: "row",
-                position: { vertical: "bottom", horizontal: "middle" },
-              },
-            }}
-          />
-        </Box>
-      )}
-    </Paper>
+        {!loading && !error && rows.length > 0 ? (
+            <Box sx={{ height: 420 }}>
+              <LineChart
+                  height={400}
+                  dataset={rows}
+                  xAxis={[
+                    {
+                      dataKey: "date",
+                      scaleType: "time",
+                      label: "Data",
+                      valueFormatter: (v) => (v instanceof Date ? v.toISOString().slice(0, 7) : v),
+                    },
+                  ]}
+                  series={[
+                    { dataKey: "history", label: "Historia", showMark: false, color: "#FFA500" },
+                    { dataKey: "forecast", label: "Prognoza", showMark: false, strokeDasharray: "6 4", color: "#1f77b4" },
+                    { dataKey: "ci_base", area: true, color: "transparent", showMark: false, stack: "ci" },
+                    { dataKey: "ci_span", label: "Przedział ufności", area: true, color: "rgba(100,149,237,0.15)", showMark: false, stack: "ci" },
+                  ]}
+                  margin={{ top: 10, right: 20, bottom: 40, left: 50 }}
+                  grid={{ horizontal: true, vertical: true }}
+                  slotProps={{
+                    legend: { direction: "row", position: { vertical: "bottom", horizontal: "middle" } },
+                  }}
+              />
+            </Box>
+        ) : null}
+      </Paper>
   );
 }

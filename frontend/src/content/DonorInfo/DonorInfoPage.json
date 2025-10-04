@@ -1,0 +1,79 @@
+{
+  "title": "Dla krwiodawcy",
+  "lead": "Kompendium dla osób chcących oddać krew: zasady kwalifikacji, przebieg wizyty i prawa dawcy.",
+  "buttons": {
+    "findPoint": "Znajdź najbliższy punkt",
+    "findPointHref": "/punkty-krwiodawstwa",
+    "eligibility": "Kto może oddać?",
+    "eligibilityHref": "/dla-dawcy",
+    "tips": "Wskazówki dla dawcy",
+    "tipsHref": "/dla-dawcy"
+  },
+  "cards": [
+    {
+      "title": "Dlaczego to ważne?",
+      "desc": "Krew ratuje życie ofiar wypadków, pacjentów onkologicznych i po dużych operacjach. To lek, którego nie da się wyprodukować.",
+      "link": { "label": "Zobacz aktualne potrzeby", "href": "#potrzeby" }
+    },
+    {
+      "title": "Jak przebiega donacja",
+      "desc": "Rejestracja → ankieta → badania wstępne → oddanie krwi (ok. 8–10 min) → odpoczynek i poczęstunek."
+    },
+    {
+      "title": "Twoje prawa",
+      "desc": "Zaświadczenie do pracy/szkoły, posiłek regeneracyjny, podstawowe wyniki badań oraz opieka wykwalifikowanego personelu."
+    }
+  ],
+  "eligibility": {
+    "title": "Kto może oddać krew?",
+    "items": [
+      "Wiek 18–65 lat",
+      "Masa ciała ≥ 50 kg",
+      "Dobry ogólny stan zdrowia i ważny dokument tożsamości",
+      "Zachowane odstępy między donacjami (np. co najmniej 8 tygodni między donacjami krwi pełnej zgodnie z przepisami RCKiK)"
+    ]
+  },
+  "contras": {
+    "title": "Przeciwwskazania (wybrane przykłady)",
+    "items": [
+      "Infekcje i gorączka, antybiotykoterapia",
+      "Świeży tatuaż/piercing lub większy zabieg (zwykle czasowa dyskwalifikacja, np. 6 mies.)",
+      "Niektóre choroby przewlekłe i leki (decyzja lekarza kwalifikującego)",
+      "Ciąża i okres karmienia"
+    ]
+  },
+  "steps": [
+    {
+      "title": "Rejestracja i ankieta",
+      "items": [
+        "Wypełniasz ankietę zdrowotną.",
+        "Okazujesz dokument tożsamości."
+      ]
+    },
+    {
+      "title": "Badania wstępne",
+      "items": [
+        "Krótki wywiad i podstawowe badania (np. hemoglobina, ciśnienie).",
+        "Lekarz kwalifikuje do donacji."
+      ]
+    },
+    {
+      "title": "Oddanie krwi",
+      "items": [
+        "Samo pobranie trwa zwykle 8–10 minut.",
+        "Cała wizyta to zwykle 45–60 minut."
+      ]
+    },
+    {
+      "title": "Po wizycie",
+      "items": [
+        "Odpocznij chwilę, wypij napój.",
+        "Otrzymujesz posiłek regeneracyjny i zalecenia personelu."
+      ]
+    }
+  ],
+  "final": {
+    "title": "Dołącz do grona dawców",
+    "text": "Sprawdź najbliższy punkt i zostań bohaterem dnia — Twoja krew może uratować życie."
+  }
+}

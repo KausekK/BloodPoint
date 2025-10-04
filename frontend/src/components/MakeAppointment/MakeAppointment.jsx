@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
 import "./MakeAppointment.css";
-import Map from "./Map/Map";
-import {
-  getSlotsForDayPaged,
-  addAppointment,
-} from "../../services/MakeAppointmentService";
+import Map from "../Map/Map";
+import { getSlotsForDayPaged, addAppointment } from "../../services/MakeAppointmentService";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import { showMessage, showError } from "../shared/services/MessageService";
@@ -13,9 +10,8 @@ import { MessageType } from "../shared/const/MessageType.model";
 import { getCities } from "../../services/BloodDonationPointService";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 
-const TODAY = new Date();
-const daysArray = Array.from({ length: 7 }).map((_, i) => {
-  const d = new Date(TODAY);
+const days = Array.from({ length: 7 }).map((_, i) => {
+  const d = new Date();
   d.setDate(d.getDate() + i);
   return d.toISOString().slice(0, 10);
 });
@@ -26,208 +22,172 @@ function Spinner() {
 
 function formatMonthYear(dateIso) {
   if (!dateIso) return "";
-  const txt = new Date(dateIso).toLocaleDateString("pl-PL", {
-    month: "long",
-    year: "numeric",
-  });
+  const txt = new Date(dateIso).toLocaleDateString("pl-PL", { month: "long", year: "numeric" });
   return txt.charAt(0).toUpperCase() + txt.slice(1);
 }
 
 export default function MakeAppointment() {
   const [city, setCity] = useState("");
   const [cities, setCities] = useState([]);
-  const [user] = useState({ id: 10 }); // TODO: dodac zalogowanego usera
+  const [user] = useState({ id: 10 });
   const [selectedSlot, setSelectedSlot] = useState(null);
-  const [days] = useState(daysArray);
   const [selectedDate, setSelectedDate] = useState(null);
   const [times, setTimes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [pageInfo, setPageInfo] = useState({ totalPages: 0 });
   const [isOpen, setIsOpen] = useState(false);
-  const [modalData, setModalData] = useState({
-    dateString: "",
-    timeString: "",
-  });
+  const [modalData, setModalData] = useState({ dateString: "", timeString: "" });
 
   useEffect(() => {
     getCities()
-      .then((data) => {
-        setCities(data);
-      })
-      .catch(() => {
-        showError("Błąd przy pobieraniu miast");
-      });
+        .then((data) => setCities(data || []))
+        .catch(() => showError("Błąd przy pobieraniu miast"));
   }, []);
 
   useEffect(() => {
     if (!selectedDate) return;
     setLoading(true);
-
     getSlotsForDayPaged(city, selectedDate, page)
-      .then((resPage) => {
-        setTimes(resPage.content || []);
-        setPageInfo(resPage);
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
+        .then((resPage) => {
+          setTimes((resPage && resPage.content) || []);
+          setPageInfo(resPage || { totalPages: 0 });
+        })
+        .catch(() => {})
+        .finally(() => setLoading(false));
   }, [city, selectedDate, page]);
 
-  const handleCityChange = (event) => {
-    setCity(event.target.value);
-  };
-
-  const handleSubmit = async () => {
+  const submit = async () => {
     if (!selectedDate || !selectedSlot) return;
 
-    const appointment = {
-      userId: user.id,
-      slotId: selectedSlot.id,
-    };
+    const appointment = { userId: user.id, slotId: selectedSlot.id };
 
     try {
       const res = await addAppointment(appointment);
 
-      if (res.messages?.length) {
-        res.messages.forEach(({ msg, type }) => {
-          showMessage(msg, type);
-        });
-        if (res.messages.some((m) => m.type === MessageType.ERROR)) {
-          setIsOpen(false);
-        } else if (res.messages.some((m) => m.type === MessageType.SUCCESS)) {
-          setIsOpen(true);
-        }
+      if (res && res.messages && res.messages.length) {
+        res.messages.forEach((m) => showMessage(m.msg, m.type));
+        const hasError = res.messages.some((m) => m.type === MessageType.ERROR);
+        const hasSuccess = res.messages.some((m) => m.type === MessageType.SUCCESS);
+        if (hasError) setIsOpen(false);
+        else if (hasSuccess) setIsOpen(true);
       } else {
         showError("Nieoczekiwana odpowiedź serwera");
       }
+
       const timeString = selectedSlot.startTime.slice(11, 16);
       setModalData({ dateString: selectedDate, timeString });
-    } catch (error) {
-      showError(error);
+    } catch (e) {
+      showError(e && e.message ? e.message : "Błąd podczas umawiania wizyty");
     }
   };
 
-  const handleDateClick = (iso) => {
+  const pickDate = (iso) => {
     setSelectedDate(iso);
     setSelectedSlot(null);
     setPage(0);
   };
 
   return (
-    <div className="make-appointment">
-      <div className="make-appointment__top-bar" />
+      <main className="page make-appointment">
+        <div className="page-top-bar" />
+        <div className="page-content">
+          <h1 className="page-heading">
+            Umów się na oddanie <br className="desktop-break" /> krwi
+          </h1>
 
-      <div className="make-appointment__content">
-        <h1 className="make-appointment__heading">
-          Umów się na oddanie <br className="desktop-break" /> krwi
-        </h1>
+          {loading ? <Spinner /> : null}
 
-        {loading && <Spinner />}
+          <FormControl size="small" sx={{ minWidth: 200 }}>
+            <InputLabel id="city-label">Miasto</InputLabel>
+            <Select
+                labelId="city-label"
+                value={city}
+                label="Miasto"
+                onChange={(e) => setCity(e.target.value)}
+            >
+              {cities.map((c, i) => (
+                  <MenuItem key={i} value={c}>{c}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-        <FormControl size="small" sx={{ minWidth: 200 }}>
-          <InputLabel id="cat-label">Miasto</InputLabel>
-          <Select
-            labelId="cat-label"
-            value={city}
-            label="Miasto"
-            onChange={handleCityChange}
-          >
-            {cities.map((c, index) => (
-              <MenuItem key={index} value={c}>
-                {c}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+          {!loading && city ? (
+              <div className="appt-wrap">
+                <div className="appt-left">
+                  <p className="text-helper">{formatMonthYear(selectedDate)}</p>
 
-        {!loading && city && (
-          <div className="make-appointment__wrapper">
-            <div className="make-appointment__left">
-              <p className="text-helper">{formatMonthYear(selectedDate)}</p>
+                  <div className="date-grid">
+                    {days.map((iso) => {
+                      const day = iso.slice(8);
+                      const weekday = new Date(iso).toLocaleDateString("pl-PL", { weekday: "short" }).toUpperCase();
+                      const isSel = selectedDate === iso;
+                      return (
+                          <button
+                              key={iso}
+                              onClick={() => pickDate(iso)}
+                              className={"date-btn" + (isSel ? " is-selected" : "")}
+                          >
+                            <span className="date-btn-day">{day}</span>
+                            <span className="date-btn-weekday">{weekday}</span>
+                          </button>
+                      );
+                    })}
+                  </div>
 
-              <div className="date-grid">
-                {days.map((iso) => {
-                  const day = iso.slice(8);
-                  const weekday = new Date(iso)
-                    .toLocaleDateString("pl-PL", { weekday: "short" })
-                    .toUpperCase();
-                  return (
-                    <button
-                      key={iso}
-                      onClick={() => handleDateClick(iso)}
-                      className={`date-btn ${
-                        selectedDate === iso ? "date-btn--selected" : ""
-                      }`}
-                    >
-                      <span className="date-btn__day">{day}</span>
-                      <span className="date-btn__weekday">{weekday}</span>
-                    </button>
-                  );
-                })}
-              </div>
+                  {times.length !== 0 && !loading ? <p className="text-helper">Dostępne godziny</p> : null}
 
-              {times.length !== 0 && !loading && (
-                <p className="text-helper">Dostępne godziny</p>
-              )}
+                  <div className="time-grid">
+                    {times.length === 0 && !loading ? <p className="text-helper">Brak wolnych terminów</p> : null}
+                    {times.map((slot) => {
+                      const time = slot.startTime.slice(11, 16);
+                      const addr = slot.city + ", " + slot.street;
+                      const sel = selectedSlot && selectedSlot.id === slot.id;
+                      return (
+                          <button
+                              key={slot.id + "-" + time}
+                              onClick={() => setSelectedSlot(slot)}
+                              className={"time-btn" + (sel ? " is-selected" : "")}
+                          >
+                            <span className="time-btn-time">{time}</span>
+                            <span className="time-btn-loc">{addr}</span>
+                          </button>
+                      );
+                    })}
+                  </div>
 
-              <div className="time-grid">
-                {times.length === 0 && !loading && (
-                  <p className="text-helper">Brak wolnych terminów</p>
-                )}
-                {times.map((slot) => {
-                  const time = slot.startTime.slice(11, 16);
-                  const addr = `${slot.city}, ${slot.street}`;
-                  return (
-                    <button
-                      key={`${slot.id}-${time}`}
-                      onClick={() => setSelectedSlot(slot)}
-                      className={`time-btn ${
-                        selectedSlot?.id === slot.id ? "time-btn--selected" : ""
-                      }`}
-                    >
-                      <span className="time-btn__time">{time}</span>
-                      <span className="time-btn__loc">{addr}</span>
-                    </button>
-                  );
-                })}
-              </div>
+                  {pageInfo.totalPages > 1 ? (
+                      <Stack direction="row" justifyContent="center" sx={{ mt: 2 }}>
+                        <Pagination
+                            count={pageInfo.totalPages}
+                            page={page + 1}
+                            onChange={(_, v) => setPage(v - 1)}
+                            shape="rounded"
+                            color="primary"
+                            variant="outlined"
+                            size="medium"
+                        />
+                      </Stack>
+                  ) : null}
 
-              {pageInfo.totalPages > 1 && (
-                <Stack direction="row" justifyContent="center" sx={{ mt: 2 }}>
-                  <Pagination
-                    count={pageInfo.totalPages}
-                    page={page + 1}
-                    onChange={(_, v) => setPage(v - 1)}
-                    shape="rounded"
-                    color="primary"
-                    variant="outlined"
-                    size="medium"
+                  <button className="appointment-btn" disabled={!selectedSlot} onClick={submit}>
+                    Umów
+                  </button>
+
+                  <CustomModal
+                      open={isOpen}
+                      onClose={() => setIsOpen(false)}
+                      dateString={modalData.dateString}
+                      timeString={modalData.timeString}
                   />
-                </Stack>
-              )}
+                </div>
 
-              <button
-                className="appointment-btn"
-                disabled={!selectedSlot}
-                onClick={handleSubmit}
-              >
-                Umów
-              </button>
-
-              <CustomModal
-                open={isOpen}
-                onClose={() => setIsOpen(false)}
-                dateString={modalData.dateString}
-                timeString={modalData.timeString}
-              />
-            </div>
-
-            <div className="make-appointment__right">
-              <Map key={city} city={city} />
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+                <div className="appt-right">
+                  <Map key={city} city={city} />
+                </div>
+              </div>
+          ) : null}
+        </div>
+      </main>
   );
 }

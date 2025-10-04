@@ -1,0 +1,86 @@
+{
+  "title": "Wskazówki dla krwiodawcy",
+  "lead": "Praktyczny planer: co robić dzień przed, w dniu donacji i po oddaniu krwi.",
+  "buttons": {
+    "findPoint": "Znajdź najbliższy punkt",
+    "findPointHref": "/punkty-krwiodawstwa",
+    "backInfo": "Wróć do informacji",
+    "backInfoHref": "/krwiodawca"
+  },
+  "cards": [
+    {
+      "title": "Dzień wcześniej — menu i płyny",
+      "items": [
+        "Wypij 1–2 litry wody w ciągu dnia.",
+        "Jedz lekko (warzywa, pełnoziarniste, chude białko).",
+        "Unikaj alkoholu min. 24 h przed.",
+        "Ogranicz napoje z dużą dawką kofeiny."
+      ]
+    },
+    {
+      "title": "Rano w dniu donacji — checklista",
+      "items": [
+        "Zjedz lekki posiłek 1–2 h przed.",
+        "Wypij szklankę wody.",
+        "Załóż wygodne ubranie z luźnym rękawem.",
+        "Zabierz dokument tożsamości i listę leków (jeśli przyjmujesz)."
+      ]
+    },
+    {
+      "title": "Po donacji — regeneracja",
+      "items": [
+        "Odpocznij 10–15 min w punkcie i nawadniaj się.",
+        "Unikaj dźwigania i intensywnego wysiłku do końca dnia.",
+        "Pozostaw opatrunek przez kilka godzin.",
+        "Jeśli poczujesz osłabienie — usiądź/połóż się i poinformuj personel."
+      ]
+    }
+  ],
+  "avoid": {
+    "title": "Tego unikaj",
+    "items": [
+      "Alkoholu 24 h przed donacją i po donacji tego samego dnia.",
+      "Bardzo tłustych i ciężkostrawnych posiłków tuż przed oddaniem.",
+      "Sauny, solarium oraz intensywnych treningów w dniu donacji.",
+      "Palenia tytoniu bezpośrednio po oddaniu krwi."
+    ]
+  },
+  "bring": {
+    "title": "Co zabrać ze sobą",
+    "items": [
+      "Dokument tożsamości ze zdjęciem (np. dowód, paszport).",
+      "Okulary/wnioski medyczne, jeżeli ich potrzebujesz do wypełnienia ankiety.",
+      "Listę przyjmowanych leków dla lekarza kwalifikującego."
+    ]
+  },
+  "dayOf": [
+    {
+      "title": "Przed wejściem do punktu",
+      "items": [
+        "Sprawdź samopoczucie (bez gorączki/infekcji).",
+        "Zjedz lekki posiłek i wypij wodę.",
+        "Przygotuj dokument tożsamości."
+      ]
+    },
+    {
+      "title": "W punkcie",
+      "items": [
+        "Wypełnij ankietę i przejdź kwalifikację.",
+        "Samo oddanie krwi trwa ok. 8–10 minut.",
+        "Po pobraniu usiądź i wypij napój."
+      ]
+    },
+    {
+      "title": "Po wyjściu",
+      "items": [
+        "Pij płyny, jedz normalnie, unikaj dużego wysiłku.",
+        "Nie korzystaj z sauny/solarium tego dnia.",
+        "W razie złego samopoczucia — odpocznij i skontaktuj się z punktem."
+      ]
+    }
+  ],
+  "final": {
+    "title": "Gotowy/a?",
+    "text": "Znajdź punkt, zaplanuj wizytę i podziel się tym, co najcenniejsze."
+  }
+}

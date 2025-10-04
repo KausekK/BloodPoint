@@ -1,9 +1,18 @@
-.forecast__chart-wrapper {
+
+.forecast-chart {
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
   padding: 16px;
-  background: #ffffff;
+  background: #fff;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
+}
+
+.forecast-filters {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  align-items: flex-end;
+  flex-wrap: wrap;
 }
