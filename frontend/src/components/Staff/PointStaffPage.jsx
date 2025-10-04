@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../Footer/Footer";
 import "./PointStaffPage.css";
@@ -25,28 +25,22 @@ export default function PointStaffPage() {
             setError("");
             const data = await getStaffByPoint(POINT_ID);
 
+            let list = [];
+            if (Array.isArray(data)) list = data;
+            else if (data && Array.isArray(data.resultDTO)) list = data.resultDTO;
 
-            const list = Array.isArray(data)
-                ? data
-                : Array.isArray(data?.resultDTO)
-                    ? data.resultDTO
-                    : [];
-
-            if (!Array.isArray(data) && !Array.isArray(list)) {
+            if (!Array.isArray(list)) {
                 setError("Niepoprawny format odpowiedzi z API (oczekiwano listy).");
-                console.warn("[staff] Unexpected payload:", data);
+                setRows([]);
+            } else {
+                setRows(list);
             }
-
-            setRows(list);
-
         } catch (e) {
-            const msg =
-                e?.response?.data?.message ||
-                e?.message ||
-                "Błąd pobierania personelu";
+            let msg = "Błąd pobierania personelu";
+            if (e && e.response && e.response.data && e.response.data.message) msg = e.response.data.message;
+            else if (e && e.message) msg = e.message;
             setError(msg);
             setRows([]);
-
         } finally {
             setLoading(false);
         }
@@ -56,24 +50,22 @@ export default function PointStaffPage() {
         load();
     }, []);
 
-    const filtered = useMemo(() => {
-        const list = Array.isArray(rows) ? rows : [];
-        const s = q.trim().toLowerCase();
-        if (!s) return list;
-        return list.filter((r) =>
-            (`${r.firstName ?? ""} ${r.lastName ?? ""} ${r.email ?? ""}`)
-                .toLowerCase()
-                .includes(s)
-        );
-    }, [q, rows]);
-
+    const s = q.trim().toLowerCase();
+    const filteredRows = s
+        ? rows.filter((r) => {
+            const first = (r.firstName || "").toLowerCase();
+            const last = (r.lastName || "").toLowerCase();
+            const email = (r.email || "").toLowerCase();
+            return (first + " " + last + " " + email).includes(s);
+        })
+        : rows;
 
     const startEdit = (r) => {
         setEditId(r.userId);
         setForm({
             employmentStartDay: r.employmentStartDay || "",
             position: r.position || "",
-            bloodDonationPointId: r.donationPointId ?? POINT_ID,
+            bloodDonationPointId: r.donationPointId || POINT_ID,
         });
     };
 
@@ -89,19 +81,16 @@ export default function PointStaffPage() {
     const saveEdit = async () => {
         try {
             const res = await updateEmployee(editId, form);
-            const updated = res?.resultDTO;
-
+            const updated = res && res.resultDTO ? res.resultDTO : null;
             setRows((prev) =>
-                prev.map((r) =>
-                    r.userId === editId ? (updated ? updated : { ...r, ...form }) : r
-                )
+                prev.map((r) => (r.userId === editId ? (updated ? updated : { ...r, ...form }) : r))
             );
             cancelEdit();
-
         } catch (e) {
-            alert(
-                e?.response?.data?.message || e?.message || "Nie udało się zapisać zmian"
-            );
+            let msg = "Nie udało się zapisać zmian";
+            if (e && e.response && e.response.data && e.response.data.message) msg = e.response.data.message;
+            else if (e && e.message) msg = e.message;
+            alert(msg);
         }
     };
 
@@ -110,14 +99,11 @@ export default function PointStaffPage() {
         try {
             await deleteEmployee(userId);
             setRows((prev) => prev.filter((r) => r.userId !== userId));
-
         } catch (e) {
-            alert(
-                e?.response?.data?.message ||
-                e?.message ||
-                "Nie udało się usunąć pracownika"
-            );
-            console.error("[staff] delete error:", e);
+            let msg = "Nie udało się usunąć pracownika";
+            if (e && e.response && e.response.data && e.response.data.message) msg = e.response.data.message;
+            else if (e && e.message) msg = e.message;
+            alert(msg);
         }
     };
 
@@ -126,23 +112,23 @@ export default function PointStaffPage() {
             <Header />
             <main className="bp-section staff">
                 <div className="bp-container">
-                    <header className="staff__head">
-                        <h1 className="staff__title">Personel punktu krwiodawstwa</h1>
-                        <p className="staff__lead">
+                    <header className="staff-head">
+                        <h1 className="staff-title">Personel punktu krwiodawstwa</h1>
+                        <p className="staff-lead">
                             Punkt ID: <strong>{POINT_ID}</strong>
                         </p>
 
-                        <div className="staff__toolbar">
-                            <div className="staff__search">
+                        <div className="staff-toolbar">
+                            <div className="staff-search">
                                 <input
                                     type="search"
-                                    className="staff__input"
+                                    className="staff-input"
                                     placeholder="Szukaj po imieniu, nazwisku, e-mailu…"
                                     value={q}
                                     onChange={(e) => setQ(e.target.value)}
                                 />
                             </div>
-                            <div className="staff__actions">
+                            <div className="staff-actions">
                                 <button type="button" className="bp-btn" onClick={load}>
                                     Odśwież
                                 </button>
@@ -150,16 +136,13 @@ export default function PointStaffPage() {
                         </div>
                     </header>
 
-                    <section
-                        className="bp-card staff__table-wrap"
-                        aria-label="Lista personelu"
-                    >
+                    <section className="bp-card staff-table-wrap" aria-label="Lista personelu">
                         {loading ? (
-                            <div className="staff__empty">Ładowanie…</div>
+                            <div className="staff-empty">Ładowanie…</div>
                         ) : error ? (
-                            <div className="staff__error">Błąd: {error}</div>
-                        ) : Array.isArray(filtered) && filtered.length > 0 ? (
-                            <table className="staff__table">
+                            <div className="staff-error">Błąd: {error}</div>
+                        ) : filteredRows.length > 0 ? (
+                            <table className="staff-table">
                                 <thead>
                                 <tr>
                                     <th>Imię i nazwisko</th>
@@ -171,36 +154,27 @@ export default function PointStaffPage() {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {filtered.map((r) => {
+                                {filteredRows.map((r) => {
                                     const isEdit = editId === r.userId;
                                     return (
                                         <tr key={r.userId}>
                                             <td data-label="Imię i nazwisko">
-                                                <div className="staff__name">
-                            <span className="staff__name-main">
-                              {r.firstName} {r.lastName}
-                            </span>
-                                                    <span className="staff__id">ID: {r.userId}</span>
+                                                <div className="staff-name">
+                                                    <span className="staff-name-main">{r.firstName} {r.lastName}</span>
+                                                    <span className="staff-id">ID: {r.userId}</span>
                                                 </div>
                                             </td>
 
                                             <td data-label="Stanowisko">
                                                 {isEdit ? (
                                                     <select
-                                                        className="staff__select"
+                                                        className="staff-select"
                                                         value={form.position}
-                                                        onChange={(e) =>
-                                                            setForm((f) => ({
-                                                                ...f,
-                                                                position: e.target.value,
-                                                            }))
-                                                        }
+                                                        onChange={(e) => setForm((f) => ({ ...f, position: e.target.value }))}
                                                     >
                                                         <option value="">— wybierz —</option>
                                                         {POSITIONS.map((p) => (
-                                                            <option key={p} value={p}>
-                                                                {p}
-                                                            </option>
+                                                            <option key={p} value={p}>{p}</option>
                                                         ))}
                                                     </select>
                                                 ) : (
@@ -212,20 +186,13 @@ export default function PointStaffPage() {
                                                 {isEdit ? (
                                                     <input
                                                         type="date"
-                                                        className="staff__input"
+                                                        className="staff-input"
                                                         value={form.employmentStartDay || ""}
                                                         max={new Date().toISOString().slice(0, 10)}
-                                                        onChange={(e) =>
-                                                            setForm((f) => ({
-                                                                ...f,
-                                                                employmentStartDay: e.target.value,
-                                                            }))
-                                                        }
+                                                        onChange={(e) => setForm((f) => ({ ...f, employmentStartDay: e.target.value }))}
                                                     />
                                                 ) : r.employmentStartDay ? (
-                                                    new Date(r.employmentStartDay).toLocaleDateString(
-                                                        "pl-PL"
-                                                    )
+                                                    new Date(r.employmentStartDay).toLocaleDateString("pl-PL")
                                                 ) : (
                                                     "—"
                                                 )}
@@ -234,33 +201,16 @@ export default function PointStaffPage() {
                                             <td data-label="E-mail">{r.email}</td>
                                             <td data-label="PESEL">{r.pesel}</td>
 
-                                            <td className="staff__actions-cell">
+                                            <td className="staff-actions-cell">
                                                 {isEdit ? (
-                                                    <div className="staff__row-actions">
-                                                        <button className="bp-btn" onClick={saveEdit}>
-                                                            Zapisz
-                                                        </button>
-                                                        <button
-                                                            className="bp-btn bp-btn--ghost"
-                                                            onClick={cancelEdit}
-                                                        >
-                                                            Anuluj
-                                                        </button>
+                                                    <div className="staff-row-actions">
+                                                        <button className="bp-btn" onClick={saveEdit}>Zapisz</button>
+                                                        <button className="bp-btn bp-btn--ghost" onClick={cancelEdit}>Anuluj</button>
                                                     </div>
                                                 ) : (
-                                                    <div className="staff__row-actions">
-                                                        <button
-                                                            className="bp-btn"
-                                                            onClick={() => startEdit(r)}
-                                                        >
-                                                            Edytuj
-                                                        </button>
-                                                        <button
-                                                            className="bp-btn bp-btn--ghost"
-                                                            onClick={() => onRemove(r.userId)}
-                                                        >
-                                                            Usuń
-                                                        </button>
+                                                    <div className="staff-row-actions">
+                                                        <button className="bp-btn" onClick={() => startEdit(r)}>Edytuj</button>
+                                                        <button className="bp-btn bp-btn--ghost" onClick={() => onRemove(r.userId)}>Usuń</button>
                                                     </div>
                                                 )}
                                             </td>
@@ -270,7 +220,7 @@ export default function PointStaffPage() {
                                 </tbody>
                             </table>
                         ) : (
-                            <div className="staff__empty">Brak wyników.</div>
+                            <div className="staff-empty">Brak wyników.</div>
                         )}
                     </section>
                 </div>

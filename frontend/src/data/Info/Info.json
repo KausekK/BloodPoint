@@ -64,7 +64,7 @@
       { "badge": "2", "title": "Ustal szczegóły", "text": "Dawca wybiera lokalizację i godzinę. Placówki monitorują stany i zgłaszają zapotrzebowanie." },
       { "badge": "3", "title": "Potwierdzenie i powiadomienia", "text": "Automatyczne przypomnienia, statusy realizacji i przejrzysty podgląd historii." }
     ],
-    "assurance": ["🔐 Zgodność z RODO", "✅ Bezpieczne logowanie", "📄 Ścieżki audytu i uprawnienia"],
+    "assurance": ["Zgodność z RODO", "Bezpieczne logowanie", "Ścieżki audytu i uprawnienia"],
     "bottomCtas": [
       { "to": "/rezerwuj", "label": "Umów wizytę jako dawca" },
       { "to": "/zaloguj", "label": "Zaloguj do panelu" }

@@ -64,7 +64,6 @@ export default function InfoPage() {
         <div className="info-page">
             <Header />
 
-            {/* HERO */}
             <section className="bp-hero" aria-label="Rezerwacja wizyty i panel dla placówek">
                 <div className="bp-hero__container">
                     <div className="bp-hero__copy">
@@ -76,7 +75,7 @@ export default function InfoPage() {
 
                         <div className="bp-hero__cta">
                             {content.hero.ctas.map((c) => (
-                                <CTA key={c.to} to={c.to} label={c.label} ariaLabel={c.ariaLabel} />
+                                <CTA key={c.to} to={c.to} label={c.label} />
                             ))}
                         </div>
 

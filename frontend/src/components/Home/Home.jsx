@@ -38,7 +38,7 @@ export default function Home() {
                     <p>{hero.subtitle}</p>
                     <p>{hero.note}</p>
                     <div className="hero-cta-wrapper">
-                        <CTA label={hero.cta.label} to={hero.cta.to} ariaLabel={hero.cta.ariaLabel} />
+                        <CTA label={hero.cta.label} to={hero.cta.to} />
                     </div>
                 </div>
 

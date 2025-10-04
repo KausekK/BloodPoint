@@ -11,8 +11,6 @@
 
     --radius-lg: 12px;
     --shadow-sm: 0 1px 2px rgb(0 0 0 / 4%);
-
-
 }
 /* dark mode */
 @media (prefers-color-scheme: dark) {

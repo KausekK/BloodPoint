@@ -1,128 +1,83 @@
 import { useState, useEffect } from "react";
 import { NavLink, Link } from "react-router-dom";
-import "./Header.css";
+import CTA from "../CTA/CTA";
+import "./header.css";
 import headerContent from "../../data/Header/Header.json";
 
 export default function Header() {
-    const [open, setOpen] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
 
     const currentRole = "guest";
-    const { brand, common, roles, actions } = headerContent;
-    const navLinks = [...(common || []), ...(roles?.[currentRole] || [])];
+    const brand = headerContent.brand;
+    const common = headerContent.common || [];
+    const roles = headerContent.roles || {};
+    const actions = headerContent.actions;
+    const roleLinks = roles[currentRole] || [];
+    const navLinks = [...common, ...roleLinks];
 
-    // Zamknij drawer po zmianie rozmiaru na desktop
     useEffect(() => {
-        const onResize = () => {
-            if (window.innerWidth > 768) setOpen(false);
-        };
+        const onResize = () => { if (window.innerWidth > 768) setMenuOpen(false); };
         window.addEventListener("resize", onResize);
         return () => window.removeEventListener("resize", onResize);
     }, []);
 
-    // Blokuj scroll tła kiedy drawer otwarty
     useEffect(() => {
-        document.body.classList.toggle("no-scroll", open);
+        document.body.classList.toggle("no-scroll", menuOpen);
         return () => document.body.classList.remove("no-scroll");
-    }, [open]);
+    }, [menuOpen]);
 
-    const close = () => setOpen(false);
+    const closeMenu = () => setMenuOpen(false);
 
     return (
-        <header className="header">
-            <div className="header__container">
-                {/* Brand */}
-                <Link
-                    to={brand.link}
-                    className="header__brand"
-                    aria-label="Strona główna"
-                    onClick={close}
-                >
+        <header className="site-header">
+            <div className="header-inner">
+                <Link to={brand.link} className="brand" aria-label="Strona główna" onClick={closeMenu}>
                     {brand.labelMain}
-                    <span className="header__brand-accent">{brand.labelAccent}</span>
+                    <span className="brand-accent">{brand.labelAccent}</span>
                 </Link>
 
-                {/* Hamburger (mobile) */}
                 <button
-                    className="header__toggle"
-                    aria-label={open ? "Zamknij menu" : "Otwórz menu"}
-                    aria-expanded={open}
-                    aria-controls="primary-menu"
-                    onClick={() => setOpen(v => !v)}
+                    className="menu-toggle"
+                    aria-label={menuOpen ? "Zamknij menu" : "Otwórz menu"}
+                    aria-expanded={menuOpen}
+                    aria-controls="main-menu"
+                    onClick={() => setMenuOpen(v => !v)}
                 >
-                    <svg className="header__toggle-icon" viewBox="0 0 24 24" aria-hidden="true">
-                        <path
-                            d="M3 6h18M3 12h18M3 18h18"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                        />
+                    <svg className="menu-toggle-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 6h18M3 12h18M3 18h18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                     </svg>
                 </button>
 
-                {/* Nav (desktop) */}
-                <nav className="header__nav" aria-label="Główna nawigacja">
+                <nav className="main-nav" aria-label="Główna nawigacja">
                     {navLinks.map(link => (
-                        <NavLink
-                            key={link.to}
-                            to={link.to}
-                            end={link.to === "/"}
-                            className="header__link"
-                        >
+                        <NavLink key={link.to} to={link.to} end={link.to === "/"} className="nav-link">
                             {link.label}
                         </NavLink>
                     ))}
                 </nav>
 
-                {/* Actions (desktop) */}
-                <div className="header__actions">
-                    <Link to={actions.guest.to} className="header__btn">
-                        {actions.guest.label}
-                    </Link>
+                <div className="header-actions">
+                    <CTA to={actions.guest.to} label={actions.guest.label} />
                 </div>
             </div>
 
-            {/* Drawer (mobile) */}
-            <div
-                className={`header__drawer ${open ? "is-open" : ""}`}
-                onClick={close}
-            >
-                <div
-                    className="header__drawer-inner"
-                    role="dialog"
-                    aria-modal="true"
-                    aria-labelledby="mobile-menu-title"
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <div className="header__drawer-head">
-                        <span id="mobile-menu-title" className="header__drawer-title">Menu</span>
-                        <button
-                            className="header__drawer-close"
-                            aria-label="Zamknij menu"
-                            onClick={close}
-                        >
-                            ✕
-                        </button>
+            <div className={"menu-overlay" + (menuOpen ? " is-open" : "")} onClick={closeMenu}>
+                <div className="menu-panel" role="dialog" aria-modal="true" aria-labelledby="mobile-menu-title" onClick={(e) => e.stopPropagation()}>
+                    <div className="menu-head">
+                        <span id="mobile-menu-title" className="menu-title">Menu</span>
+                        <button className="menu-close" aria-label="Zamknij menu" onClick={closeMenu}>✕</button>
                     </div>
 
-                    <nav id="primary-menu" className="header__drawer-body" aria-label="Menu mobilne">
+                    <nav id="main-menu" className="menu-list" aria-label="Menu mobilne">
                         {navLinks.map(link => (
-                            <NavLink
-                                key={link.to}
-                                to={link.to}
-                                end={link.to === "/"}
-                                className="header__drawer-link"
-                                onClick={close}
-                            >
+                            <NavLink key={link.to} to={link.to} end={link.to === "/"} className="menu-link" onClick={closeMenu}>
                                 {link.label}
                             </NavLink>
                         ))}
                     </nav>
 
-                    <div className="header__drawer-actions">
-                        <Link to={actions.guest.to} className="header__btn" onClick={close}>
-                            {actions.guest.label}
-                        </Link>
+                    <div className="menu-footer">
+                        <CTA to={actions.guest.to} label={actions.guest.label} />
                     </div>
                 </div>
             </div>
