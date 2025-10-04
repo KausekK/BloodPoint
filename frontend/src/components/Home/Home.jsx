@@ -5,7 +5,7 @@ import Header from "../../components/Header/Header";
 
 import CTA from "../../components/CTA/CTA";
 import SectionHeading from "../../components/SectionHeading/SectionHeading";
-import homeContent from "../../data/Home/Home.json";
+import homeContent from "../../content/Home/Home.json";
 
 export default function Home() {
     const { hero, bloodStock } = homeContent;

@@ -4,7 +4,7 @@ import Footer from "../Footer/Footer";
 import { getPoints, getCities } from "../../services/BloodDonationPointService";
 import Map from "../Map/Map";
 import "./DonationPointsPage.css";
-import content from "../../data/DonationPoints/DonationPoints.json";
+import content from "../../content/DonationPoints/DonationPoints.json";
 
 const PAGE_SIZE = 6;
 

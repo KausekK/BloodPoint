@@ -1,7 +1,7 @@
 import Header from "../../components/Header/Header";
 import Footer from "../Footer/Footer";
 import "./DonorInfoPage.css";
-import content from "../../data/DonorInfo/DonorInfoPage.json";
+import content from "../../content/DonorInfo/DonorInfoPage.json";
 
 export default function DonorInfoPage() {
     return (

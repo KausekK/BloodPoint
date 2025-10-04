@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { NavLink, Link } from "react-router-dom";
 import CTA from "../CTA/CTA";
 import "./header.css";
-import headerContent from "../../data/Header/Header.json";
+import headerContent from "../../content/Header/Header.json";
 
 export default function Header() {
     const [menuOpen, setMenuOpen] = useState(false);

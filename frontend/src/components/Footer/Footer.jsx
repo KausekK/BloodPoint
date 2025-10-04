@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-import footerContent from '../../data/Footer/footer.json';
+import footerContent from '../../content/Footer/footer.json';
 
 export default function Footer() {
   const { brand, faqsTitle, faqs } = footerContent;

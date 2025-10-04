@@ -4,7 +4,7 @@
     "accent": "Zaplanuj wizytę online.",
     "lead": "Jeden portal dla wszystkich: dawcy rezerwują wygodnie terminy, a placówki i szpitale monitorują stany magazynowe i zgłaszają zapotrzebowanie.",
     "ctas": [
-      { "to": "/rezerwuj", "label": "Zarezerwuj wizytę", "ariaLabel": "Zarezerwuj wizytę jako dawca" },
+      { "to": "/appointment", "label": "Zarezerwuj wizytę", "ariaLabel": "Zarezerwuj wizytę jako dawca" },
       { "to": "/zaloguj", "label": "Zaloguj się do panelu", "ariaLabel": "Zaloguj jako placówka lub szpital" }
     ]
   },
