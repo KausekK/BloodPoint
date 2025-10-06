@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { Box, TextField, Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import ScheduledAppointment from "./ScheduledAppointment";
 import {
   getDonations,
@@ -9,50 +9,101 @@ import {
   deleteScheduledAppointment,
 } from "../../services/ProfileService";
 
+const startOfDay = (d) => {
+  const x = new Date(d);
+  x.setHours(0, 0, 0, 0);
+  return x;
+};
+const endOfDay = (d) => {
+  const x = new Date(d);
+  x.setHours(23, 59, 59, 999);
+  return x;
+};
+const addYears = (d, n) => {
+  const x = new Date(d);
+  x.setFullYear(x.getFullYear() + n);
+  return x;
+};
+const isValidDate = (d) => d instanceof Date && !isNaN(d?.getTime?.());
+
 export default function VisitHistory() {
+  const today = new Date();
+  const defaultFrom = addYears(today, -1);
+
   const [visits, setVisits] = useState([]);
   const [scheduledAppointment, setScheduledAppointment] = useState(null);
-  const [fromDate, setFromDate] = useState(null);
-  const [toDate, setToDate] = useState(null);
+
+  const [fromDate, setFromDate] = useState(startOfDay(defaultFrom));
+  const [toDate, setToDate] = useState(endOfDay(today));
+
+  const [fromError, setFromError] = useState(null);
+  const [toError, setToError] = useState(null);
+  const [rangeError, setRangeError] = useState(null);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [openFrom, setOpenFrom] = useState(false);
+  const [openTo, setOpenTo] = useState(false);
 
   const userId = 10; // TODO: pobrać z kontekstu zalogowanego użytkownika
 
+  useEffect(() => {
+    if (isValidDate(fromDate) && isValidDate(toDate)) {
+      const f = startOfDay(fromDate).getTime();
+      const t = endOfDay(toDate).getTime();
+      setRangeError(
+        f <= t ? null : "Data 'Od' nie może być późniejsza niż 'Do'."
+      );
+    } else {
+      setRangeError(null);
+    }
+  }, [fromDate, toDate]);
+
+  const hasAnyError = useMemo(
+    () => Boolean(fromError || toError || rangeError),
+    [fromError, toError, rangeError]
+  );
+
+  const toIsoOrUndefined = (d, useEndOfDay = false) => {
+    if (!isValidDate(d)) return undefined;
+    const normalized = useEndOfDay ? endOfDay(d) : startOfDay(d);
+    return normalized.toISOString();
+  };
+
   const fetchAll = () => {
+    if (hasAnyError) return;
+
     setLoading(true);
     setError(null);
 
     Promise.all([
       getDonations(
         userId,
-        fromDate ? fromDate.toISOString() : undefined,
-        toDate ? toDate.toISOString() : undefined
+        toIsoOrUndefined(fromDate, false),
+        toIsoOrUndefined(toDate, true)
       ),
       getScheduledAppointmentForUser(userId),
     ])
       .then(([donations, scheduled]) => {
-        setVisits(donations);
+        setVisits(donations || []);
         setScheduledAppointment(scheduled || null);
       })
       .catch((err) => {
         console.error(err);
-        setError(err.message || "Błąd ładowania danych");
+        setError(err?.message || "Błąd ładowania danych");
       })
       .finally(() => setLoading(false));
   };
 
   useEffect(fetchAll, [fromDate, toDate]);
-
   const handleDelete = (id) => {
     deleteScheduledAppointment(id)
       .then(() => fetchAll())
-      .catch((err) =>
-        console.error("Błąd podczas usuwania wizyty:", err)
-      );
+      .catch((err) => console.error("Błąd podczas usuwania wizyty:", err));
   };
 
-  if (loading) return <div className="loading">Ładowanie historii wizyt...</div>;
+  if (loading)
+    return <div className="loading">Ładowanie historii wizyt...</div>;
   if (error) return <div className="error">Błąd: {error}</div>;
 
   return (
@@ -65,24 +116,82 @@ export default function VisitHistory() {
       )}
 
       <h2 className="card-title">Historia wizyt</h2>
+
       <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <Box className="filter-bar">
+        <Box
+          className="filter-bar"
+          sx={{
+            display: "flex",
+            gap: 2,
+            alignItems: "center",
+            flexWrap: "wrap",
+          }}
+        >
           <DatePicker
             label="Od daty"
             value={fromDate}
-            onChange={setFromDate}
-            renderInput={(params) => <TextField {...params} size="small" />}
+            onChange={(val) => setFromDate(val ? startOfDay(val) : null)}
+            onError={(reason) => {
+              if (reason === "invalidDate") setFromError("Nieprawidłowa data.");
+              else if (reason) setFromError("Błędna data.");
+              else setFromError(null);
+            }}
+            open={openFrom}
+            onOpen={() => setOpenFrom(true)}
+            onClose={() => setOpenFrom(false)}
+            slotProps={{
+              textField: {
+                size: "small",
+                error: Boolean(fromError),
+                helperText: fromError || "",
+                inputProps: { readOnly: true },
+                onKeyDown: (e) => e.preventDefault(),
+                onPaste: (e) => e.preventDefault(),
+                onClick: () => setOpenFrom(true),
+              },
+              openPickerButton: { disabled: false },
+            }}
           />
+
           <DatePicker
             label="Do daty"
             value={toDate}
-            onChange={setToDate}
-            renderInput={(params) => <TextField {...params} size="small" />}
+            onChange={(val) => setToDate(val ? endOfDay(val) : null)}
+            onError={(reason) => {
+              if (reason === "invalidDate") setToError("Nieprawidłowa data.");
+              else if (reason) setToError("Błędna data.");
+              else setToError(null);
+            }}
+            open={openTo}
+            onOpen={() => setOpenTo(true)}
+            onClose={() => setOpenTo(false)}
+            slotProps={{
+              textField: {
+                size: "small",
+                error: Boolean(toError),
+                helperText: toError || "",
+                inputProps: { readOnly: true },
+                onKeyDown: (e) => e.preventDefault(),
+                onPaste: (e) => e.preventDefault(),
+                onClick: () => setOpenTo(true),
+              },
+              openPickerButton: { disabled: false },
+            }}
           />
-          <Button variant="contained" color="error" onClick={fetchAll}>
+
+          <Button
+            variant="contained"
+            color="error"
+            onClick={fetchAll}
+            disabled={hasAnyError}
+          >
             Filtruj
           </Button>
         </Box>
+
+        {rangeError && (
+          <div style={{ color: "#d32f2f", marginTop: 8 }}>{rangeError}</div>
+        )}
       </LocalizationProvider>
 
       {visits.length === 0 ? (
@@ -102,7 +211,11 @@ export default function VisitHistory() {
             {visits.map((v, idx) => (
               <tr key={v.id} className={idx % 2 === 0 ? "" : "striped"}>
                 <td>{new Date(v.donationDate).toLocaleDateString()}</td>
-                <td>{v.donationType.replace("_", " ").toLowerCase()}</td>
+                <td>
+                  {String(v.donationType || "")
+                    .replaceAll("_", " ")
+                    .toLowerCase()}
+                </td>
                 <td>{v.amountOfBlood} ml</td>
                 <td>{v.city}</td>
                 <td>{v.street}</td>
