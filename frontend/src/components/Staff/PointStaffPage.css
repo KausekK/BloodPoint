@@ -123,3 +123,9 @@
         margin-right: 6px;
     }
 }
+
+.staff-edit-name {
+    display: grid;
+    gap: 6px;
+  }
+  
