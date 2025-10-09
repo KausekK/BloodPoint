@@ -71,6 +71,8 @@ public class AppointmentService {
 
         appointmentRepository.delete(appt);
 
+
+
         return EditResult.<AppointmentDTO>builder()
                 .messages(List.of(MessageDTO.createSuccessMessage("Wizyta została odwołana")))
                 .build();

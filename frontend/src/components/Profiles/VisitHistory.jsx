@@ -8,6 +8,8 @@ import {
   getScheduledAppointmentForUser,
   deleteScheduledAppointment,
 } from "../../services/ProfileService";
+import { MessageType } from "../shared/const/MessageType.model";
+import { showMessage, showError } from "../shared/services/MessageService";
 
 const startOfDay = (d) => {
   const x = new Date(d);
@@ -98,8 +100,15 @@ export default function VisitHistory() {
   useEffect(fetchAll, [fromDate, toDate]);
   const handleDelete = (id) => {
     deleteScheduledAppointment(id)
-      .then(() => fetchAll())
-      .catch((err) => console.error("Błąd podczas usuwania wizyty:", err));
+      .then(() => {
+        showMessage("Wizyta została usunięta.", MessageType.SUCCESS);
+        fetchAll();
+      })
+      .catch((err) =>
+        showError(
+          err && err.message ? err.message : "Błąd podczas usuwania wizyty"
+        )
+      );
   };
 
   if (loading)
