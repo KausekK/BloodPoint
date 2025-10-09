@@ -22,7 +22,7 @@ public class Staff {
     @Column(name = "users_id")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     @MapsId
     @JoinColumn(name = "users_id")
     private Users users;

@@ -43,23 +43,14 @@ public class StaffService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Pracownik o id %d nie istnieje.".formatted(staffId)));
 
-        List<String> errors = validate(req);
-        if (!errors.isEmpty()) {
-            return EditResult.<StaffDTO>builder()
-                    .messages(errors.stream().map(MessageDTO::createErrorMessage).toList())
-                    .resultDTO(null)
-                    .build();
-        }
-
-        if (req.getEmploymentStartDay() != null) {
-            staff.setEmploymentStartDay(req.getEmploymentStartDay());
-        }
         if (req.getPosition() != null) {
             staff.setPosition(req.getPosition());
         }
-        if (req.getBloodDonationPointId() != null) {
-            staff.setBloodDonationPoint(
-                    bloodDonationPointRepository.getReferenceById(req.getBloodDonationPointId()));
+        if (req.getFirstName() != null && !req.getFirstName().isBlank()) {
+            staff.getUsers().setFirstName(req.getFirstName());
+        }
+        if (req.getLastName() != null && !req.getLastName().isBlank()) {
+            staff.getUsers().setLastName(req.getLastName());
         }
 
         StaffDTO dto = staffMapper.toDto(staff);
@@ -70,11 +61,11 @@ public class StaffService {
                 .build();
     }
 
-    private List<String> validate(StaffUpdateDTO req) {
-        List<String> errors = new ArrayList<>();
-        if (req.getEmploymentStartDay() != null && req.getEmploymentStartDay().isAfter(LocalDate.now())) {
-            errors.add("Data zatrudnienia nie może być w przyszłości.");
-        }
-        return errors;
-    }
+//    private List<String> validate(StaffUpdateDTO req) {
+//        List<String> errors = new ArrayList<>();
+//        if (req.getEmploymentStartDay() != null && req.getEmploymentStartDay().isAfter(LocalDate.now())) {
+//            errors.add("Data zatrudnienia nie może być w przyszłości.");
+//        }
+//        return errors;
+//    }
 }
