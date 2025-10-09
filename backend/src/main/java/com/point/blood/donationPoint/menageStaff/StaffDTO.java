@@ -15,7 +15,7 @@ public class StaffDTO {
     private String firstName;
     private String lastName;
     private String email;
-//    private String phone;
+    private String phone;
     private String pesel;
     private LocalDate employmentStartDay;
     private StaffPosition position;

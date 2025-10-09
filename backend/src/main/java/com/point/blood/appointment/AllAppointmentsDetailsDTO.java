@@ -20,9 +20,9 @@ public class AllAppointmentsDetailsDTO {
     private String lastName;
     private String pesel;
     private String email;
-//    private String phone;
-//    private String gender;
-//    private LocalDate dateOfBirth;
+    private String phone;
+    private Character gender;
+    private LocalDate dateOfBirth;
     private LocalDate lastDonationDate;
     private String bloodGroup;
     private LocalDateTime appointmentDate;

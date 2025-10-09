@@ -23,7 +23,7 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
                 bt.bloodGroup,
                 bt.rhFactor,
                 d.lastDonationDate,
-                COALESCE(SUM(do.amountOfBlood), 0)
+                COALESCE(SUM(do.amountOfBlood) + 0L, 0L)
               )
               FROM Users u
               JOIN u.donor d

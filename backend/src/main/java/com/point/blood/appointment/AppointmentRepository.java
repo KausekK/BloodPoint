@@ -30,7 +30,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     @Query("""
                 SELECT DISTINCT new com.point.blood.appointment.AllAppointmentsDetailsDTO(
-                    a.id, u.id, b.id, u.firstName, u.lastName, u.pesel, u.email,
+                    a.id, u.id, b.id, u.firstName, u.lastName, u.pesel, u.email, u.phone, u.gender, u.dateOfBirth,
                     d.lastDonationDate, CONCAT(bt.bloodGroup, bt.rhFactor), dts.startTime, a.status
                 )
                 FROM Appointment a
