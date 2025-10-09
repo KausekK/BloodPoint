@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StaffUpdateDTO {
-    private LocalDate employmentStartDay;
     private StaffPosition position;
-    private Long bloodDonationPointId;
+    private String firstName;
+    private String lastName;
 }
