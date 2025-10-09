@@ -83,7 +83,7 @@ public class AppointmentService {
 
     public List<AllAppointmentsDetailsDTO> getAllAppointmentsForBloodPoint(Long bloodDonationPointId) {
         LocalDateTime today = LocalDate.now().atStartOfDay();
-        LocalDateTime tomorrow = today.plusDays(2);
+        LocalDateTime tomorrow = today.plusDays(1);
 
         return appointmentRepository.findAllTodayAppointmentsForBloodPoint(
                 bloodDonationPointId, today, tomorrow);
