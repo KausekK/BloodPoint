@@ -30,8 +30,6 @@ class DemandForecastService:
         self.backtest_results: pd.DataFrame = pd.DataFrame()
         self.sql_query: str = self._default_sql()
 
-    # ------------------- Public API -------------------
-
     def load_data(self, sql: str | None = None) -> pd.DataFrame:
         """
         /**
@@ -181,12 +179,12 @@ class DemandForecastService:
                   h.province                                 AS province,
                   TRUNC(bh.changed_at, 'MM')                 AS month_start,
                   SUM(br.amount)                             AS demand
-              FROM BLOODPOINT.Blood_Request br
-              JOIN BLOODPOINT.Blood_Request_Status_History bh ON bh.Blood_Request_id = br.id
-              JOIN BLOODPOINT.Blood_Request_Status s ON s.id = bh.Blood_Request_Status_id
-              JOIN BLOODPOINT.Blood_Type bt ON bt.id = br.Blood_Type_id
-              JOIN BLOODPOINT.Hospital h ON h.id = br.Hospital_id
-              WHERE s.type IN ('ZATWIERDZONA','UTWORZONA')
+              FROM Blood_Request br
+              JOIN Blood_Request_Status_History bh ON bh.Blood_Request_id = br.id
+              JOIN Blood_Request_Status s ON s.id = bh.Blood_Request_Status_id
+              JOIN Blood_Type bt ON bt.id = br.Blood_Type_id
+              JOIN Hospital h ON h.id = br.Hospital_id
+              WHERE s.type IN ('ZATWIERDZONA','NOWA')
               GROUP BY br.Blood_Type_id, bt.blood_group || bt.rh_factor, h.province, TRUNC(bh.changed_at, 'MM')
             )
             SELECT * FROM req
