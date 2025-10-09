@@ -1,0 +1,63 @@
+.auth-card {
+    padding: 18px;
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+    background: #fff;
+  }
+  
+  .auth-card-cap {
+    height: 46px;
+    background: var(--color-primary);
+    border-radius: 16px 16px 0 0;
+    margin: -18px -18px 12px -18px;
+  }
+  
+  .auth-card-title {
+    margin: 0 0 10px;
+    text-align: center;
+    color: var(--color-primary);
+    font-family: var(--font-heading);
+    font-weight: 800;
+    letter-spacing: 0.3px;
+  }
+  
+  .auth-form {
+    display: grid;
+    gap: 12px;
+  }
+  
+  .form-field {
+    display: grid;
+  }
+  
+  .input {
+    background: #fff;
+    border: 1px solid var(--color-primary);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+  }
+  
+  .input::placeholder {
+    color: #d26a6c; /* delikatnie szarawo-czerwony, nadal „wyszarzony” */
+    opacity: 0.8;
+  }
+  
+  .input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(225, 27, 30, 0.12);
+    border-color: var(--color-primary);
+  }
+  
+  .form-actions {
+    margin-top: 4px;
+  }
+  
+  .auth-submit {
+    width: 100%;
+    background: var(--color-primary);
+    color: #fff;
+    border-color: transparent;
+  }
+  

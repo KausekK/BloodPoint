@@ -1,0 +1,9 @@
+{
+    "title": "Zaloguj się jako",
+    "cards": [
+        { "key": "donor", "title": "Dawca", "desc": "Panel krwiodawcy.", "cta": { "label": "Zaloguj się", "to": "/login/donor" } },
+        { "key": "point", "title": "Punkt krwiodawstwa", "desc": "Panel punktu RCKiK.", "cta": { "label": "Zaloguj się", "to": "/login/point" } },
+        { "key": "hospital", "title": "Placówka szpitalna", "desc": "Dostęp do panelu placówki.", "cta": { "label": "Zaloguj się", "to": "/login/hospital" } }
+    ]
+  }
+  
