@@ -28,6 +28,7 @@ public class StaffMapper implements EntityMapper<StaffDTO, Staff> {
                 entity.getUsers().getFirstName(),
                 entity.getUsers().getLastName(),
                 entity.getUsers().getEmail(),
+                entity.getUsers().getPhone(),
                 entity.getUsers().getPesel(),
                 entity.getEmploymentStartDay(),
                 entity.getPosition(),

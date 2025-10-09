@@ -13,7 +13,7 @@ public interface StaffRepository extends JpaRepository<Staff, Long> {
 
     @Query("""
         SELECT new com.point.blood.donationPoint.menageStaff.StaffDTO(
-        s.id, u.firstName, u.lastName, u.email,
+        s.id, u.firstName, u.lastName, u.email, u.phone,
          u.pesel, s.employmentStartDay, s.position, bd.id)
         FROM Staff s
         JOIN s.users u

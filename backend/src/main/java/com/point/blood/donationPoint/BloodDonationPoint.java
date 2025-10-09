@@ -43,16 +43,6 @@ public class BloodDonationPoint {
     @Column(name = "street", nullable = false)
     private String street;
 
-    @Min(value = 0)
-    @Max(value = 24)
-    @Column(name = "open_hour", nullable = false)
-    private Double openHour;
-
-    @Min(value = 0)
-    @Max(value = 24)
-    @Column(name = "close_hour", nullable = false)
-    private Double closeHour;
-
     @Column(precision = 9, scale = 6, nullable = false)
     @DecimalMin("-90.0") @DecimalMax("90.0")
     private BigDecimal latitude;

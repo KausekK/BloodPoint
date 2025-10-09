@@ -1,4 +1,0 @@
-/.venv/
- /target/
- *.log
- /application.properties
