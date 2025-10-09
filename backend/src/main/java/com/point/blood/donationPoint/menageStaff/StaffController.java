@@ -1,6 +1,4 @@
 package com.point.blood.donationPoint.menageStaff;
-
-import com.point.blood.appointment.AppointmentDTO;
 import com.point.blood.shared.EditResult;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,14 +15,10 @@ public class StaffController {
     private final StaffService staffService;
     private final StaffRepository staffRepository;
 
-//    @GetMapping("/{id}")//TODO nie podlaczone
-//    public List<StaffDTO> getStaffById(@PathVariable("id") Long id) {
-//        return staffRepository.findAllByBloodDonationPoint_Id(id);
-//    }
-        @GetMapping("/{id}")//TODO nie podlaczone
-        public List<StaffDTO> getStaffByPoint(@PathVariable("id") Long id) {
-            return staffRepository.findAllByBloodDonationPoint_Id(id);
-        }
+    @GetMapping("/{id}")
+    public List<StaffDTO> getStaffByPoint(@PathVariable("id") Long id) {
+        return staffRepository.findAllByBloodDonationPoint_Id(id);
+    }
 
 
     //TODO dodanie pracownika - czeka az bedzie mozliwosc dodania usera i uprawnien
