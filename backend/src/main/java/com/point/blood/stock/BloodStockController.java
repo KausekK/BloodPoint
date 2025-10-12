@@ -3,6 +3,7 @@ package com.point.blood.stock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,5 +19,10 @@ public class BloodStockController {
     @GetMapping
     public ResponseEntity<List<BloodStockDTO>> getBloodStock() {
         return ResponseEntity.ok(bloodStockService.getBloodStock());
+    }
+
+    @GetMapping("/point/{id}")
+    public ResponseEntity<List<BloodStockDTO>> getBloodStockByDonationPoint(@PathVariable Long id) {
+        return ResponseEntity.ok(bloodStockService.getBloodStockByBloodDonationPointId(id));
     }
 }

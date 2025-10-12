@@ -1,0 +1,107 @@
+.point-stocks {
+    background: var(--color-bg-light);
+}
+
+.stocks-head {
+    text-align: left;
+    margin: 0 0 16px;
+}
+
+.stocks-title {
+    margin: 0 0 6px;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    letter-spacing: .2px;
+    line-height: 1.15;
+    font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+    color: var(--color-text);
+}
+
+.stocks-lead {
+    color: var(--color-helper);
+    margin: 0;
+}
+
+.stocks-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
+.stocks-card {
+    padding: 0;
+    overflow: hidden;
+}
+
+.stocks-state {
+    padding: 18px;
+    color: var(--color-helper);
+}
+
+.stocks-error {
+    color: #b71c1c;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+.bp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .95rem;
+}
+
+.bp-table thead th {
+    text-align: left;
+    background: #fff5f5;
+    color: #b71c1c;
+    border-bottom: 1px solid var(--color-border);
+    padding: 12px;
+    font-weight: 800;
+}
+
+.bp-table tbody td {
+    padding: 12px;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text);
+}
+
+.bp-table tfoot th {
+    padding: 12px;
+    border-top: 2px solid var(--color-border);
+    text-align: left;
+}
+
+.col-group {
+    font-weight: 700;
+}
+
+.col-free {
+    color: var(--color-primary);
+    font-weight: 700;
+}
+
+.stocks-ops {
+    margin-top: 16px;
+    padding: 18px;
+}
+
+.ops-title {
+    margin: 0 0 10px;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    color: var(--color-text);
+}
+
+.ops-form {
+    display: grid;
+    gap: 12px;
+}
+
+.ops-note {
+    margin: 6px 2px 0;
+    font-size: .9rem;
+    color: var(--color-helper);
+}

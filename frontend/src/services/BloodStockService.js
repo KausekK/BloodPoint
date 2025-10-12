@@ -10,3 +10,7 @@ export function getBloodStock() {
     .get("")
     .then((r) => r.data);
 }
+export function getBloodStockByDonationPoint(pointId = 1) {
+  // TODO dodac backend logowania
+  return api.get(`/point/${pointId}`).then(r => r.data);
+}
