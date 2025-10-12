@@ -6,7 +6,7 @@ const api = axios.create({
 });
 
 export function getHospitalsProvinces() {
- return api
+  return api
     .get("/provinces")
     .then((r) => r.data);
 }

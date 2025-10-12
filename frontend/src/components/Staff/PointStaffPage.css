@@ -106,16 +106,19 @@
     .staff-table thead {
         display: none;
     }
+
     .staff-table tr {
         display: grid;
         grid-template-columns: 1fr;
         padding: 10px 0;
         border-bottom: 1px solid var(--color-border);
     }
+
     .staff-table td {
         border: 0;
         padding: 6px 0;
     }
+
     .staff-table td::before {
         content: attr(data-label) ": ";
         font-weight: 700;
@@ -127,5 +130,4 @@
 .staff-edit-name {
     display: grid;
     gap: 6px;
-  }
-  
+}

@@ -41,20 +41,20 @@ export default function MakeAppointment() {
 
   useEffect(() => {
     getCities()
-        .then((data) => setCities(data || []))
-        .catch(() => showError("Błąd przy pobieraniu miast"));
+      .then((data) => setCities(data || []))
+      .catch(() => showError("Błąd przy pobieraniu miast"));
   }, []);
 
   useEffect(() => {
     if (!selectedDate) return;
     setLoading(true);
     getSlotsForDayPaged(city, selectedDate, page)
-        .then((resPage) => {
-          setTimes((resPage && resPage.content) || []);
-          setPageInfo(resPage || { totalPages: 0 });
-        })
-        .catch(() => {})
-        .finally(() => setLoading(false));
+      .then((resPage) => {
+        setTimes((resPage && resPage.content) || []);
+        setPageInfo(resPage || { totalPages: 0 });
+      })
+      .catch(() => { })
+      .finally(() => setLoading(false));
   }, [city, selectedDate, page]);
 
   const submit = async () => {
@@ -89,105 +89,105 @@ export default function MakeAppointment() {
   };
 
   return (
-      <main className="page make-appointment">
-        <div className="page-top-bar" />
-        <div className="page-content">
-          <h1 className="page-heading">
-            Umów się na oddanie <br className="desktop-break" /> krwi
-          </h1>
+    <main className="page make-appointment">
+      <div className="page-top-bar" />
+      <div className="page-content">
+        <h1 className="page-heading">
+          Umów się na oddanie <br className="desktop-break" /> krwi
+        </h1>
 
-          {loading ? <Spinner /> : null}
+        {loading ? <Spinner /> : null}
 
-          <FormControl size="small" sx={{ minWidth: 200 }}>
-            <InputLabel id="city-label">Miasto</InputLabel>
-            <Select
-                labelId="city-label"
-                value={city}
-                label="Miasto"
-                onChange={(e) => setCity(e.target.value)}
-            >
-              {cities.map((c, i) => (
-                  <MenuItem key={i} value={c}>{c}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+        <FormControl size="small" sx={{ minWidth: 200 }}>
+          <InputLabel id="city-label">Miasto</InputLabel>
+          <Select
+            labelId="city-label"
+            value={city}
+            label="Miasto"
+            onChange={(e) => setCity(e.target.value)}
+          >
+            {cities.map((c, i) => (
+              <MenuItem key={i} value={c}>{c}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-          {!loading && city ? (
-              <div className="appt-wrap">
-                <div className="appt-left">
-                  <p className="text-helper">{formatMonthYear(selectedDate)}</p>
+        {!loading && city ? (
+          <div className="appt-wrap">
+            <div className="appt-left">
+              <p className="text-helper">{formatMonthYear(selectedDate)}</p>
 
-                  <div className="date-grid">
-                    {days.map((iso) => {
-                      const day = iso.slice(8);
-                      const weekday = new Date(iso).toLocaleDateString("pl-PL", { weekday: "short" }).toUpperCase();
-                      const isSel = selectedDate === iso;
-                      return (
-                          <button
-                              key={iso}
-                              onClick={() => pickDate(iso)}
-                              className={"date-btn" + (isSel ? " is-selected" : "")}
-                          >
-                            <span className="date-btn-day">{day}</span>
-                            <span className="date-btn-weekday">{weekday}</span>
-                          </button>
-                      );
-                    })}
-                  </div>
-
-                  {times.length !== 0 && !loading ? <p className="text-helper">Dostępne godziny</p> : null}
-
-                  <div className="time-grid">
-                    {times.length === 0 && !loading ? <p className="text-helper">Brak wolnych terminów</p> : null}
-                    {times.map((slot) => {
-                      const time = slot.startTime.slice(11, 16);
-                      const addr = slot.city + ", " + slot.street;
-                      const sel = selectedSlot && selectedSlot.id === slot.id;
-                      return (
-                          <button
-                              key={slot.id + "-" + time}
-                              onClick={() => setSelectedSlot(slot)}
-                              className={"time-btn" + (sel ? " is-selected" : "")}
-                          >
-                            <span className="time-btn-time">{time}</span>
-                            <span className="time-btn-loc">{addr}</span>
-                          </button>
-                      );
-                    })}
-                  </div>
-
-                  {pageInfo.totalPages > 1 ? (
-                      <Stack direction="row" justifyContent="center" sx={{ mt: 2 }}>
-                        <Pagination
-                            count={pageInfo.totalPages}
-                            page={page + 1}
-                            onChange={(_, v) => setPage(v - 1)}
-                            shape="rounded"
-                            color="primary"
-                            variant="outlined"
-                            size="medium"
-                        />
-                      </Stack>
-                  ) : null}
-
-                  <button className="appointment-btn" disabled={!selectedSlot} onClick={submit}>
-                    Umów
-                  </button>
-
-                  <CustomModal
-                      open={isOpen}
-                      onClose={() => setIsOpen(false)}
-                      dateString={modalData.dateString}
-                      timeString={modalData.timeString}
-                  />
-                </div>
-
-                <div className="appt-right">
-                  <Map key={city} city={city} />
-                </div>
+              <div className="date-grid">
+                {days.map((iso) => {
+                  const day = iso.slice(8);
+                  const weekday = new Date(iso).toLocaleDateString("pl-PL", { weekday: "short" }).toUpperCase();
+                  const isSel = selectedDate === iso;
+                  return (
+                    <button
+                      key={iso}
+                      onClick={() => pickDate(iso)}
+                      className={"date-btn" + (isSel ? " is-selected" : "")}
+                    >
+                      <span className="date-btn-day">{day}</span>
+                      <span className="date-btn-weekday">{weekday}</span>
+                    </button>
+                  );
+                })}
               </div>
-          ) : null}
-        </div>
-      </main>
+
+              {times.length !== 0 && !loading ? <p className="text-helper">Dostępne godziny</p> : null}
+
+              <div className="time-grid">
+                {times.length === 0 && !loading ? <p className="text-helper">Brak wolnych terminów</p> : null}
+                {times.map((slot) => {
+                  const time = slot.startTime.slice(11, 16);
+                  const addr = slot.city + ", " + slot.street;
+                  const sel = selectedSlot && selectedSlot.id === slot.id;
+                  return (
+                    <button
+                      key={slot.id + "-" + time}
+                      onClick={() => setSelectedSlot(slot)}
+                      className={"time-btn" + (sel ? " is-selected" : "")}
+                    >
+                      <span className="time-btn-time">{time}</span>
+                      <span className="time-btn-loc">{addr}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {pageInfo.totalPages > 1 ? (
+                <Stack direction="row" justifyContent="center" sx={{ mt: 2 }}>
+                  <Pagination
+                    count={pageInfo.totalPages}
+                    page={page + 1}
+                    onChange={(_, v) => setPage(v - 1)}
+                    shape="rounded"
+                    color="primary"
+                    variant="outlined"
+                    size="medium"
+                  />
+                </Stack>
+              ) : null}
+
+              <button className="appointment-btn" disabled={!selectedSlot} onClick={submit}>
+                Umów
+              </button>
+
+              <CustomModal
+                open={isOpen}
+                onClose={() => setIsOpen(false)}
+                dateString={modalData.dateString}
+                timeString={modalData.timeString}
+              />
+            </div>
+
+            <div className="appt-right">
+              <Map key={city} city={city} />
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </main>
   );
 }

@@ -6,11 +6,11 @@ const api = axios.create({
 });
 
 export function getProfile(id) {
- return axios.get(`/api/user/profile/${id}`).then((r) => r.data);
+  return axios.get(`/api/user/profile/${id}`).then((r) => r.data);
 }
 
 export function getDonations(id, dateFrom, dateTo) {
- return api.post(`/${id}`, {dateFrom,dateTo}).then((r) => r.data);
+  return api.post(`/${id}`, { dateFrom, dateTo }).then((r) => r.data);
 }
 export function getScheduledAppointmentForUser(id) {
   return axios.get(`/api/appointment/${id}`).then((r) => r.data);

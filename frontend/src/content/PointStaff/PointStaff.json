@@ -4,12 +4,10 @@
     "subheading": "Lista pracowników przypisanych do danego punktu pobrań.",
     "note": "Punkt ID: {{POINT_ID}}"
   },
-
   "search": {
     "placeholder": "Szukaj po imieniu, nazwisku lub adresie e-mail",
     "button": "Odśwież"
   },
-
   "table": {
     "title": "Lista personelu",
     "columns": {
@@ -20,17 +18,20 @@
       "pesel": "PESEL",
       "actions": "Akcje"
     },
-    "positions": ["Lekarz", "Pielegniarka", "Menadzer", "Recepcjonistka"],
+    "positions": [
+      "Lekarz",
+      "Pielegniarka",
+      "Menadzer",
+      "Recepcjonistka"
+    ],
     "noData": "Brak wyników."
   },
-
   "actions": {
     "edit": "Edytuj",
     "delete": "Usuń",
     "save": "Zapisz",
     "cancel": "Anuluj"
   },
-
   "messages": {
     "loading": "Ładowanie danych…",
     "confirmDelete": "Czy na pewno chcesz usunąć tego pracownika?",

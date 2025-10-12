@@ -53,7 +53,7 @@ export default function InfoPage() {
                 });
                 setDemand(mapped);
             })
-            .catch(() => {});
+            .catch(() => { });
     }, []);
 
     return (

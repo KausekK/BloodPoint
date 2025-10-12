@@ -8,7 +8,7 @@ export default function ProfileInfo() {
   const { profile, loading, error } = useProfile(userId);
 
   if (loading) return <div className="loading">Ładowanie profilu...</div>;
-  if (error)   return <div className="error">Błąd: {error}</div>;
+  if (error) return <div className="error">Błąd: {error}</div>;
   if (!profile) return <div className="no-data">Brak danych profilu</div>;
 
   return (

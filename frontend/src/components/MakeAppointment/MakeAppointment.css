@@ -1,6 +1,7 @@
 .desktop-break {
   display: none;
 }
+
 @media (min-width: 768px) {
   .desktop-break {
     display: block;
@@ -15,8 +16,12 @@
   padding: 0 24px;
   box-sizing: border-box;
 }
+
 @media (min-width: 768px) {
-  .appt-wrap { flex-direction: row; padding: 0 48px; }
+  .appt-wrap {
+    flex-direction: row;
+    padding: 0 48px;
+  }
 }
 
 .appt-left {
@@ -45,6 +50,7 @@
   gap: 8px;
   grid-template-columns: repeat(7, 1fr);
 }
+
 @media (max-width: 639px) {
   .date-grid {
     grid-template-columns: repeat(4, 1fr);
@@ -67,18 +73,22 @@
   font-weight: 500;
   box-shadow: var(--shadow-sm);
 }
+
 .date-btn:hover {
   background: #f3f4f6;
 }
+
 .date-btn.is-selected {
   background: var(--color-primary);
   border-color: var(--color-primary);
   color: #fff;
 }
+
 .date-btn-day {
   font-size: 18px;
   font-weight: 600;
 }
+
 .date-btn-weekday {
   font-size: 11px;
 }
@@ -102,10 +112,12 @@
   box-shadow: var(--shadow-sm);
   transition: background .2s, border-color .2s, transform .15s;
 }
+
 .time-btn:hover {
   background: #fafafa;
   transform: translateY(-2px);
 }
+
 .time-btn.is-selected {
   border-color: var(--color-primary);
   background: #fff1f1;
@@ -117,6 +129,7 @@
   line-height: 1.2;
   margin-bottom: 4px;
 }
+
 .time-btn-loc {
   font-size: 12px;
   color: var(--color-helper);
@@ -136,6 +149,7 @@
   cursor: pointer;
   transition: background .2s;
 }
+
 .appointment-btn:hover {
   background: var(--color-primary-dark);
 }
@@ -145,6 +159,7 @@
     transform: rotate(360deg);
   }
 }
+
 .spinner {
   width: 48px;
   height: 48px;

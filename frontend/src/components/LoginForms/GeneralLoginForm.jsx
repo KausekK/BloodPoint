@@ -1,5 +1,6 @@
 import { useState } from "react";
-import ".GeneralLoginForm.css"; 
+import "./GeneralLoginForm.css"; 
+import CTA from "../CTA/CTA";
 
 export default function GeneralLoginForm({
   loginType,
@@ -58,7 +59,7 @@ export default function GeneralLoginForm({
         </div>
 
         <div className="form-actions">
-          <button type="submit" className="bp-btn auth-submit">{submitText}</button>
+          <CTA label={submitText} type="submit" />
         </div>
       </form>
     </article>

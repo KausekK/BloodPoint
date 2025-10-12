@@ -13,7 +13,10 @@
     {
       "title": "Dlaczego to ważne?",
       "desc": "Krew ratuje życie ofiar wypadków, pacjentów onkologicznych i po dużych operacjach. To lek, którego nie da się wyprodukować.",
-      "link": { "label": "Zobacz aktualne potrzeby", "href": "#potrzeby" }
+      "link": {
+        "label": "Zobacz aktualne potrzeby",
+        "href": "#potrzeby"
+      }
     },
     {
       "title": "Jak przebiega donacja",

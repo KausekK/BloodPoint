@@ -32,5 +32,7 @@
 }
 
 @media (min-width: 768px) {
-  .page-heading { font-size: 3rem; }
+  .page-heading {
+    font-size: 3rem;
+  }
 }

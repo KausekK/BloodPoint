@@ -6,7 +6,7 @@ const api = axios.create({
 });
 
 export function getBloodStock() {
- return api
+  return api
     .get("")
     .then((r) => r.data);
 }

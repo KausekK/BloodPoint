@@ -9,7 +9,7 @@ export function getStaffByPoint(pointId) {
     return api.get(`/${pointId}`).then((r) => r.data);
 }
 
-export function deleteEmployee(userId){
+export function deleteEmployee(userId) {
     return api.delete(`/${userId}`).then((r) => r.data);
 }
 

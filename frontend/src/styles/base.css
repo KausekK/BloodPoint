@@ -1,8 +1,12 @@
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
-html, body, #root {
+html,
+body,
+#root {
     height: 100%;
     width: 100%;
     margin: 0;
@@ -22,6 +26,7 @@ a {
     text-decoration: none;
     transition: color .2s;
 }
+
 a:hover {
     color: var(--color-primary-dark);
 }
@@ -38,7 +43,9 @@ a:hover {
 }
 
 @media (min-width: 768px) {
-    .section-heading { font-size: 2.4rem; }
+    .section-heading {
+        font-size: 2.4rem;
+    }
 }
 
 .hero-section {
@@ -83,4 +90,6 @@ button:focus-visible {
     outline-offset: 2px;
 }
 
-.no-scroll { overflow: hidden; }
+.no-scroll {
+    overflow: hidden;
+}
