@@ -14,7 +14,6 @@ export default function DonorAuthCard({ onModeChange }) {
         firstName: "",
         lastName: "",
         pesel: "",
-        bloodGroup: "",
         phone: "",
         email: "",
         agree: false,
@@ -28,7 +27,6 @@ export default function DonorAuthCard({ onModeChange }) {
             firstName.trim() &&
             lastName.trim() &&
             pesel.trim().length === 11 &&
-            bloodGroup &&
             phone.trim().length >= 6 &&
             /\S+@\S+\.\S+/.test(email) &&
             agree
@@ -127,24 +125,6 @@ export default function DonorAuthCard({ onModeChange }) {
                                 required
                                 inputMode="numeric"
                             />
-                        </div>
-
-                        <div className="form-field">
-                            <div className="select-wrap">
-                                <select
-                                    className="select"
-                                    name="bloodGroup"
-                                    value={reg.bloodGroup}
-                                    onChange={handleRegChange}
-                                    required
-                                >
-                                    <option value="">Grupa krwi</option>
-                                    <option>0 Rh+</option><option>0 Rh-</option>
-                                    <option>A Rh+</option><option>A Rh-</option>
-                                    <option>B Rh+</option><option>B Rh-</option>
-                                    <option>AB Rh+</option><option>AB Rh-</option>
-                                </select>
-                            </div>
                         </div>
 
                         <div className="form-field">
