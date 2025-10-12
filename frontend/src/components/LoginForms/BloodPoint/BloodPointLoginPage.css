@@ -1,0 +1,23 @@
+.point-login .login-grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px 0;
+    gap: 16px;
+}
+
+.point-login .auth-card {
+    width: 100%;
+    max-width: 460px;
+}
+
+.point-login .form-actions .cta {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+.point-login .login-head {
+    text-align: center;
+    margin: 10px 0 0;
+}

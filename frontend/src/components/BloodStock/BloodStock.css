@@ -17,7 +17,7 @@
 .drop-svg {
   width: 64px;
   height: 64px;
-  overflow: visible; 
+  overflow: visible;
 }
 
 .stock-label {
@@ -35,10 +35,10 @@
   font-size: 12px;
   color: #9ca3af;
 }
+
 .stock-date {
   text-align: center;
   font-size: 0.95rem;
   color: #6b7280;
   margin-bottom: 12px;
 }
-

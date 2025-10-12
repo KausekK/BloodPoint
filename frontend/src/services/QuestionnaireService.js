@@ -10,5 +10,5 @@ export function getQuestions(questionnarieId) {
 }
 
 export function submitResponses({ donationId, questionnaireId, answers }) {
-  return api.post('/questionnaire-response', {donationId,questionnaireId,answers});
+  return api.post('/questionnaire-response', { donationId, questionnaireId, answers });
 }

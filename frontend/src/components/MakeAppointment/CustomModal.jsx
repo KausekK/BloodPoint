@@ -18,10 +18,10 @@ export default function CustomModal({ open, onClose, dateString, timeString }) {
       onClose={onClose}
       PaperProps={{
         sx: {
-          backgroundColor: '#fff5f3',        
-          borderRadius: 3,                   
+          backgroundColor: '#fff5f3',
+          borderRadius: 3,
           boxShadow: 5,
-          p: 0,                            
+          p: 0,
         }
       }}
       BackdropProps={{
@@ -72,8 +72,8 @@ export default function CustomModal({ open, onClose, dateString, timeString }) {
           sx={{
             bgcolor: theme.palette.error.main,
             borderRadius: 6,
-            px: 6,     
-            py: 1.5,                 
+            px: 6,
+            py: 1.5,
             textTransform: 'none',
             fontWeight: 'bold',
             '&:hover': {

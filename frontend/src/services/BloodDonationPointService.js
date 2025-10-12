@@ -6,12 +6,12 @@ const api = axios.create({
 });
 
 export function getCities() {
- return api
+  return api
     .get("/cities")
     .then((r) => r.data);
 }
 
-export function getPoints(city){
-    const params = city ? { params: { city } } : {};
-    return api.get("/points", params).then(r => r.data);
+export function getPoints(city) {
+  const params = city ? { params: { city } } : {};
+  return api.get("/points", params).then(r => r.data);
 }

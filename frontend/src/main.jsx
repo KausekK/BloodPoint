@@ -19,7 +19,7 @@ toastr.options = {
 };
 const theme = createTheme({
   palette: {
-    primary: { main: "#e11b1e" }, 
+    primary: { main: "#e11b1e" },
   },
 });
 

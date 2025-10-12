@@ -60,57 +60,57 @@ export default function ForecastChart({ bloodType, province }) {
   }, [bloodType, province]);
 
   return (
-      <Paper elevation={2} sx={{ p: 3, width: "100%", mb: 3 }}>
-        <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
-          <Typography variant="h6">
-            Prognoza zapotrzebowania: {bloodType} / {province}
+    <Paper elevation={2} sx={{ p: 3, width: "100%", mb: 3 }}>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
+        <Typography variant="h6">
+          Prognoza zapotrzebowania: {bloodType} / {province}
+        </Typography>
+        {meta ? (
+          <Typography variant="body2" color="text.secondary">
+            Przedział niepewności: {Math.round((meta.interval_width || 0) * 100)}%
           </Typography>
-          {meta ? (
-              <Typography variant="body2" color="text.secondary">
-                Przedział niepewności: {Math.round((meta.interval_width || 0) * 100)}%
-              </Typography>
-          ) : null}
-        </Stack>
-
-        {loading ? (
-            <Box py={8} textAlign="center">
-              <CircularProgress />
-            </Box>
         ) : null}
+      </Stack>
 
-        {!loading && error ? <Alert severity="error">{error}</Alert> : null}
+      {loading ? (
+        <Box py={8} textAlign="center">
+          <CircularProgress />
+        </Box>
+      ) : null}
 
-        {!loading && !error && rows.length === 0 ? (
-            <Alert severity="info">Brak danych dla wybranych parametrów.</Alert>
-        ) : null}
+      {!loading && error ? <Alert severity="error">{error}</Alert> : null}
 
-        {!loading && !error && rows.length > 0 ? (
-            <Box sx={{ height: 420 }}>
-              <LineChart
-                  height={400}
-                  dataset={rows}
-                  xAxis={[
-                    {
-                      dataKey: "date",
-                      scaleType: "time",
-                      label: "Data",
-                      valueFormatter: (v) => (v instanceof Date ? v.toISOString().slice(0, 7) : v),
-                    },
-                  ]}
-                  series={[
-                    { dataKey: "history", label: "Historia", showMark: false, color: "#FFA500" },
-                    { dataKey: "forecast", label: "Prognoza", showMark: false, strokeDasharray: "6 4", color: "#1f77b4" },
-                    { dataKey: "ci_base", area: true, color: "transparent", showMark: false, stack: "ci" },
-                    { dataKey: "ci_span", label: "Przedział ufności", area: true, color: "rgba(100,149,237,0.15)", showMark: false, stack: "ci" },
-                  ]}
-                  margin={{ top: 10, right: 20, bottom: 40, left: 50 }}
-                  grid={{ horizontal: true, vertical: true }}
-                  slotProps={{
-                    legend: { direction: "row", position: { vertical: "bottom", horizontal: "middle" } },
-                  }}
-              />
-            </Box>
-        ) : null}
-      </Paper>
+      {!loading && !error && rows.length === 0 ? (
+        <Alert severity="info">Brak danych dla wybranych parametrów.</Alert>
+      ) : null}
+
+      {!loading && !error && rows.length > 0 ? (
+        <Box sx={{ height: 420 }}>
+          <LineChart
+            height={400}
+            dataset={rows}
+            xAxis={[
+              {
+                dataKey: "date",
+                scaleType: "time",
+                label: "Data",
+                valueFormatter: (v) => (v instanceof Date ? v.toISOString().slice(0, 7) : v),
+              },
+            ]}
+            series={[
+              { dataKey: "history", label: "Historia", showMark: false, color: "#FFA500" },
+              { dataKey: "forecast", label: "Prognoza", showMark: false, strokeDasharray: "6 4", color: "#1f77b4" },
+              { dataKey: "ci_base", area: true, color: "transparent", showMark: false, stack: "ci" },
+              { dataKey: "ci_span", label: "Przedział ufności", area: true, color: "rgba(100,149,237,0.15)", showMark: false, stack: "ci" },
+            ]}
+            margin={{ top: 10, right: 20, bottom: 40, left: 50 }}
+            grid={{ horizontal: true, vertical: true }}
+            slotProps={{
+              legend: { direction: "row", position: { vertical: "bottom", horizontal: "middle" } },
+            }}
+          />
+        </Box>
+      ) : null}
+    </Paper>
   );
 }

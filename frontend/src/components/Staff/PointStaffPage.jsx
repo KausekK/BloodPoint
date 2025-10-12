@@ -58,11 +58,11 @@ export default function PointStaffPage() {
   const s = q.trim().toLowerCase();
   const filteredRows = s
     ? rows.filter((r) => {
-        const first = (r.firstName || "").toLowerCase();
-        const last = (r.lastName || "").toLowerCase();
-        const email = (r.email || "").toLowerCase();
-        return (first + " " + last + " " + email).includes(s);
-      })
+      const first = (r.firstName || "").toLowerCase();
+      const last = (r.lastName || "").toLowerCase();
+      const email = (r.email || "").toLowerCase();
+      return (first + " " + last + " " + email).includes(s);
+    })
     : rows;
 
   const startEdit = (r) => {
@@ -243,8 +243,8 @@ export default function PointStaffPage() {
                         <td data-label={content.table.columns.date}>
                           {r.employmentStartDay
                             ? new Date(
-                                r.employmentStartDay
-                              ).toLocaleDateString("pl-PL")
+                              r.employmentStartDay
+                            ).toLocaleDateString("pl-PL")
                             : "—"}
                         </td>
 

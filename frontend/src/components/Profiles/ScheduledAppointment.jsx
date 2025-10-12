@@ -7,7 +7,7 @@ import ConfirmModal from "../shared/modal/ConfirmModal";
 export default function ScheduledAppointment({ appointment, onCancel }) {
   const [confirmOpen, setConfirmOpen] = useState(false);
 
-   return (
+  return (
     <section className="scheduled-appointment">
       <Button
         variant="contained"
@@ -21,9 +21,9 @@ export default function ScheduledAppointment({ appointment, onCancel }) {
         open={confirmOpen}
         title="Potwierdzenie"
         description="Czy na pewno chcesz odwołać wizytę?"
-        onCancel={() => setConfirmOpen(false)}  
-        onConfirm={() => { 
-          onCancel(appointment.appointmentId);                          
+        onCancel={() => setConfirmOpen(false)}
+        onConfirm={() => {
+          onCancel(appointment.appointmentId);
           setConfirmOpen(false);
         }}
       />

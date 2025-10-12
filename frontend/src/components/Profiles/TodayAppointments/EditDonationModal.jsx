@@ -28,11 +28,11 @@ const STATUS_OPTIONS = [
 export default function EditDonationModal({
   open,
   onClose,
-  donation = {},     
-  onSave            
+  donation = {},
+  onSave
 }) {
-  const [status, setStatus]         = useState(donation.status || '');
-  const [amount, setAmount]         = useState(donation.amountOfBlood || '');
+  const [status, setStatus] = useState(donation.status || '');
+  const [amount, setAmount] = useState(donation.amountOfBlood || '');
   const [bloodGroup, setBloodGroup] = useState(donation.bloodGroup || '');
 
   useEffect(() => {

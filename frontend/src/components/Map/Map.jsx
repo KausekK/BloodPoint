@@ -38,7 +38,7 @@ export default function Map({ city }) {
       popup: "Regionalne Centrum Krwiodawstwa i Krwiolecznictwa , Kraków",
     },
   ];
-  
+
   const citiesCoords = {
     Warszawa: [52.2297, 21.0122],
     Kraków: [50.0614, 19.9366],

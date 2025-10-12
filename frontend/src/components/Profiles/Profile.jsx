@@ -6,7 +6,7 @@ import VisitHistory from "./VisitHistory";
 import Documents from "./Documents/Documents";
 import TodayAppointments from "./TodayAppointments/TodayAppointments";
 import { Person, CalendarToday, Edit, Logout, Dashboard } from "@mui/icons-material";
-import "./Profile.css"; 
+import "./Profile.css";
 
 export default function Profile() {
   const navigate = useNavigate();

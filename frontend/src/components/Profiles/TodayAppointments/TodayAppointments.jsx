@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { IconButton } from '@mui/material';
 import { Bloodtype } from '@mui/icons-material';
 import { getAllTodayAppointmentsForBloodPoint } from "../../../services/MakeAppointmentService";
-import EditDonationModal from './EditDonationModal';  
+import EditDonationModal from './EditDonationModal';
 import "./TodayAppointments.css";
 import { APPOINTMENT_STATUS } from '../../shared/const/AppointmentStatus';
 
 export default function TodayAppointments() {
   const [appointments, setAppointments] = useState([]);
-  const [loading, setLoading]     = useState(true);
-  const [error, setError]         = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const donationPointId = 1; // TODO: pobierz ID punktu z kontekstu/logowania
 
@@ -24,15 +24,15 @@ export default function TodayAppointments() {
   }, [donationPointId]);
 
   if (loading) return <div className="loading">Ładowanie wizyt na dziś…</div>;
-  if (error)   return <div className="error">Błąd: {error}</div>;
+  if (error) return <div className="error">Błąd: {error}</div>;
   if (!appointments.length) return <div className="no-data">Brak dzisiejszych wizyt</div>;
 
   const handleOpenModal = appt => {
     setCurrentAppt({
       appointmentId: appt.appointmentId,
-      status: APPOINTMENT_STATUS.UMOWIONA,  
-      amountOfBlood: '',           
-      bloodGroup: appt.bloodGroup  
+      status: APPOINTMENT_STATUS.UMOWIONA,
+      amountOfBlood: '',
+      bloodGroup: appt.bloodGroup
     });
     setModalOpen(true);
   };
