@@ -45,7 +45,7 @@ public class Users {
 
     @Pattern(regexp = "[MK]")
     @Column(name = "gender", nullable = false, length = 1)
-    private String gender;
+    private Character gender;
 
     @Pattern(regexp = "\\d{11}")
     @Column(name = "pesel", nullable = false, length = 11)

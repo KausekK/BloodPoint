@@ -24,13 +24,13 @@ public class StaffController {
     //TODO dodanie pracownika - czeka az bedzie mozliwosc dodania usera i uprawnien
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<EditResult<Void>> removeEmployee(@PathVariable Long id){
+    public ResponseEntity<EditResult<Void>> removeEmployee(@PathVariable Long id) {
         return ResponseEntity.ok(staffService.deleteEmployee(id));
     }
 
     @PatchMapping("/{id}")// TODO nie podlaczone + do przetestowania
     public ResponseEntity<EditResult<StaffDTO>> updateStaff(@PathVariable Long id, @RequestBody @Valid StaffUpdateDTO request) {
-     return ResponseEntity.ok(staffService.editEmployee(id, request));
+        return ResponseEntity.ok(staffService.editEmployee(id, request));
     }
 
 }

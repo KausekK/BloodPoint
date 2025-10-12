@@ -2,10 +2,22 @@ import { Button } from "@mui/material";
 import { Edit } from "@mui/icons-material";
 import Detail from "./Detail";
 import { useProfile } from "./hooks/useProfile";
+import { useState, useEffect } from "react";
 
 export default function ProfileInfo() {
   const userId = 10; // TODO: zamień na ID pobrane z kontekstu uwierzytelnionego użytkownika
   const { profile, loading, error } = useProfile(userId);
+  const [age, setAge] = useState(0);
+
+  useEffect(() => {
+    if (!profile?.birthDate) return;
+    const dob = new Date(profile.birthDate);
+    const today = new Date();
+    let years = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) years--;
+    setAge(years);
+  }, [profile]);
 
   if (loading) return <div className="loading">Ładowanie profilu...</div>;
   if (error) return <div className="error">Błąd: {error}</div>;
@@ -26,9 +38,9 @@ export default function ProfileInfo() {
             value={`${profile.firstName} ${profile.lastName}`}
           />
           <Detail label="Płeć" value={profile.gender} />
-          <Detail label="Wiek" value={profile.age} />
+          <Detail label="Wiek" value={age} />
           <Detail label="PESEL" value={profile.pesel} />
-          <Detail label="Numer telefonu" value={profile.phoneNumber} />
+          <Detail label="Numer telefonu" value={profile.phone} />
           <Detail label="E-mail" value={profile.email} />
         </div>
       </section>
