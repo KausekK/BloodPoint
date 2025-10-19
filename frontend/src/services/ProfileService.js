@@ -20,6 +20,6 @@ export function deleteScheduledAppointment(id) {
   return axios.delete(`/api/appointment/${id}`).then((r) => r.data);
 }
 
-export function updateProfileContactInfo(data) {//TODO podlaczyc do edycji
+export function updateProfileContactInfo(data) {
   return axios.put(`/api/user/profile`, data).then((r) => r.data);
 }

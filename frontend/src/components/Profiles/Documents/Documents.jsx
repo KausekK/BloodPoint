@@ -33,7 +33,7 @@ export default function Documents() {
       })
       .catch(err => setError(err.message || 'Błąd ładowania pytań'))
       .finally(() => setLoading(false));
-  }, [donationId]);
+  }, [questionnaireId]);
 
   const handleChange = (questionId, value) => {
     setAnswers(prev => ({ ...prev, [questionId]: value }));

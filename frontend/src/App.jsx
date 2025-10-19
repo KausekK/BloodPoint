@@ -12,6 +12,8 @@ import LoginInfoPage from './components/LoginInfo/LoginInfoPage.jsx'
 import DonorLoginPage from './components/LoginForms/Donor/DonorLoginPage.jsx'
 import HospitalLoginPage from './components/LoginForms/Hospital/HospitalLoginPage.jsx';
 import BloodPointLoginPage from './components/LoginForms/BloodPoint/BloodPointLoginPage.jsx';
+import BloodPointDashboardPanelPage from './components/MenagePanels/BloodPoint/BloodPointDashboardPanelPage.jsx';
+import BloodStockManagePage from './components/MenagePanels/BloodPoint/Actions/Stock/BloodStockManagePage.jsx';
 
 
 function App() {
@@ -31,6 +33,8 @@ function App() {
                 <Route path="/login/donor" element={<DonorLoginPage />} />
                 <Route path="/login/hospital" element={<HospitalLoginPage />} />
                 <Route path="/login/point" element={<BloodPointLoginPage />} />
+                <Route path="/point/dashboard" element={<BloodPointDashboardPanelPage />} />
+                <Route path="/point/:pointId/stocks" element={<BloodStockManagePage />} />
             </Routes>
         </Router>
     );
