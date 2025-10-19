@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/questionnaire-response")
+@RequestMapping("/api/questionnaires")
 @AllArgsConstructor
 public class QuestionnaireResponseController {
 
     private final QuestionnaireResponseService service;
 
-    @PostMapping
+    @PostMapping("/{questionnaireId}/responses")
     public ResponseEntity<Void> submit(@RequestBody QuestionnaireResponseDTO dto) {
         service.saveResponses(dto);
         return ResponseEntity.ok().build();

@@ -5,10 +5,10 @@ const api = axios.create({
   timeout: 8000,
 });
 
-export function getQuestions(questionnarieId) {
-  return api.get(`questionnaire/${questionnarieId}/questions`).then(r => r.data);
+export function getQuestions(questionnaireId) {
+  return api.get(`/questionnaires/${questionnaireId}/questions`).then(r => r.data);
 }
 
 export function submitResponses({ donationId, questionnaireId, answers }) {
-  return api.post('/questionnaire-response', { donationId, questionnaireId, answers });
+  return api.post(`/questionnaires/${questionnaireId}/responses`, { donationId, questionnaireId, answers });
 }
