@@ -26,9 +26,6 @@ public class Questionnaire {
     @Column(nullable = false)
     private String description;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 }
