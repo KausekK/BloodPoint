@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 
 @Service
 @Transactional
@@ -22,6 +21,7 @@ public class QuestionnaireResponseService {
     private final QuestionnaireRepository questionnaireRepository;
     private final QuestionRepository questionRepository;
     private final QuestionnaireResponseRepository responseRepository;
+
 
     public void saveResponses(QuestionnaireResponseDTO dto) {
         Donation donation = donationRepository.findById(dto.getDonationId())
@@ -35,7 +35,7 @@ public class QuestionnaireResponseService {
         QuestionnaireResponse session = QuestionnaireResponse.builder()
                 .donation(donation)
                 .questionnaire(questionnaire)
-                .filledAt(LocalDateTime.now())
+//                .filledAt(LocalDateTime.now())
                 .build();
 
         dto.getAnswers().forEach(a -> {

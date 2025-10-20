@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import { getQuestions, submitResponses } from '../../../services/QuestionnaireService';
 import './Documents.css';
+// import { showMessage, showError } from "../shared/services/MessageService";
 
 export default function Documents() {
   const donationId = 101;      // TODO: pobierz to z kontekstu/logiki
@@ -63,6 +64,16 @@ export default function Documents() {
     };
 
     try {
+      // const res = await submitResponses(payload);
+      // if (res && res.messages && res.messages.length) {
+      //         res.messages.forEach((m) => showMessage(m.msg, m.type));
+      //         const hasError = res.messages.some((m) => m.type === MessageType.ERROR);
+      //         const hasSuccess = res.messages.some((m) => m.type === MessageType.SUCCESS);
+      //         if (hasError) setIsOpen(false);
+      //         else if (hasSuccess) setIsOpen(true);
+      //       } else {
+      //         showError("Wystąpił błąd przy zapisywaniu odpowiedzi");
+      //       }
       await submitResponses(payload);
       alert('Odpowiedzi zapisane pomyślnie!');
     } catch (err) {

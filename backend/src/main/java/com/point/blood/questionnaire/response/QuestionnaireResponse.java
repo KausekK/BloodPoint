@@ -21,7 +21,12 @@ import java.util.List;
 public class QuestionnaireResponse {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "qr_seq")
+    @SequenceGenerator(
+            name = "qr_seq",
+            sequenceName = "QUESTIONNAIRE_RESPONSE_SEQ",
+            allocationSize = 1
+    )
     private Long id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -32,8 +37,8 @@ public class QuestionnaireResponse {
     @JoinColumn(name = "questionnaire_id", nullable = false, updatable = false)
     private Questionnaire questionnaire;
 
-    @Column(name = "filled_at", nullable = false)
-    private LocalDateTime filledAt;
+//    @Column(name = "filled_at", nullable = false)
+//    private LocalDateTime filledAt;
 
     @OneToMany(mappedBy = "questionnaireResponse", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
