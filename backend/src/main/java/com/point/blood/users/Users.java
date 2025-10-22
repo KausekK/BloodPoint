@@ -43,7 +43,7 @@ public class Users {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Pattern(regexp = "[MK]")
+//    @Pattern(regexp = "[MK]")
     @Column(name = "gender", nullable = false, length = 1)
     private Character gender;
 
