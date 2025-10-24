@@ -35,13 +35,13 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
 
     @Query(value = """
             WITH base AS (
-               SELECT  bt.group       AS blood_group,
+               SELECT  bt.BLOOD_GROUP      AS blood_group,
                        bt.rh_factor   AS rh_factor,
                        u.gender       AS gender,
-                       TRUNC(MONTHS_BETWEEN(d.donation_date, u.date_of_birth) / 12) AS age_at
+                       TIMESTAMPDIFF(YEAR, u.date_of_birth, d.donation_date) AS age_at
                FROM donation d
-               JOIN doner dn          ON d.doner_id = dn.id
-               JOIN Users u          ON dn.user_id = u.id
+               JOIN donor dn          ON d.DONOR_USERS_ID = dn.USERS_ID
+               JOIN Users u          ON dn.USERS_ID= u.id
                JOIN blood_type bt     ON dn.blood_type_id = bt.id
                WHERE d.donation_date BETWEEN :from AND :to
             )

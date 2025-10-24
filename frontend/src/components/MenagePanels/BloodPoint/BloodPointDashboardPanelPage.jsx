@@ -5,7 +5,7 @@ import DashboardPanel from "../GeneralDashboardPanel";
 export default function BloodPointDashboardPanelPage() {
     const actions = [
         { label: "Zarządzaj zapasami krwi", to: "/point/1/stocks" },
-        { label: "Przeglądaj statystyki", to: "/point/predictions" },
+        { label: "Przeglądaj statystyki", to: "/point/1/statistics" },
         { label: "Sprawdź predykcje", to: "/forecast" },
     ];
 
