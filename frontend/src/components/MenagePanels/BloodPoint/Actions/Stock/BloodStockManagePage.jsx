@@ -2,19 +2,25 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import Header from "../../../../Header/Header";
 import Footer from "../../../../Footer/Footer";
-import { getBloodStockByDonationPoint } from "../../../../../services/BloodStockService";
+import {
+  getBloodStockByDonationPoint,
+  postDelivery,
+} from "../../../../../services/BloodStockService";
 import "./BloodStockManagePage.css";
+
+import { showMessage, showError } from "../../../../shared/services/MessageService";
+import { MessageType } from "../../../../shared/const/MessageType.model";
 
 export default function BloodStockManagePage() {
   const { pointId } = useParams();
   const effectiveId =
-    Number(pointId) ||
-    Number(localStorage.getItem("pointId")) ||
-    1;
+    Number(pointId) || Number(localStorage.getItem("pointId")) || 1;
 
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [err, setErr] = useState("");
+  const [msg, setMsg] = useState("");
 
   const [delivery, setDelivery] = useState({
     bloodGroup: "",
@@ -25,6 +31,7 @@ export default function BloodStockManagePage() {
     try {
       setLoading(true);
       setErr("");
+      setMsg("");
       const data = await getBloodStockByDonationPoint(effectiveId);
       setRows(Array.isArray(data) ? data : []);
     } catch (e) {
@@ -36,24 +43,69 @@ export default function BloodStockManagePage() {
     }
   }
 
-  useEffect(() => { load(); }, [effectiveId]);
+  useEffect(() => {
+    load();
+  }, [effectiveId]);
 
-  const totals = useMemo(() => rows.reduce((acc, r) => ({
-    available: acc.available + (+r.totalAvailable || 0),
-    reserved: acc.reserved + (+r.totalReserved || 0),
-    free: acc.free + (+r.totalFree || 0),
-  }), { available: 0, reserved: 0, free: 0 }), [rows]);
+  const totals = useMemo(
+    () =>
+      rows.reduce(
+        (acc, r) => ({
+          available: acc.available + (+r.totalAvailable || 0),
+          reserved: acc.reserved + (+r.totalReserved || 0),
+          free: acc.free + (+r.totalFree || 0),
+        }),
+        { available: 0, reserved: 0, free: 0 }
+      ),
+    [rows]
+  );
 
   function onDeliveryChange(e) {
     const { name, value } = e.target;
-    setDelivery(v => ({ ...v, [name]: value }));
+    setDelivery((v) => ({ ...v, [name]: value }));
+    setErr("");
+    setMsg("");
   }
 
+  function validateDelivery(d) {
+    if (!d.bloodGroup) return "Wybierz grupę krwi.";
+    const liters = Number(d.liters);
+    if (!Number.isFinite(liters) || liters <= 0) return "Podaj dodatnią ilość (l).";
+    return "";
+  }
 
-  function submitDelivery(e) {
+  async function submitDelivery(e) {
     e.preventDefault();
-    // TODO POST do backendu
+    const v = validateDelivery(delivery);
+    if (v) {
+      setErr(v);
+      showError(v);
+      return;
+    }
+    try {
+      setSubmitting(true);
+      setErr("");
+      setMsg("");
+  
+      await postDelivery(effectiveId, {
+        bloodGroup: delivery.bloodGroup,
+        liters: Number(delivery.liters),
+      });
+  
+      const success = "Dostawa została zarejestrowana.";
+      setMsg(success);
+      showMessage(success, MessageType.SUCCESS);
+      setDelivery({ bloodGroup: "", liters: "" });
+      await load();
+    } catch (e) {
+      const emsg = e?.response?.data?.message || "Nie udało się zarejestrować dostawy.";
+      setErr(emsg);
+      showError(emsg);
+    } finally {
+      setSubmitting(false);
+    }
   }
+  
 
   return (
     <>
@@ -64,13 +116,16 @@ export default function BloodStockManagePage() {
             <h1 className="stocks-title">Zarządzaj zapasami krwi</h1>
             <p className="stocks-lead">Punkt {effectiveId}</p>
             <div className="stocks-actions">
-              <button className="bp-btn" onClick={load}>Odśwież</button>
+              <button className="bp-btn" onClick={load} disabled={loading || submitting}>
+                {loading ? "Ładowanie…" : "Odśwież"}
+              </button>
             </div>
           </header>
 
           <section className="bp-card stocks-card">
             {loading && <div className="stocks-state">Ładowanie…</div>}
             {err && !loading && <div className="stocks-state stocks-error">{err}</div>}
+            {msg && !loading && <div className="stocks-state stocks-ok">{msg}</div>}
             {!loading && !err && rows.length === 0 && (
               <div className="stocks-state">Brak danych do wyświetlenia.</div>
             )}
@@ -87,7 +142,7 @@ export default function BloodStockManagePage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {rows.map(r => (
+                    {rows.map((r) => (
                       <tr key={r.bloodGroup}>
                         <td className="col-group">{r.bloodGroup}</td>
                         <td>{r.totalAvailable} l</td>
@@ -120,6 +175,7 @@ export default function BloodStockManagePage() {
                     value={delivery.bloodGroup}
                     onChange={onDeliveryChange}
                     required
+                    disabled={submitting}
                   >
                     <option value="">Wybierz grupę krwi</option>
                     <option>0 Rh+</option><option>0 Rh-</option>
@@ -141,15 +197,13 @@ export default function BloodStockManagePage() {
                   value={delivery.liters}
                   onChange={onDeliveryChange}
                   required
+                  disabled={submitting}
                 />
               </div>
 
               <div className="form-actions">
-                <button
-                  type="submit"
-                  className="bp-btn"
-                >
-                  Zarejestruj dostawę
+                <button type="submit" className="bp-btn" disabled={submitting}>
+                  {submitting ? "Rejestrowanie…" : "Zarejestruj dostawę"}
                 </button>
               </div>
             </form>

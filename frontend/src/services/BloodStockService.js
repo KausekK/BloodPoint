@@ -14,3 +14,7 @@ export function getBloodStockByDonationPoint(pointId = 1) {
   // TODO dodac backend logowania
   return api.get(`/point/${pointId}`).then(r => r.data);
 }
+
+export function postDelivery(pointId, payload) {
+  return api.post(`/point/${pointId}/deliveries`, payload).then(r => r.data);
+}
