@@ -34,43 +34,47 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
 
 
     @Query(value = """
-            WITH base AS (
-               SELECT  bt.BLOOD_GROUP      AS blood_group,
-                       bt.rh_factor   AS rh_factor,
-                       u.gender       AS gender,
-                       TIMESTAMPDIFF(YEAR, u.date_of_birth, d.donation_date) AS age_at
-               FROM donation d
-               JOIN donor dn          ON d.DONOR_USERS_ID = dn.USERS_ID
-               JOIN Users u          ON dn.USERS_ID= u.id
-               JOIN blood_type bt     ON dn.blood_type_id = bt.id
-               WHERE d.donation_date BETWEEN :from AND :to
-            )
-            SELECT  b.blood_group  AS bloodGroup,
-                    b.rh_factor    AS rhFactor,
-                    b.gender       AS gender,
-                    CASE
-                        WHEN b.age_at < 18 THEN '<18'
-                        WHEN b.age_at BETWEEN 18 AND 24 THEN '18-24'
-                        WHEN b.age_at BETWEEN 25 AND 34 THEN '25-34'
-                        WHEN b.age_at BETWEEN 35 AND 44 THEN '35-44'
-                        WHEN b.age_at BETWEEN 45 AND 54 THEN '45-54'
-                        WHEN b.age_at BETWEEN 55 AND 64 THEN '55-64'
-                        ELSE '65+'
-                    END            AS ageBucket,
-                    COUNT(*)       AS donationsCnt
-            FROM base b
-            GROUP BY b.blood_group, b.rh_factor, b.gender,
-                     CASE
-                        WHEN b.age_at < 18 THEN '<18'
-                        WHEN b.age_at BETWEEN 18 AND 24 THEN '18-24'
-                        WHEN b.age_at BETWEEN 25 AND 34 THEN '25-34'
-                        WHEN b.age_at BETWEEN 35 AND 44 THEN '35-44'
-                        WHEN b.age_at BETWEEN 45 AND 54 THEN '45-54'
-                        WHEN b.age_at BETWEEN 55 AND 64 THEN '55-64'
-                        ELSE '65+'
-                     END
-            """, nativeQuery = true)
-    List<DonationStatsView> getStats(LocalDate from, LocalDate to);
+    WITH base AS (
+       SELECT  bt.blood_group AS blood_group,
+               bt.rh_factor    AS rh_factor,
+               u.gender        AS gender,
+               FLOOR(MONTHS_BETWEEN(
+                   CAST(d.donation_date AS DATE),
+                   CAST(u.date_of_birth AS DATE)
+               ) / 12)         AS age_at
+       FROM donation d
+       JOIN donor      dn ON d.DONOR_USERS_ID = dn.USERS_ID
+       JOIN users       u ON dn.USERS_ID = u.id
+       JOIN blood_type bt ON dn.blood_type_id = bt.id
+       WHERE d.donation_date BETWEEN :dateFrom AND :dateTo
+    )
+    SELECT  b.blood_group  AS bloodGroup,
+            b.rh_factor    AS rhFactor,
+            b.gender       AS gender,
+            CASE
+                WHEN b.age_at < 18 THEN '<18'
+                WHEN b.age_at BETWEEN 18 AND 24 THEN '18-24'
+                WHEN b.age_at BETWEEN 25 AND 34 THEN '25-34'
+                WHEN b.age_at BETWEEN 35 AND 44 THEN '35-44'
+                WHEN b.age_at BETWEEN 45 AND 54 THEN '45-54'
+                WHEN b.age_at BETWEEN 55 AND 64 THEN '55-64'
+                ELSE '65+'
+            END            AS ageBucket,
+            COUNT(*)       AS donationsCnt
+    FROM base b
+    GROUP BY b.blood_group, b.rh_factor, b.gender,
+             CASE
+                WHEN b.age_at < 18 THEN '<18'
+                WHEN b.age_at BETWEEN 18 AND 24 THEN '18-24'
+                WHEN b.age_at BETWEEN 25 AND 34 THEN '25-34'
+                WHEN b.age_at BETWEEN 35 AND 44 THEN '35-44'
+                WHEN b.age_at BETWEEN 45 AND 54 THEN '45-54'
+                WHEN b.age_at BETWEEN 55 AND 64 THEN '55-64'
+                ELSE '65+'
+             END
+    """, nativeQuery = true)
+    List<DonationStatsView> getStats(@Param("dateFrom") LocalDate dateFrom,
+                                     @Param("dateTo")   LocalDate dateTo);
 
 
 }
