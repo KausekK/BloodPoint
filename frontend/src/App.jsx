@@ -3,7 +3,6 @@ import MakeAppointment from './components/MakeAppointment/MakeAppointment.jsx';
 import Home from './components/Home/Home.jsx';
 import Profile from './components/Profiles/Profile.jsx';
 import ForecastOfBloodDemand from './components/ForecastOfBloodDemand/ForecastOfBloodDemand.jsx';
-import InfoPage from './components/Info/InfoPage.jsx';
 import DonationPointsPage from './components/DonationPoints/DonationPointsPage.jsx';
 import DonorInfoPage from './components/DonorInfo/DonorInfoPage.jsx';
 import DonorTipsPage from './components/DonorInfo/DonorTipsPage.jsx';
@@ -14,29 +13,26 @@ import HospitalLoginPage from './components/LoginForms/Hospital/HospitalLoginPag
 import BloodPointLoginPage from './components/LoginForms/BloodPoint/BloodPointLoginPage.jsx';
 import BloodPointDashboardPanelPage from './components/MenagePanels/BloodPoint/BloodPointDashboardPanelPage.jsx';
 import BloodStockManagePage from './components/MenagePanels/BloodPoint/Actions/Stock/BloodStockManagePage.jsx';
-import Statistics from './components/Statistics/Statistics.jsx';
 
 
 function App() {
     return (
         <Router>
             <Routes>
-                <Route path="/appointment" element={<MakeAppointment />} />
+                <Route path="/rezerwacja" element={<MakeAppointment />} />
                 <Route path="/" element={<Home />} />
-                <Route path="/profile/*" element={<Profile />} />
-                <Route path="/forecast" element={<ForecastOfBloodDemand />} />
-                <Route path="/informacje" element={<InfoPage />} />
+                <Route path="/profil/*" element={<Profile />} />
+                <Route path="/prognoza" element={<ForecastOfBloodDemand />} />
                 <Route path="/punkty-krwiodawstwa" element={<DonationPointsPage />} />
                 <Route path="/krwiodawca" element={<DonorInfoPage />} />
                 <Route path="/dla-dawcy" element={<DonorTipsPage />} />
-                <Route path="/panel/staff" element={<PointStaffPage />} />
+                <Route path="/panel/pracownicy" element={<PointStaffPage />} />
                 <Route path="/login-info" element={<LoginInfoPage />} />
                 <Route path="/login/donor" element={<DonorLoginPage />} />
-                <Route path="/login/hospital" element={<HospitalLoginPage />} />
-                <Route path="/login/point" element={<BloodPointLoginPage />} />
+                <Route path="/login/szpital" element={<HospitalLoginPage />} />
+                <Route path="/login/punkt-krwiodawstwa" element={<BloodPointLoginPage />} />
                 <Route path="/point/dashboard" element={<BloodPointDashboardPanelPage />} />
-                <Route path="/point/:pointId/stocks" element={<BloodStockManagePage />} />
-                <Route path="/point/:pointId/statistics" element={<Statistics />} />
+                <Route path="/point/:pointId/zapasy" element={<BloodStockManagePage />} />
             </Routes>
         </Router>
     );

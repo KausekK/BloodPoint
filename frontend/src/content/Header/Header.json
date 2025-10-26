@@ -6,10 +6,6 @@
   },
   "common": [
     {
-      "label": "Informacje",
-      "to": "/informacje"
-    },
-    {
       "label": "Punkty krwiodawstwa",
       "to": "/punkty-krwiodawstwa"
     }
@@ -27,12 +23,12 @@
     ],
     "donor": [
       {
-        "label": "Moje wizyty",
-        "to": "/moje-wizyty"
-      },
-      {
         "label": "Umów wizytę",
         "to": "/rezerwacja"
+      },
+      {
+        "label": "Mój profil",
+        "to": "/profil"
       }
     ],
     "admin": [
@@ -52,12 +48,7 @@
       "label": "Zaloguj się",
       "to": "/login-info"
     },
-    "auth": [
-      {
-        "type": "link",
-        "label": "Profil",
-        "to": "/profil"
-      },
+    "auth": [ 
       {
         "type": "button",
         "label": "Wyloguj",

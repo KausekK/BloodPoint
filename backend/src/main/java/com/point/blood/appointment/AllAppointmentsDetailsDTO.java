@@ -1,5 +1,6 @@
 package com.point.blood.appointment;
 
+import com.point.blood.users.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +22,7 @@ public class AllAppointmentsDetailsDTO {
     private String pesel;
     private String email;
     private String phone;
-    private Character gender;
+    private Gender gender;
     private LocalDate dateOfBirth;
     private LocalDate lastDonationDate;
     private String bloodGroup;

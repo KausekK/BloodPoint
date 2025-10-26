@@ -23,11 +23,11 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
                 bt.bloodGroup,
                 bt.rhFactor,
                 d.lastDonationDate,
-                COALESCE(SUM(do.amountOfBlood) + 0L, 0L)
-              )
+            COALESCE(SUM(COALESCE(do.amountOfBlood, 0) * 1L), 0L)
+                )
               FROM Users u
-              JOIN u.donor d
-              JOIN d.bloodType bt
+              LEFT JOIN u.donor d
+              LEFT JOIN d.bloodType bt
               LEFT JOIN d.donations do
               WHERE u.id = :id
               GROUP BY
@@ -44,5 +44,11 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
                 d.lastDonationDate
             """)
     Optional<UsersProfileDTO> findProfileById(@Param("id") Long id);
+
+    Optional<Users> findByPesel(String pesel);
+
+    Optional<Users> findByEmail(String email);
+
+
 
 }

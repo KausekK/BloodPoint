@@ -1,5 +1,5 @@
 package com.point.blood.role;
 
 public enum RoleEnum {
-    DAWCA
+    DAWCA, SZPITAL, PUNKT_KRWIODAWSTWA
 }

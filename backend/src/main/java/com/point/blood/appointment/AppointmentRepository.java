@@ -17,9 +17,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             SELECT new com.point.blood.appointment.ScheduledAppointmentForUserDTO(
             a.id, u.id, d.startTime, b.city, b.street)
             FROM Appointment a
-            JOIN a.users u
-            JOIN a.donationTimeSlot d
-            JOIN d.bloodDonationPoint b
+            LEFT JOIN a.users u
+            LEFT JOIN a.donationTimeSlot d
+            LEFT JOIN d.bloodDonationPoint b
             WHERE u.id = :userId
             AND d.startTime >= :now
             """)
@@ -34,11 +34,11 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
                     d.lastDonationDate, CONCAT(bt.bloodGroup, bt.rhFactor), dts.startTime, a.status
                 )
                 FROM Appointment a
-                JOIN a.users u
-                JOIN u.donor d
-                JOIN d.bloodType bt
-                JOIN a.donationTimeSlot dts
-                JOIN dts.bloodDonationPoint b
+                LEFT JOIN a.users u
+                LEFT JOIN u.donor d
+                LEFT JOIN d.bloodType bt
+                LEFT JOIN a.donationTimeSlot dts
+                LEFT JOIN dts.bloodDonationPoint b
                 WHERE b.id = :bloodDonationPointId
                   AND dts.startTime >= :today AND dts.startTime < :tomorrow
             """)

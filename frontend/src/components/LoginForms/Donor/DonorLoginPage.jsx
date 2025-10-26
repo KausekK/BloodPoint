@@ -22,7 +22,6 @@ export default function DonorLoginPage() {
       default:
         return {
           title: "LOGOWANIE DAWCY",
-          lead: "Wprowadź dane, aby się zalogować."
         };
     }
   }, [mode]);

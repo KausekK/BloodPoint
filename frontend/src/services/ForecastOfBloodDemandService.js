@@ -1,13 +1,9 @@
-import axios from "axios";
+import { api8081 } from "./api";
 
-const api = axios.create({
-  baseURL: "http://localhost:8000/api",
-  timeout: 8000,
-});
 
 
 export async function getForecastOfBloodDemand(bloodType, province) {
-  const response = await api.get("/series", {
+  const response = await api8081.get("/series", {
     params: {
       blood_type: bloodType,
       province: province,

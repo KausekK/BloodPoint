@@ -1,12 +1,7 @@
-import axios from "axios";
-
-const api = axios.create({
-  baseURL: "/api/hospital",
-  timeout: 8000,
-});
+import { api } from "./api";
 
 export function getHospitalsProvinces() {
   return api
-    .get("/provinces")
+    .get("/hospital/provinces")
     .then((r) => r.data);
 }

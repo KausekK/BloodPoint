@@ -10,29 +10,14 @@ import homeContent from "../../content/Home/Home.json";
 export default function Home() {
     const { hero, bloodStock } = homeContent;
 
-    const handlePause = (e) => e.target.play();
-    const handleContextMenu = (e) => e.preventDefault();
+ 
 
     return (
         <div className="home">
             <Header />
 
             <div className="main-content">
-                <div className="video-wrapper">
-                    <video
-                        src={hero.videoSrc}
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        disablePictureInPicture
-                        disableRemotePlayback
-                        onPause={handlePause}
-                        onContextMenu={handleContextMenu}
-                        style={{ width: "100%", height: "auto", display: "block" }}
-                    />
-                </div>
-
+            
                 <SectionHeading>{hero.title}</SectionHeading>
                 <div className="hero-section">
                     <p>{hero.subtitle}</p>

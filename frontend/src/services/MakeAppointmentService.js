@@ -1,19 +1,15 @@
-import axios from "axios";
+import { api } from "./api";
 
-const api = axios.create({
-  baseURL: "/api/appointment",
-  timeout: 8000,
-});
 
 export function getSlotsForDayPaged(city, isoDate, page = 0, size = 12) {
   return api
-    .get("/available", { params: { city, date: isoDate, page, size } })
+    .get("/appointment/available", { params: { city, date: isoDate, page, size } })
     .then((r) => r.data);
 }
 
 export function addAppointment(appointment) {
   return api
-    .post("/add", appointment)
+    .post("/appointment/add", appointment)
     .then((r) => r.data)
     .catch((error) => {
       throw error;
@@ -21,7 +17,7 @@ export function addAppointment(appointment) {
 }
 
 export function getAllTodayAppointmentsForBloodPoint(id) {
-  return api.get(`/point/all/${id}`)
+  return api.get(`/appointment/point/all/${id}`)
     .then((r) => r.data)
     .catch((error) => {
       throw error;

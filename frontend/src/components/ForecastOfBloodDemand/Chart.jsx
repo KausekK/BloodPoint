@@ -47,7 +47,7 @@ export default function ForecastChart({ bloodType, province }) {
         if (!mounted) return;
         setMeta(res.meta || null);
         setRows(buildDataset(res.history || [], res.forecast || []));
-      } catch (e) {
+      } catch {
         if (!mounted) return;
         setError("Nie udało się pobrać danych.");
       } finally {
