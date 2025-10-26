@@ -1,0 +1,70 @@
+.statistics-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: var(--color-bg-light);
+  }
+  
+  .statistics-content {
+    flex: 1;
+    padding: 2rem 5vw;
+  }
+  
+  .filters {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  
+  .filters label {
+    display: flex;
+    flex-direction: column;
+    font-weight: 500;
+  }
+  
+  .filters input {
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+  
+  .filters button {
+    background: #c0392b;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .filters button:hover {
+    background: #a93226;
+  }
+  
+  .stats-table-wrapper {
+    overflow-x: auto;
+    margin-bottom: 3rem;
+  }
+  
+  .stats-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .stats-table th, .stats-table td {
+    padding: 0.8rem;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+  }
+  
+  .chart-container {
+    width: 100%;
+    margin-top: 2rem;
+  }
+  
+  .error {
+    color: red;
+    font-weight: bold;
+  }

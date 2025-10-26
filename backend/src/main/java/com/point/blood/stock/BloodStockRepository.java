@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import java.util.Optional;
 
 import java.util.List;
 
@@ -41,5 +42,7 @@ public interface BloodStockRepository extends JpaRepository<BloodPointBloodTyp, 
               ORDER BY bt.bloodGroup, bt.rhFactor
             """)
     List<BloodStockDTO> findStockByPointId(@Param("pointId") Long pointId);
+
+    Optional<BloodPointBloodTyp> findByDonationPointIdAndBloodTypeId(Long pointId, Long bloodTypeId);
 
 }

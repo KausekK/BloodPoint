@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "Question_Response", schema = "BLOODPOINT")
+@Table(name = "Question_Response")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor @Builder
 @ToString(exclude = "questionnaireResponse")
@@ -13,11 +13,12 @@ import lombok.*;
 public class QuestionResponse {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "qresp_seq")
+    @SequenceGenerator(name = "qresp_seq", sequenceName = "QUESTION_RESPONSE_SEQ", allocationSize = 1)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "response_id", nullable = false)
+    @JoinColumn(name = "QUESTIONNAIRE_RESPONSE_ID", nullable = false)
     private QuestionnaireResponse questionnaireResponse;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
