@@ -3,9 +3,28 @@ import { Edit } from "@mui/icons-material";
 import Detail from "./Detail";
 import { useProfile } from "./hooks/useProfile";
 import { useState, useEffect } from "react";
+import authService from "../../services/AuthenticationService";
 
 export default function ProfileInfo() {
-  const userId = 10; // TODO: zamień na ID pobrane z kontekstu uwierzytelnionego użytkownika
+  const [userId, setUserId] = useState(null);
+  const [idLoading, setIdLoading] = useState(true);
+  const [idError, setIdError] = useState("");
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      try {
+        const id = await authService.getMyId();
+        if (active) setUserId(id);
+      } catch (e) {
+        if (active) setIdError(e?.response?.data?.message || e?.message || "Nie udało się pobrać ID użytkownika");
+      } finally {
+        if (active) setIdLoading(false);
+      }
+    })();
+    return () => { active = false; };
+  }, []);
+
   const { profile, loading, error } = useProfile(userId);
   const [age, setAge] = useState(0);
 
@@ -19,9 +38,15 @@ export default function ProfileInfo() {
     setAge(years);
   }, [profile]);
 
+  if (idLoading) return <div className="loading">Pobieram identyfikator użytkownika...</div>;
+  if (idError) return <div className="error">Błąd: {idError}</div>;
+  if (!userId) return <div className="no-data">Nie znaleziono identyfikatora użytkownika</div>;
+
   if (loading) return <div className="loading">Ładowanie profilu...</div>;
   if (error) return <div className="error">Błąd: {error}</div>;
   if (!profile) return <div className="no-data">Brak danych profilu</div>;
+
+  const genderLabel = profile.gender === "K" ? "Kobieta" : profile.gender === "M" ? "Mężczyzna" : profile.gender;
 
   return (
     <div className="cards">
@@ -33,11 +58,8 @@ export default function ProfileInfo() {
           </Button>
         </header>
         <div className="details-grid">
-          <Detail
-            label="Imię i nazwisko"
-            value={`${profile.firstName} ${profile.lastName}`}
-          />
-          <Detail label="Płeć" value={profile.gender} />
+          <Detail label="Imię i nazwisko" value={`${profile.firstName} ${profile.lastName}`} />
+          <Detail label="Płeć" value={genderLabel} />
           <Detail label="Wiek" value={age} />
           <Detail label="PESEL" value={profile.pesel} />
           <Detail label="Numer telefonu" value={profile.phone} />
@@ -48,18 +70,9 @@ export default function ProfileInfo() {
       <section className="card">
         <h2 className="card-title">Informacje o dawcy</h2>
         <div className="details-grid">
-          <Detail
-            label="Ilość oddanej krwi"
-            value={`${profile.totalDonatedBlood / 1000} litry`}
-          />
-          <Detail
-            label="Ostatnia donacja"
-            value={new Date(profile.lastDonationDate).toLocaleDateString()}
-          />
-          <Detail
-            label="Grupa krwi"
-            value={`${profile.bloodGroup} Rh${profile.rhFactor}`}
-          />
+          <Detail label="Ilość oddanej krwi" value={profile.totalDonatedBlood != null ? `${profile.totalDonatedBlood / 1000} l` : "-"} />
+          <Detail label="Ostatnia donacja" value={profile.lastDonationDate ? new Date(profile.lastDonationDate).toLocaleDateString() : "-"} />
+          <Detail label="Grupa krwi" value={profile.bloodGroup && profile.rhFactor ? `${profile.bloodGroup} Rh${profile.rhFactor}` : "-"} />
         </div>
       </section>
 

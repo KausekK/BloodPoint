@@ -6,7 +6,7 @@ export default function BloodPointDashboardPanelPage() {
     const actions = [
         { label: "Zarządzaj zapasami krwi", to: "/point/1/stocks" },
         { label: "Przeglądaj statystyki", to: "/forecast" },
-        { label: "Sprawdź predykcje", to: "/point/predictions" },
+        { label: "Sprawdź predykcje", to: "/prognoza" },
     ];
 
     return (

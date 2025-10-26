@@ -5,7 +5,7 @@
     "note": "Skorzystaj z menu nawigacyjnego, aby uzyskać dostęp do różnych funkcji aplikacji.",
     "cta": {
       "label": "Przejdź do rezerwacji",
-      "to": "/appointment",
+      "to": "/rezerwacja",
       "ariaLabel": "Przejdź do strony rezerwacji"
     },
     "videoSrc": "src/assets/video/rckik_warszawa_animacja1.mp4"

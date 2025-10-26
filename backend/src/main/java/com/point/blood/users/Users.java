@@ -1,32 +1,35 @@
 package com.point.blood.users;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.point.blood.donor.Donor;
+import com.point.blood.role.Role;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = "donor")
-@EqualsAndHashCode(exclude = "donor")
-public class Users {
+@ToString(exclude = {"donor", "roles"})
+//@EqualsAndHashCode(exclude = "donor")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class Users implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @NotBlank
-    @Size(max = 255)
-    @Column(name = "login", nullable = false)
-    private String login;
 
     @NotBlank
     @Size(max = 255)
@@ -43,9 +46,11 @@ public class Users {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Pattern(regexp = "[MK]")
+    @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(name = "gender", nullable = false, length = 1)
-    private Character gender;
+    private Gender gender;
+
 
     @Pattern(regexp = "\\d{11}")
     @Column(name = "pesel", nullable = false, length = 11)
@@ -67,4 +72,37 @@ public class Users {
     @OneToOne(mappedBy = "users", cascade = CascadeType.ALL)
     private Donor donor;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JsonIgnore
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "users_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
+    )
+    private Set<Role> roles = new HashSet<>();
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles.stream()
+                .map(r -> new SimpleGrantedAuthority(r.getName().name()))
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    @JsonIgnore
+    public String getUsername() {
+        return email;
+    }
+
+    @Override @JsonIgnore
+    public boolean isAccountNonExpired() { return true; }
+
+    @Override @JsonIgnore
+    public boolean isAccountNonLocked() { return true; }
+
+    @Override @JsonIgnore
+    public boolean isCredentialsNonExpired() { return true; }
+
+    @Override @JsonIgnore
+    public boolean isEnabled() { return true; }
 }

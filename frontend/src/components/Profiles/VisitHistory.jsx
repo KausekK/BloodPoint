@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Box, Button } from "@mui/material";
@@ -10,6 +10,7 @@ import {
 } from "../../services/ProfileService";
 import { MessageType } from "../shared/const/MessageType.model";
 import { showMessage, showError } from "../shared/services/MessageService";
+import authService from "../../services/AuthenticationService";
 
 const startOfDay = (d) => {
   const x = new Date(d);
@@ -32,6 +33,32 @@ export default function VisitHistory() {
   const today = new Date();
   const defaultFrom = addYears(today, -1);
 
+  const [userId, setUserId] = useState(null);
+  const [idLoading, setIdLoading] = useState(true);
+  const [idError, setIdError] = useState("");
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      try {
+        const id = await authService.getMyId();
+        if (active) setUserId(id);
+      } catch (e) {
+        if (active)
+          setIdError(
+            e?.response?.data?.message ||
+              e?.message ||
+              "Nie udało się pobrać ID użytkownika"
+          );
+      } finally {
+        if (active) setIdLoading(false);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const [visits, setVisits] = useState([]);
   const [scheduledAppointment, setScheduledAppointment] = useState(null);
 
@@ -47,15 +74,11 @@ export default function VisitHistory() {
   const [openFrom, setOpenFrom] = useState(false);
   const [openTo, setOpenTo] = useState(false);
 
-  const userId = 10; // TODO: pobrać z kontekstu zalogowanego użytkownika
-
   useEffect(() => {
     if (isValidDate(fromDate) && isValidDate(toDate)) {
       const f = startOfDay(fromDate).getTime();
       const t = endOfDay(toDate).getTime();
-      setRangeError(
-        f <= t ? null : "Data 'Od' nie może być późniejsza niż 'Do'."
-      );
+      setRangeError(f <= t ? null : "Data 'Od' nie może być późniejsza niż 'Do'.");
     } else {
       setRangeError(null);
     }
@@ -73,6 +96,7 @@ export default function VisitHistory() {
   };
 
   const fetchAll = () => {
+    if (!userId) return;
     if (hasAnyError) return;
 
     setLoading(true);
@@ -97,7 +121,10 @@ export default function VisitHistory() {
       .finally(() => setLoading(false));
   };
 
-  useEffect(fetchAll, [fromDate, toDate]);
+  useEffect(() => {
+    if (userId) fetchAll();
+  }, [userId, fromDate, toDate]);
+
   const handleDelete = (id) => {
     deleteScheduledAppointment(id)
       .then(() => {
@@ -111,8 +138,11 @@ export default function VisitHistory() {
       );
   };
 
-  if (loading)
-    return <div className="loading">Ładowanie historii wizyt...</div>;
+  if (idLoading) return <div className="loading">Pobieram identyfikator użytkownika...</div>;
+  if (idError) return <div className="error">Błąd: {idError}</div>;
+  if (!userId) return <div className="no-data">Nie znaleziono identyfikatora użytkownika</div>;
+
+  if (loading) return <div className="loading">Ładowanie historii wizyt...</div>;
   if (error) return <div className="error">Błąd: {error}</div>;
 
   return (
@@ -129,12 +159,7 @@ export default function VisitHistory() {
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <Box
           className="filter-bar"
-          sx={{
-            display: "flex",
-            gap: 2,
-            alignItems: "center",
-            flexWrap: "wrap",
-          }}
+          sx={{ display: "flex", gap: 2, alignItems: "center", flexWrap: "wrap" }}
         >
           <DatePicker
             label="Od daty"
@@ -220,11 +245,7 @@ export default function VisitHistory() {
             {visits.map((v, idx) => (
               <tr key={v.id} className={idx % 2 === 0 ? "" : "striped"}>
                 <td>{new Date(v.donationDate).toLocaleDateString()}</td>
-                <td>
-                  {String(v.donationType || "")
-                    .replaceAll("_", " ")
-                    .toLowerCase()}
-                </td>
+                <td>{String(v.donationType || "").replaceAll("_", " ").toLowerCase()}</td>
                 <td>{v.amountOfBlood} ml</td>
                 <td>{v.city}</td>
                 <td>{v.street}</td>

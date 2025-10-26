@@ -1,18 +1,14 @@
-import axios from "axios";
+import { api } from "./api";
 
-const api = axios.create({
-    baseURL: "/api/blood_point/staff",
-    timeout: 8000,
-});
 
 export function getStaffByPoint(pointId) {
-    return api.get(`/${pointId}`).then((r) => r.data);
+    return api.get(`/blood_point/staff/${pointId}`).then((r) => r.data);
 }
 
 export function deleteEmployee(userId) {
-    return api.delete(`/${userId}`).then((r) => r.data);
+    return api.delete(`/blood_point/staff/${userId}`).then((r) => r.data);
 }
 
 export function updateEmployee(userId, payload) {
-    return api.patch(`/${userId}`, payload).then((r) => r.data); // EditResult<StaffDTO>
+    return api.patch(`/blood_point/staff/${userId}`, payload).then((r) => r.data); // EditResult<StaffDTO>
 }
