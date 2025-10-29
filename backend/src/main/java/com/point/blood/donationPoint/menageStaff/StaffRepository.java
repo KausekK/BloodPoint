@@ -6,10 +6,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface StaffRepository extends JpaRepository<Staff, Long> {
 
+    @Query("select s.bloodDonationPoint.id from Staff s where s.users.id = :userId")
+    Long findPointIdByUserId(@Param("userId") Long userId);
 
 //    @Query("""
 //        SELECT new com.point.blood.donationPoint.menageStaff.StaffDTO(

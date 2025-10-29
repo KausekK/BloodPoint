@@ -1,6 +1,8 @@
 package com.point.blood.auth;
 
 import com.point.blood.config.JwtService;
+import com.point.blood.donationPoint.menageStaff.Staff;
+import com.point.blood.donationPoint.menageStaff.StaffRepository;
 import com.point.blood.role.Role;
 import com.point.blood.role.RoleEnum;
 import com.point.blood.role.RoleRepository;
@@ -15,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -27,6 +30,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final StaffRepository staffRepository;
 
     public AuthenticationResponse register(RegisterRequest request) {
         if (request.getEmail() == null || request.getEmail().isBlank()) {
@@ -76,9 +80,29 @@ public class AuthenticationService {
         Users user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        String jwtToken = jwtService.generateToken(user);
+        Set<String> roleNames = user.getRoles().stream()
+                .map(r -> r.getName().name())
+                .collect(java.util.stream.Collectors.toSet());
+
+        Map<String, Object> claims = new java.util.HashMap<>();
+        claims.put("roles", roleNames);
+        claims.put("uid", user.getId());
+
+        boolean isStaff = roleNames.contains(RoleEnum.PUNKT_KRWIODAWSTWA.name());
+        if (isStaff) {
+            Long pointId = staffRepository.findPointIdByUserId(user.getId());
+            if (pointId == null) {
+                throw new IllegalStateException("Staff has no assigned point");
+            }
+            claims.put("pid", pointId);
+        }
+
+        String jwtToken = jwtService.generateToken(claims, user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
+                .userId(user.getId())
+                .pointId((Long) claims.get("pid"))
+                .roles(roleNames)
                 .build();
     }
 

@@ -7,7 +7,7 @@
             "desc": "Panel krwiodawcy.",
             "cta": {
                 "label": "Zaloguj się",
-                "to": "/login/donor"
+                "to": "/login/dawca"
             }
         },
         {
@@ -16,7 +16,7 @@
             "desc": "Panel punktu RCKiK.",
             "cta": {
                 "label": "Zaloguj się",
-                "to": "/login/point"
+                "to": "/login/punkt-krwiodawstwa"
             }
         },
         {
@@ -25,7 +25,7 @@
             "desc": "Dostęp do panelu placówki.",
             "cta": {
                 "label": "Zaloguj się",
-                "to": "/login/hospital"
+                "to": "/login/szpital"
             }
         }
     ]

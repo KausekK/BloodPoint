@@ -14,7 +14,7 @@ export default function ProfileInfo() {
     let active = true;
     (async () => {
       try {
-        const id = await authService.getMyId();
+        const id = await authService.getUserId();
         if (active) setUserId(id);
       } catch (e) {
         if (active) setIdError(e?.response?.data?.message || e?.message || "Nie udało się pobrać ID użytkownika");

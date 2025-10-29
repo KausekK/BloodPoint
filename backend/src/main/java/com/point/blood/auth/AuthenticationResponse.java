@@ -11,5 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthenticationResponse {
     private String token;
-
+    private Long userId;
+    private Long pointId;
+    private java.util.Set<String> roles;
 }
