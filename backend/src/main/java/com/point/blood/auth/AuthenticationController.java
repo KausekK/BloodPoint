@@ -28,4 +28,5 @@ public class AuthenticationController {
     public Map<String, Long> meId(@AuthenticationPrincipal com.point.blood.users.Users user) {
         return Map.of("id", user.getId());
     }
+
 }

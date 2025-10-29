@@ -1,4 +1,5 @@
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 const api = axios.create({
   baseURL: "/api/v1/auth",
@@ -6,9 +7,24 @@ const api = axios.create({
 });
 
 const TOKEN_KEY = "userToken";
+const USER_KEY = "currentUser";
+
 const setToken = (t) => localStorage.setItem(TOKEN_KEY, t);
 const getToken = () => localStorage.getItem(TOKEN_KEY);
 const clearToken = () => localStorage.removeItem(TOKEN_KEY);
+
+const setUser = (user) => localStorage.setItem(USER_KEY, JSON.stringify(user));
+const getUser = () => {
+  const raw = localStorage.getItem(USER_KEY);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    localStorage.removeItem(USER_KEY);
+    return null;
+  }
+};
+const clearUser = () => localStorage.removeItem(USER_KEY);
 
 api.interceptors.request.use((config) => {
   const token = getToken();
@@ -27,39 +43,80 @@ async function register(registerRequest) {
   return data;
 }
 
-
 async function login(authenticationRequest) {
-  const { data } = await api.post("/authenticate", authenticationRequest, {
-    headers: { "Content-Type": "application/json" },
-  });
-  if (data?.token) setToken(data.token);
+  const { data } = await api.post("/authenticate", authenticationRequest);
+  if (data?.token) {
+    setToken(data.token);
+    api.defaults.headers.common.Authorization = `Bearer ${data.token}`;
+
+    const decoded = jwtDecode(data.token);
+    const { uid, pid, roles, exp } = decoded || {};
+
+    if (exp && exp * 1000 <= Date.now()) {
+      logout();
+      throw new Error("Token expired");
+    }
+
+    setUser({
+      userId: uid ?? null,
+      pointId: pid ?? null,
+      roles: Array.isArray(roles) ? roles : [],
+      token: data.token,
+      exp: exp ?? null,
+    });
+  }
   return data;
 }
 
 async function getMyId() {
+  const token = getToken();
   const { data } = await axios.get("/api/v1/auth/me/id", {
-    headers: { Authorization: `Bearer ${getToken()}` }
+    headers: { Authorization: `Bearer ${token}` },
   });
   return data.id;
 }
 
-
-
 function logout() {
   clearToken();
+  clearUser();
+  delete api.defaults.headers.common.Authorization;
 }
 
 function isAuthenticated() {
-  return getToken() !== null;
+  const token = getToken();
+  if (!token) return false;
+  try {
+    const { exp } = jwtDecode(token);
+    return !exp || exp * 1000 > Date.now();
+  } catch {
+    return false;
+  }
+}
+
+function getUserId() {
+  return getUser()?.userId ?? null;
+}
+function getPointId() {
+  return getUser()?.pointId ?? null;
+}
+function hasRole(roleName) {
+  const roles = getUser()?.roles || [];
+  return roles.includes(roleName);
 }
 
 const authService = {
   register,
   login,
   logout,
+  getMyId,
+
   isAuthenticated,
   getToken,
-  getMyId,
+  getUser,
+
+  getUserId,
+  getPointId,
+  hasRole,
 };
 
 export default authService;

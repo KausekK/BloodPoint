@@ -39,7 +39,7 @@ export default function MakeAppointment() {
     let active = true;
     (async () => {
       try {
-        const id = await authService.getMyId();
+        const id = await authService.getUserId();
         if (active) setUserId(id);
       } catch (e) {
         if (active)

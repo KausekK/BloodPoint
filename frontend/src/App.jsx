@@ -28,11 +28,11 @@ function App() {
                 <Route path="/dla-dawcy" element={<DonorTipsPage />} />
                 <Route path="/panel/pracownicy" element={<PointStaffPage />} />
                 <Route path="/login-info" element={<LoginInfoPage />} />
-                <Route path="/login/donor" element={<DonorLoginPage />} />
+                <Route path="/login/dawca" element={<DonorLoginPage />} />
                 <Route path="/login/szpital" element={<HospitalLoginPage />} />
                 <Route path="/login/punkt-krwiodawstwa" element={<BloodPointLoginPage />} />
-                <Route path="/point/dashboard" element={<BloodPointDashboardPanelPage />} />
-                <Route path="/point/:pointId/zapasy" element={<BloodStockManagePage />} />
+                <Route path="/punkt-krwiodawstwa/dashboard" element={<BloodPointDashboardPanelPage />} />
+                <Route path="/punkt-krwiodawstwa/:pointId/zapasy" element={<BloodStockManagePage />} />
             </Routes>
         </Router>
     );
