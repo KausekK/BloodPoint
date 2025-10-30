@@ -26,9 +26,9 @@ public class Donation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-
+// TODO WAZNE ZMIENIC ILOSC
     @Column(name = "amount_of_blood", nullable = false)
-    private Integer amountOfBlood;
+    private Double amountOfBlood;
 
     @Column(name = "donation_date", nullable = false)
     private LocalDateTime donationDate;

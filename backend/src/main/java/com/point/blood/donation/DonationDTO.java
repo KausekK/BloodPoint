@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class DonationDTO {
     private Long id;
-    private Integer amountOfBlood;
+    private Double amountOfBlood;
     private LocalDateTime donationDate;
     private DonationTypeEnum donationType;
     private String city;

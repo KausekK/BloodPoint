@@ -13,6 +13,7 @@ import HospitalLoginPage from './components/LoginForms/Hospital/HospitalLoginPag
 import BloodPointLoginPage from './components/LoginForms/BloodPoint/BloodPointLoginPage.jsx';
 import BloodPointDashboardPanelPage from './components/MenagePanels/BloodPoint/BloodPointDashboardPanelPage.jsx';
 import BloodStockManagePage from './components/MenagePanels/BloodPoint/Actions/Stock/BloodStockManagePage.jsx';
+import HospitalDashboardPanelPage from './components/MenagePanels/Hospital/HospitalDashboardPanelPage.jsx'
 
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
                 <Route path="/login/punkt-krwiodawstwa" element={<BloodPointLoginPage />} />
                 <Route path="/punkt-krwiodawstwa/dashboard" element={<BloodPointDashboardPanelPage />} />
                 <Route path="/punkt-krwiodawstwa/:pointId/zapasy" element={<BloodStockManagePage />} />
+                <Route path="/szpital/dashboard" element={<HospitalDashboardPanelPage />} />
             </Routes>
         </Router>
     );
