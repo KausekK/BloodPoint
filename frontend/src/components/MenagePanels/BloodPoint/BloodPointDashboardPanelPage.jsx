@@ -7,7 +7,7 @@ export default function BloodPointDashboardPanelPage() {
   const pointId = authService.getPointId();
   const actions = [
     { label: "Zarządzaj zapasami krwi", to: `/punkt-krwiodawstwa/${pointId}/zapasy` },
-    { label: "Przeglądaj statystyki", to: "/forecast" },
+    { label: "Przeglądaj statystyki", to: "/statystyki" },
     { label: "Sprawdź predykcje", to: "/prognoza" },
   ];
 

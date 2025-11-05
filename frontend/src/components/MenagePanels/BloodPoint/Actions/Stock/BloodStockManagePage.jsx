@@ -1,29 +1,32 @@
+// pages/BloodStockManagePage.jsx
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import Header from "../../../../Header/Header";
 import Footer from "../../../../Footer/Footer";
+
 import {
   getBloodStockByDonationPoint,
   postDelivery,
 } from "../../../../../services/BloodStockService";
-import "./BloodStockManagePage.css";
+import { listBloodTypes } from "../../../../../services/BloodTypeService";
 
+import "./BloodStockManagePage.css";
 import { showMessage, showError } from "../../../../shared/services/MessageService";
 import { MessageType } from "../../../../shared/const/MessageType.model";
 
 export default function BloodStockManagePage() {
   const { pointId } = useParams();
-  const effectiveId =
-    Number(pointId) || Number(localStorage.getItem("pointId")) || 1;
+  const effectiveId = Number(pointId) || Number(localStorage.getItem("pointId")) || 1;
 
   const [rows, setRows] = useState([]);
+  const [bloodTypes, setBloodTypes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [err, setErr] = useState("");
   const [msg, setMsg] = useState("");
 
   const [delivery, setDelivery] = useState({
-    bloodGroup: "",
+    bloodTypeId: "",
     liters: "",
   });
 
@@ -45,6 +48,9 @@ export default function BloodStockManagePage() {
 
   useEffect(() => {
     load();
+    listBloodTypes()
+      .then((opts) => setBloodTypes(Array.isArray(opts) ? opts : []))
+      .catch(() => showError("Nie udało się pobrać listy grup krwi."));
   }, [effectiveId]);
 
   const totals = useMemo(
@@ -68,7 +74,7 @@ export default function BloodStockManagePage() {
   }
 
   function validateDelivery(d) {
-    if (!d.bloodGroup) return "Wybierz grupę krwi.";
+    if (!d.bloodTypeId) return "Wybierz grupę krwi.";
     const liters = Number(d.liters);
     if (!Number.isFinite(liters) || liters <= 0) return "Podaj dodatnią ilość (l).";
     return "";
@@ -86,26 +92,25 @@ export default function BloodStockManagePage() {
       setSubmitting(true);
       setErr("");
       setMsg("");
-  
+
       await postDelivery(effectiveId, {
-        bloodGroup: delivery.bloodGroup,
+        bloodTypeId: Number(delivery.bloodTypeId),
         liters: Number(delivery.liters),
       });
-  
+
       const success = "Dostawa została zarejestrowana.";
       setMsg(success);
       showMessage(success, MessageType.SUCCESS);
-      setDelivery({ bloodGroup: "", liters: "" });
+      setDelivery({ bloodTypeId: "", liters: "" });
       await load();
-    } catch (e) {
-      const emsg = e?.response?.data?.message || "Nie udało się zarejestrować dostawy.";
+    } catch (e2) {
+      const emsg = e2?.response?.data?.message || "Nie udało się zarejestrować dostawy.";
       setErr(emsg);
       showError(emsg);
     } finally {
       setSubmitting(false);
     }
   }
-  
 
   return (
     <>
@@ -143,8 +148,8 @@ export default function BloodStockManagePage() {
                   </thead>
                   <tbody>
                     {rows.map((r) => (
-                      <tr key={r.bloodGroup}>
-                        <td className="col-group">{r.bloodGroup}</td>
+                      <tr key={r.bloodTypeId ?? r.bloodGroup /* fallback, gdyby backend jeszcze nie zmieniony */}>
+                        <td className="col-group">{r.bloodGroupLabel ?? r.bloodGroup}</td>
                         <td>{r.totalAvailable} l</td>
                         <td>{r.totalReserved} l</td>
                         <td className="col-free">{r.totalFree} l</td>
@@ -171,17 +176,18 @@ export default function BloodStockManagePage() {
                 <div className="select-wrap">
                   <select
                     className="select"
-                    name="bloodGroup"
-                    value={delivery.bloodGroup}
+                    name="bloodTypeId"
+                    value={delivery.bloodTypeId}
                     onChange={onDeliveryChange}
                     required
                     disabled={submitting}
                   >
                     <option value="">Wybierz grupę krwi</option>
-                    <option>0 Rh+</option><option>0 Rh-</option>
-                    <option>A Rh+</option><option>A Rh-</option>
-                    <option>B Rh+</option><option>B Rh-</option>
-                    <option>AB Rh+</option><option>AB Rh-</option>
+                    {bloodTypes.map((bt) => (
+                      <option key={bt.id} value={bt.id}>
+                        {bt.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>

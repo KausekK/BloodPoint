@@ -6,7 +6,8 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class BloodStockDTO {
-    private String bloodGroup;
+    private Long bloodTypeId;
+    private String bloodGroupLabel;
     private Long totalAvailable;
     private Long totalReserved;
     private Long totalFree;

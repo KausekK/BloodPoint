@@ -21,6 +21,6 @@ public class BloodType {
     @Column(name = "blood_group",nullable = false)
     private String bloodGroup;
 
-    @Column(nullable = false, length = 1)
+    @Column(name = "rh_factor", length = 1)
     private Character rhFactor;
 }

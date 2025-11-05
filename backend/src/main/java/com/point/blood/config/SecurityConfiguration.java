@@ -40,6 +40,8 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/user/**").permitAll()
                         .requestMatchers("/api/blood_point/**").permitAll()
                         .requestMatchers("/api/hospital/provinces/**").permitAll()
+                        .requestMatchers("/api/statistic/**").permitAll()
+                        .requestMatchers("/api/blood-types/**").permitAll()
 
                         .anyRequest().authenticated()
                 )
