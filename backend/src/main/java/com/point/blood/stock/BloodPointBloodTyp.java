@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @Entity
 @Builder
@@ -20,11 +22,11 @@ public class BloodPointBloodTyp {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "available_quantity", nullable = false)
-    private Integer availableQuantity;
+    @Column(name = "available_quantity", nullable = false,  precision = 12, scale = 3)
+    private BigDecimal availableQuantity;
 
-    @Column(name = "reserved_quantity", nullable = false)
-    private Integer reservedQuantity;
+    @Column(name = "reserved_quantity", nullable = false,  precision = 12, scale = 3)
+    private BigDecimal reservedQuantity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "blood_donation_point_id", nullable = false)
