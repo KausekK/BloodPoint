@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MakeAppointment from './components/MakeAppointment/MakeAppointment.jsx';
 import Home from './components/Home/Home.jsx';
@@ -15,6 +16,7 @@ import BloodPointDashboardPanelPage from './components/MenagePanels/BloodPoint/B
 import BloodStockManagePage from './components/MenagePanels/BloodPoint/Actions/Stock/BloodStockManagePage.jsx';
 import HospitalDashboardPanelPage from './components/MenagePanels/Hospital/HospitalDashboardPanelPage.jsx'
 import Statistics from './components/Statistics/Statistics.jsx'
+import ReportEmergencyPage from './components/MenagePanels/Hospital/ReportEmergencyPage.jsx';
 
 
 function App() {
@@ -37,9 +39,11 @@ function App() {
                 <Route path="/punkt-krwiodawstwa/:pointId/zapasy" element={<BloodStockManagePage />} />
                 <Route path="/szpital/dashboard" element={<HospitalDashboardPanelPage />} />
                 <Route path="/statystyki" element={<Statistics/>}/>
+                <Route path="/szpital/zgloszenie-zapotrzebowania" element={<ReportEmergencyPage/>}/>
             </Routes>
         </Router>
     );
 }
+
 
 export default App

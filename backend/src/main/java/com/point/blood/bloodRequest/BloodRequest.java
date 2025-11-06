@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @Entity
 @Builder
@@ -17,7 +19,12 @@ import lombok.NoArgsConstructor;
 public class BloodRequest {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(
+            name = "blood_request_seq",
+            sequenceName = "blood_request_seq",
+            allocationSize = 1
+    )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "blood_request_seq")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,6 +36,6 @@ public class BloodRequest {
     private BloodType bloodType;
 
     @Column(name = "amount", nullable = false)
-    private Double amount;
+    private BigDecimal amount;
 
 }

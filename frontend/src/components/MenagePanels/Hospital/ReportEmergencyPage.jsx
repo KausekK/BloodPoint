@@ -1,103 +1,170 @@
-// import { useEffect, useState, useMemo } from "react";
-// import { createBloodRequest } from "../../../services/BloodRequestService";
+import { useEffect, useState } from "react";
+import Header from "../../../components/Header/Header";
+import Footer from "../../../components/Footer/Footer";
 
-// export default function ReportEmergencyPage() {
-//   const [hospitals, setHospitals] = useState([]);
-//   const [bloodTypes, setBloodTypes] = useState([]);
-//   const [form, setForm] = useState({ hospitalId: "", bloodTypeId: "", amount: "" });
-//   const [busy, setBusy] = useState(false);
-//   const [msg, setMsg] = useState({ type: "", text: "" });
+import { createBloodRequest } from "../../../services/BloodRequestService";
+import { listBloodTypes } from "../../../services/BloodTypeService";
 
-//   useEffect(() => {
-//     Promise.all([getHospitals(), getBloodTypes()])
-//       .then(([hs, bts]) => { setHospitals(hs || []); setBloodTypes(bts || []); })
-//       .catch(() => setMsg({ type: "error", text: "Nie udało się pobrać danych." }));
-//   }, []);
+import { showMessage, showError } from "../../shared/services/MessageService";
+import { MessageType } from "../../shared/const/MessageType.model";
 
-//   const btOptions = useMemo(() =>
-//     (bloodTypes || []).map(bt => ({
-//       id: bt.id,
-//       label: `${bt.group}${bt.rhFactor ? bt.rhFactor.replace(" ", "") : ""}`
-//     })), [bloodTypes]
-//   );
+import "./ReportEmergencyPage.css";
 
-//   function onChange(e) {
-//     const { name, value } = e.target;
-//     setForm(f => ({ ...f, [name]: value }));
-//     setMsg({ type: "", text: "" });
-//   }
+function toNumInt(v) {
+  if (v === null || v === undefined) return 0;
+  const n = typeof v === "number" ? v : Number(String(v).replace(",", "."));
+  return Number.isFinite(n) ? Math.trunc(n) : 0;
+}
 
-//   async function onSubmit(e) {
-//     e.preventDefault();
-//     const { hospitalId, bloodTypeId, amount } = form;
-//     const amountNum = Number(amount);
+export default function ReportEmergencyPage() {
+  const [bloodTypes, setBloodTypes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
-//     if (!hospitalId || !bloodTypeId || !amountNum || amountNum <= 0) {
-//       setMsg({ type: "error", text: "Uzupełnij poprawnie wszystkie pola." });
-//       return;
-//     }
+  const [err, setErr] = useState("");
+  const [msg, setMsg] = useState("");
 
-//     setBusy(true);
-//     try {
-//       await createBloodRequest({ hospitalId: Number(hospitalId), bloodTypeId: Number(bloodTypeId), amount: amountNum });
-//       setMsg({ type: "ok", text: "Zapotrzebowanie zostało zgłoszone." });
-//       setForm(f => ({ ...f, amount: "" }));
-//     } catch {
-//       setMsg({ type: "error", text: "Nie udało się zgłosić zapotrzebowania." });
-//     } finally {
-//       setBusy(false);
-//     }
-//   }
+  const [form, setForm] = useState({
+    bloodTypeId: "",
+    amount: "",
+  });
 
-//   return (
-//     <section className="panel-dashboard is-centered">
-//       <div style={{ width: "min(720px, 92%)" }}>
-//         <header className="panel-head">
-//           <h1 className="panel-title">Zgłoszenie zapotrzebowania</h1>
-//           <p className="panel-lead">Wybierz szpital, grupę krwi i ilość.</p>
-//         </header>
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        setErr("");
+        setMsg("");
+        const bts = await listBloodTypes();
+        setBloodTypes(Array.isArray(bts) ? bts : []);
+      } catch (e) {
+        console.error(e);
+        setErr("Nie udało się pobrać listy grup krwi.");
+        setBloodTypes([]);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
-//         <form className="panel-actions" onSubmit={onSubmit}>
-//           <div>
-//             <label htmlFor="hospitalId">Szpital</label>
-//             <select id="hospitalId" name="hospitalId" className="panel-btn" value={form.hospitalId} onChange={onChange} required>
-//               <option value="">— wybierz szpital —</option>
-//               {hospitals.map(h => (
-//                 <option key={h.id} value={h.id}>
-//                   {`#${h.hospitalNumber ?? h.id} • ${h.city}, ${h.street}`}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
+  function onChange(e) {
+    const { name, value } = e.target;
+    setForm((f) => ({ ...f, [name]: value }));
+    setErr("");
+    setMsg("");
+  }
 
-//           <div>
-//             <label htmlFor="bloodTypeId">Grupa krwi</label>
-//             <select id="bloodTypeId" name="bloodTypeId" className="panel-btn" value={form.bloodTypeId} onChange={onChange} required>
-//               <option value="">— wybierz grupę —</option>
-//               {btOptions.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
-//             </select>
-//           </div>
+  function validate(f) {
+    if (!f.bloodTypeId) return "Wybierz grupę krwi.";
+    const amountInt = toNumInt(f.amount);
+    if (!Number.isFinite(amountInt) || amountInt <= 0)
+      return "Podaj dodatnią liczbę jednostek.";
+    return "";
+  }
 
-//           <div>
-//             <label htmlFor="amount">Ilość (jednostki)</label>
-//             <input
-//               id="amount" name="amount" type="number" min="1" step="1"
-//               className="panel-btn" placeholder="np. 5"
-//               value={form.amount} onChange={onChange} required
-//             />
-//           </div>
+  async function onSubmit(e) {
+    e.preventDefault();
+    const v = validate(form);
+    if (v) {
+      setErr(v);
+      showError(v);
+      return;
+    }
 
-//           {msg.text && (
-//             <div className={`panel-cta ${msg.type === "error" ? "is-ghost" : ""}`} role={msg.type === "error" ? "alert" : "status"}>
-//               {msg.text}
-//             </div>
-//           )}
+    try {
+      setSubmitting(true);
+      setErr("");
+      setMsg("");
 
-//           <button className="panel-btn" type="submit" disabled={busy}>
-//             {busy ? "Wysyłanie..." : "Zgłoś zapotrzebowanie"}
-//           </button>
-//         </form>
-//       </div>
-//     </section>
-//   );
-// }
+      await createBloodRequest({
+        bloodTypeId: Number(form.bloodTypeId),
+        amount: toNumInt(form.amount),
+      });
+
+      const ok = "Zapotrzebowanie zostało zgłoszone.";
+      setMsg(ok);
+      showMessage(ok, MessageType.SUCCESS);
+
+      setForm((f) => ({ ...f, amount: "" }));
+    } catch (e2) {
+        console.error('createBloodRequest error:', {
+          url: e2?.config?.url,
+          method: e2?.config?.method,
+          status: e2?.response?.status,
+          data: e2?.response?.data,
+        });
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <>
+      <Header />
+      <main className="bp-section request-panel">
+        <div className="bp-container">
+          <header className="stocks-head">
+            <h1 className="stocks-title">Zgłoszenie zapotrzebowania</h1>
+            <p className="stocks-lead">
+              Wybierz grupę krwi i liczbę jednostek.
+            </p>
+          </header>
+
+          <section className="bp-card stocks-ops">
+            {loading && <div className="stocks-state">Ładowanie…</div>}
+            {err && !loading && <div className="stocks-state stocks-error">{err}</div>}
+            {msg && !loading && <div className="stocks-state stocks-ok">{msg}</div>}
+
+            {!loading && (
+              <form className="ops-form" onSubmit={onSubmit} noValidate>
+                <div className="form-field">
+                  <div className="select-wrap">
+                    <select
+                      className="select"
+                      id="bloodTypeId"
+                      name="bloodTypeId"
+                      value={form.bloodTypeId}
+                      onChange={onChange}
+                      required
+                      disabled={submitting}
+                    >
+                      <option value="">— wybierz grupę krwi —</option>
+                      {bloodTypes.map((bt) => (
+                        <option key={bt.id} value={bt.id}>
+                          {bt.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="form-field">
+                  <input
+                    className="input"
+                    id="amount"
+                    name="amount"
+                    type="number"
+                    min="1"
+                    step="1"
+                    placeholder="Ilość"
+                    value={form.amount}
+                    onChange={onChange}
+                    required
+                    disabled={submitting}
+                  />
+                </div>
+
+                <div className="form-actions">
+                  <button type="submit" className="bp-btn" disabled={submitting}>
+                    {submitting ? "Wysyłanie…" : "Zgłoś zapotrzebowanie"}
+                  </button>
+                </div>
+              </form>
+            )}
+          </section>
+        </div>
+      </main>
+      <Footer />
+    </>
+  );
+}
