@@ -1,7 +1,6 @@
 import Header from "../../../components/Header/Header";
 import Footer from "../../Footer/Footer";
 import GeneralLoginForm from "../GeneralLoginForm";
-// import "./BloodPointLoginPage.css";
 import '../../SharedCSS/LoginForms.css'
 import { useState } from "react";
 import authService from "../../../services/AuthenticationService";

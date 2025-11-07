@@ -53,12 +53,9 @@ export default function BloodStock() {
       <p className="stock-date">Stan na dzień: {today}</p>
       <div className="stock-container">
         {stock.map((row) => {
-          // NOWE API: { bloodTypeId, bloodGroupLabel, totalAvailable, totalReserved, totalFree }
-          // Fallback: { bloodGroup, ... }
-          const label = row.bloodGroupLabel ?? row.bloodGroup; // musi pasować do kluczy w MAX_CAPACITY
+          const label = row.bloodGroupLabel ?? row.bloodGroup;
           const totalFree = Number(row.totalFree ?? 0);
 
-          // stabilne klucze/ID (preferuj bloodTypeId)
           const key = row.bloodTypeId ?? label;
           const id =
             row.bloodTypeId != null
