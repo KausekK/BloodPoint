@@ -14,9 +14,9 @@ import HospitalLoginPage from './components/LoginForms/Hospital/HospitalLoginPag
 import BloodPointLoginPage from './components/LoginForms/BloodPoint/BloodPointLoginPage.jsx';
 import BloodPointDashboardPanelPage from './components/MenagePanels/BloodPoint/BloodPointDashboardPanelPage.jsx';
 import BloodStockManagePage from './components/MenagePanels/BloodPoint/Actions/Stock/BloodStockManagePage.jsx';
-import HospitalDashboardPanelPage from './components/MenagePanels/Hospital/HospitalDashboardPanelPage.jsx'
-import Statistics from './components/Statistics/Statistics.jsx'
-import ReportEmergencyPage from './components/MenagePanels/Hospital/ReportEmergencyPage.jsx';
+import HospitalDashboardPanelPage from './components/MenagePanels/Hospital/Actions/HospitalDashboardPanelPage.jsx'
+import Statistics from './components/MenagePanels/BloodPoint/Actions/Statistics/Statistics.jsx'
+import ReportEmergencyPage from './components/MenagePanels/Hospital/Actions/ReportEmergencyPage.jsx'
 
 
 function App() {

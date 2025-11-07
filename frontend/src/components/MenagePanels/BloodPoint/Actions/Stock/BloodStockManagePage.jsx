@@ -1,4 +1,3 @@
-// pages/BloodStockManagePage.jsx
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import Header from "../../../../Header/Header";
@@ -10,9 +9,10 @@ import {
 } from "../../../../../services/BloodStockService";
 import { listBloodTypes } from "../../../../../services/BloodTypeService";
 
-import "./BloodStockManagePage.css";
 import { showMessage, showError } from "../../../../shared/services/MessageService";
 import { MessageType } from "../../../../shared/const/MessageType.model";
+
+import "../../../../SharedCSS/MenagePanels.css";
 
 const fmtPL = new Intl.NumberFormat("pl-PL", {
   minimumFractionDigits: 2,
@@ -135,29 +135,30 @@ export default function BloodStockManagePage() {
   return (
     <>
       <Header />
-      <main className="bp-section point-stocks">
+      <main className="bp-section">
         <div className="bp-container">
-          <header className="stocks-head">
-            <h1 className="stocks-title">Zarządzaj zapasami krwi</h1>
-            <p className="stocks-lead">Punkt {effectiveId}</p>
-            <div className="stocks-actions">
+          <header className="dashboard-head">
+            <h1 className="dashboard-title">Zarządzaj zapasami krwi</h1>
+            <p className="dashboard-lead">Punkt {effectiveId}</p>
+            <div className="dashboard-actions">
               <button className="bp-btn" onClick={load} disabled={loading || submitting}>
                 {loading ? "Ładowanie…" : "Odśwież"}
               </button>
             </div>
           </header>
 
-          <section className="bp-card stocks-card">
-            {loading && <div className="stocks-state">Ładowanie…</div>}
-            {err && !loading && <div className="stocks-state stocks-error">{err}</div>}
-            {msg && !loading && <div className="stocks-state stocks-ok">{msg}</div>}
+          <section className="bp-card">
+            {loading && <div className="bp-state">Ładowanie…</div>}
+            {err && !loading && <div className="bp-state error">{err}</div>}
+            {msg && !loading && <div className="bp-state success">{msg}</div>}
+
             {!loading && !err && rows.length === 0 && (
-              <div className="stocks-state">Brak danych do wyświetlenia.</div>
+              <div className="bp-state">Brak danych do wyświetlenia.</div>
             )}
 
             {!loading && !err && rows.length > 0 && (
               <div className="table-wrap">
-                <table className="bp-table stocks-table">
+                <table className="bp-table">
                   <thead>
                     <tr>
                       <th>Grupa krwi</th>
@@ -191,27 +192,25 @@ export default function BloodStockManagePage() {
             )}
           </section>
 
-          <section className="bp-card stocks-ops">
-            <h2 className="ops-title">Zarejestruj dostawę krwi</h2>
-            <form className="ops-form" onSubmit={submitDelivery} noValidate>
+          <section className="bp-card">
+            <h2 className="dashboard-title">Zarejestruj dostawę krwi</h2>
+            <form className="bp-form" onSubmit={submitDelivery} noValidate>
               <div className="form-field">
-                <div className="select-wrap">
-                  <select
-                    className="select"
-                    name="bloodTypeId"
-                    value={delivery.bloodTypeId}
-                    onChange={onDeliveryChange}
-                    required
-                    disabled={submitting}
-                  >
-                    <option value="">Wybierz grupę krwi</option>
-                    {bloodTypes.map((bt) => (
-                      <option key={bt.id} value={bt.id}>
-                        {bt.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <select
+                  className="select"
+                  name="bloodTypeId"
+                  value={delivery.bloodTypeId}
+                  onChange={onDeliveryChange}
+                  required
+                  disabled={submitting}
+                >
+                  <option value="">Wybierz grupę krwi</option>
+                  {bloodTypes.map((bt) => (
+                    <option key={bt.id} value={bt.id}>
+                      {bt.label}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="form-field">
