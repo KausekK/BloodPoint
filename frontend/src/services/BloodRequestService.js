@@ -7,3 +7,11 @@ export function createBloodRequest({ bloodTypeId, amount }) {
     .post(`/request/hospitals/${HOSPITAL_ID}/requests`, { bloodTypeId, amount })
     .then(r => r.data);
 }
+
+export function getAllNewBloodRequests() {
+  return api.get("/request/new").then(r => r.data);
+}
+
+export function acceptBloodRequest(requestId, pointId) {
+  return api.post(`/request/${requestId}/accept`, null, { params: { pointId } });
+}

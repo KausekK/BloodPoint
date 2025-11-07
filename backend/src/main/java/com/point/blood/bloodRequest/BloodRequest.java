@@ -1,5 +1,6 @@
 package com.point.blood.bloodRequest;
 
+import com.point.blood.BloodRequestStatus.BloodRequestStatus;
 import com.point.blood.bloodType.BloodType;
 import com.point.blood.hospital.Hospital;
 import jakarta.persistence.*;
@@ -38,4 +39,7 @@ public class BloodRequest {
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "BLOOD_REQUEST_STATUS_ID", nullable = false)
+    private BloodRequestStatus status;
 }
