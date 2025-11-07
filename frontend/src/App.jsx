@@ -7,7 +7,7 @@ import ForecastOfBloodDemand from './components/ForecastOfBloodDemand/ForecastOf
 import DonationPointsPage from './components/DonationPoints/DonationPointsPage.jsx';
 import DonorInfoPage from './components/DonorInfo/DonorInfoPage.jsx';
 import DonorTipsPage from './components/DonorInfo/DonorTipsPage.jsx';
-import PointStaffPage from './components/Staff/PointStaffPage.jsx';
+import PointStaffPage from './components/MenagePanels/BloodPoint/Actions/Staff/PointStaffPage.jsx';
 import LoginInfoPage from './components/LoginInfo/LoginInfoPage.jsx'
 import DonorLoginPage from './components/LoginForms/Donor/DonorLoginPage.jsx'
 import HospitalLoginPage from './components/LoginForms/Hospital/HospitalLoginPage.jsx';

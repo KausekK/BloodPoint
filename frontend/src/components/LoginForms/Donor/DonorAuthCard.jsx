@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import CTA from "../../../components/CTA/CTA";
 import GeneralLoginForm from "../GeneralLoginForm";
-import "./DonorAuthCard.css";
+// import "./DonorAuthCard.css";
+import '../../SharedCSS/LoginForms.css'
 import authService from "../../../services/AuthenticationService";
 import { showMessage, showError } from "../../shared/services/MessageService";
 import { ROLES } from "../../shared/const/Roles";

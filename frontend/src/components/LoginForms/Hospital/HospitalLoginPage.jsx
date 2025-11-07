@@ -1,7 +1,8 @@
 import Header from "../../../components/Header/Header";
 import Footer from "../../Footer/Footer";
 import GeneralLoginForm from "../GeneralLoginForm";
-import "./HospitalLoginPage.css";
+// import "./HospitalLoginPage.css";
+import '../../SharedCSS/LoginForms.css'
 
 export default function HospitalLoginPage() {
   return (
