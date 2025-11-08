@@ -12,11 +12,6 @@ import { MessageType } from "../../../shared/const/MessageType.model";
 
 import "../../../SharedCSS/MenagePanels.css"
 
-// function toNum(v) {
-//   if (v === null || v === undefined) return 0;
-//   const n = typeof v === "number" ? v : Number(String(v).replace(",", "."));
-//   return Number.isFinite(n) ? n : 0;
-// }
 
 export default function ReportEmergencyPage() {
   const [bloodTypes, setBloodTypes] = useState([]);

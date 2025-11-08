@@ -22,18 +22,6 @@ const fmtPL = new Intl.NumberFormat("pl-PL", {
   maximumFractionDigits: 2,
 });
 
-// function toNum(v) {
-//   if (v === null || v === undefined) return 0;
-//   const n = typeof v === "number" ? v : Number(String(v).replace(",", "."));
-//   return Number.isFinite(n) ? n : 0;
-// }
-// function add(a, b) {
-//   return Math.round((toNum(a) * 100 + toNum(b) * 100)) / 100;
-// }
-
-// function formatLiters(v) {
-//   return fmtPL.format(toNum(v));
-// }
 
 export default function BloodStockManagePage() {
   const { pointId } = useParams();

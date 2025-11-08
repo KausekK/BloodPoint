@@ -65,7 +65,6 @@ export default function ReportHistoryPage() {
           </header>
 
           <section className="bp-card">
-            {/* 🔍 Filtr po statusie */}
             <form
               className="bp-form"
               onSubmit={(e) => e.preventDefault()}
