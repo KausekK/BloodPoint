@@ -1,6 +1,6 @@
 import { useState } from "react";
-import "./GeneralLoginForm.css"; 
 import CTA from "../CTA/CTA";
+import '../SharedCSS/LoginForms.css'
 
 export default function GeneralLoginForm({
   loginType,

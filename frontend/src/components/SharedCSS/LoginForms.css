@@ -1,0 +1,171 @@
+/* === SEKCJA LOGOWANIA === */
+.login {
+    background: #fdfcfc;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .login .bp-container {
+    width: min(500px, 90%);
+    margin: 0 auto;
+  }
+  
+  /* === NAGŁÓWEK === */
+  .login-head {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  
+  .login-title {
+    margin: 0 0 6px;
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-weight: 800;
+    font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+    color: var(--color-primary, #c0392b);
+  }
+  
+  .login-lead {
+    color: var(--color-helper, #666);
+    margin: 0;
+  }
+  
+  /* === UKŁAD KARTY === */
+  .login-grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px 0;
+  }
+  
+  .auth-card {
+    width: 100%;
+    max-width: 480px;
+    padding: 22px 26px;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+    position: relative;
+  }
+  
+  .auth-card-cap {
+    height: 48px;
+    background: var(--color-primary, #c0392b);
+    border-radius: 16px 16px 0 0;
+    margin: -22px -26px 16px -26px;
+  }
+  
+  .auth-card-title {
+    margin: 0 0 10px;
+    text-align: center;
+    color: var(--color-primary, #c0392b);
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-weight: 800;
+    letter-spacing: 0.3px;
+  }
+  
+  /* === FORMULARZE === */
+  .auth-form {
+    display: grid;
+    gap: 14px;
+  }
+  
+  .form-field {
+    display: grid;
+    margin-top: 6px;
+  }
+  
+  .input,
+  .select {
+    width: 100%;
+    border: 1px solid var(--color-border, #ddd);
+    border-radius: 10px;
+    background: #fff;
+    color: #333;
+    font-size: 0.95rem;
+    padding: 10px 12px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  
+  .input:focus,
+  .select:focus {
+    border-color: var(--color-primary, #c0392b);
+    box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.12);
+    outline: none;
+  }
+  
+  .input::placeholder {
+    color: #c06a6c;
+    opacity: 0.8;
+  }
+  
+  /* === PRZYCISKI === */
+  .form-actions {
+    margin-top: 18px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .form-actions .cta {
+    display: block;
+    width: 100%;
+    text-align: center;
+  }
+  
+  /* === LINKI / PRZEŁĄCZNIKI === */
+  .auth-switch {
+    text-align: center;
+    margin-top: 10px;
+  }
+  
+  .auth-link {
+    background: none;
+    border: none;
+    color: var(--color-primary, #c0392b);
+    font-weight: 700;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  
+  .auth-link:hover {
+    color: #a83224;
+  }
+  
+  /* === DODATKOWE ELEMENTY === */
+  .consent {
+    display: grid;
+    grid-template-columns: 18px 1fr;
+    gap: 8px;
+    align-items: start;
+    font-size: 0.95rem;
+    color: var(--color-text, #333);
+  }
+  
+  .auth-note {
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: var(--color-helper, #777);
+    text-align: center;
+  }
+  
+  .auth-hint {
+    text-align: center;
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: #777;
+  }
+  
+  /* === RESPONSYWNOŚĆ === */
+  @media (max-width: 600px) {
+    .login .bp-container {
+      width: 94%;
+    }
+    .auth-card {
+      padding: 18px 20px;
+    }
+    .auth-card-cap {
+      margin: -18px -20px 14px -20px;
+    }
+  }
+  

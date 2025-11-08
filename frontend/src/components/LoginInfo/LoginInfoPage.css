@@ -52,4 +52,5 @@
 .login-card .cta,
 .login-card .bp-btn {
     margin-top: auto;
+    min-width: 300px;
 }

@@ -1,4 +1,3 @@
-// src/pages/LoginInfoPage.jsx
 import Header from "../../components/Header/Header";
 import Footer from "../Footer/Footer";
 import CTA from "../../components/CTA/CTA";

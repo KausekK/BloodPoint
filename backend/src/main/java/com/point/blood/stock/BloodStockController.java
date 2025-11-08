@@ -15,9 +15,9 @@ public class BloodStockController {
 
     private final BloodStockService bloodStockService;
 
-    @GetMapping
-    public ResponseEntity<List<BloodStockDTO>> getBloodStock() {
-        return ResponseEntity.ok(bloodStockService.getBloodStock());
+    @GetMapping()
+    public List<BloodStockDTO> getBloodStock() {
+        return bloodStockService.getBloodStock();
     }
 
     @GetMapping("/point/{id}")

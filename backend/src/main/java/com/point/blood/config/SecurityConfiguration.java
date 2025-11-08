@@ -3,6 +3,7 @@ package com.point.blood.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -40,6 +41,12 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/user/**").permitAll()
                         .requestMatchers("/api/blood_point/**").permitAll()
                         .requestMatchers("/api/hospital/provinces/**").permitAll()
+                        .requestMatchers("/api/statistic/**").permitAll()
+                        .requestMatchers("/api/blood-types/**").permitAll()
+                        .requestMatchers("/api/request/hospitals/*/requests").permitAll()
+                        .requestMatchers("/api/request/**").permitAll()
+                        .requestMatchers("/api/zgloszenia/**").permitAll()
+                        .requestMatchers("/api/request/*/accept").permitAll()
 
                         .anyRequest().authenticated()
                 )
