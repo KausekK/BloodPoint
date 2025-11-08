@@ -2,35 +2,23 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import Header from "../../../../Header/Header";
 import Footer from "../../../../Footer/Footer";
-
 import {
   getBloodStockByDonationPoint,
   postDelivery,
 } from "../../../../../services/BloodStockService";
 import { listBloodTypes } from "../../../../../services/BloodTypeService";
-
 import { showMessage, showError } from "../../../../shared/services/MessageService";
 import { MessageType } from "../../../../shared/const/MessageType.model";
-
 import "../../../../SharedCSS/MenagePanels.css";
+import { toNum, addWithScale, formatAmount } from "../../../../shared/utils/number";
+import BackButton from "../../../../BackButton/BackButton";
+
 
 const fmtPL = new Intl.NumberFormat("pl-PL", {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
 });
 
-function toNum(v) {
-  if (v === null || v === undefined) return 0;
-  const n = typeof v === "number" ? v : Number(String(v).replace(",", "."));
-  return Number.isFinite(n) ? n : 0;
-}
-function add(a, b) {
-  return Math.round((toNum(a) * 100 + toNum(b) * 100)) / 100;
-}
-
-function formatLiters(v) {
-  return fmtPL.format(toNum(v));
-}
 
 export default function BloodStockManagePage() {
   const { pointId } = useParams();
@@ -73,17 +61,17 @@ export default function BloodStockManagePage() {
   }, [effectiveId]);
 
   const totals = useMemo(
-    () =>
-      rows.reduce(
-        (acc, r) => ({
-          available: add(acc.available, r.totalAvailable),
-          reserved: add(acc.reserved, r.totalReserved),
-          free: add(acc.free, r.totalFree),
-        }),
-        { available: 0, reserved: 0, free: 0 }
-      ),
+    () => rows.reduce(
+      (acc, r) => ({
+        available: addWithScale(acc.available, r.totalAvailable, 2),
+        reserved:  addWithScale(acc.reserved,  r.totalReserved,  2),
+        free:      addWithScale(acc.free,      r.totalFree,      2),
+      }),
+      { available: 0, reserved: 0, free: 0 }
+    ),
     [rows]
   );
+  
 
   function onDeliveryChange(e) {
     const { name, value } = e.target;
@@ -136,6 +124,7 @@ export default function BloodStockManagePage() {
     <>
       <Header />
       <main className="bp-section">
+      <BackButton to="/punkt-krwiodawstwa/dashboard" label="Powrót do panelu punktu krwiodawstwa" />
         <div className="bp-container">
           <header className="dashboard-head">
             <h1 className="dashboard-title">Zarządzaj zapasami krwi</h1>
@@ -173,20 +162,20 @@ export default function BloodStockManagePage() {
                         <td className="col-group">
                           {r.bloodGroupLabel ?? r.bloodGroup}
                         </td>
-                        <td>{formatLiters(r.totalAvailable)} l</td>
-                        <td>{formatLiters(r.totalReserved)} l</td>
-                        <td className="col-free">{formatLiters(r.totalFree)} l</td>
+                        <td>{formatAmount(r.totalAvailable, 2)} l</td>
+                        <td>{formatAmount(r.totalReserved, 2)} l</td>
+                        <td className="col-free">{formatAmount(r.totalFree, 2)} l</td>
                       </tr>
                     ))}
                   </tbody>
                   <tfoot>
-                    <tr>
-                      <th>Razem</th>
-                      <th>{formatLiters(totals.available)} l</th>
-                      <th>{formatLiters(totals.reserved)} l</th>
-                      <th className="col-free">{formatLiters(totals.free)} l</th>
-                    </tr>
-                  </tfoot>
+                  <tr>
+                    <th>Razem</th>
+                    <th>{formatAmount(totals.available, 2)} l</th>
+                    <th>{formatAmount(totals.reserved, 2)} l</th>
+                    <th className="col-free">{formatAmount(totals.free, 2)} l</th>
+                  </tr>
+                </tfoot>
                 </table>
               </div>
             )}

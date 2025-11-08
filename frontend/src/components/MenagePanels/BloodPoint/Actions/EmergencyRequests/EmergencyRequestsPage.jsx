@@ -6,12 +6,16 @@ import { getAllNewBloodRequests, acceptBloodRequest } from "../../../../../servi
 import { showMessage, showError } from "../../../../shared/services/MessageService";
 import { MessageType } from "../../../../shared/const/MessageType.model";
 
+import { formatAmount } from "../../../../shared/utils/number";
+import BackButton from "../../../../BackButton/BackButton";
+
+
 export default function EmergencyRequestsPage() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const effectivePointId = 1;
+  const pointId = 1; // TODO do backendu param zalogowanego punktu
 
   const loadRequests = async () => {
     setLoading(true);
@@ -34,7 +38,7 @@ export default function EmergencyRequestsPage() {
 
   async function onAccept(id) {
     try {
-      await acceptBloodRequest(id, effectivePointId);
+      await acceptBloodRequest(id, pointId);
       showMessage("Zgłoszenie zaakceptowane. Stan magazynu został pomniejszony.", MessageType.SUCCESS);
       await loadRequests();
     } catch (e) {
@@ -47,6 +51,7 @@ export default function EmergencyRequestsPage() {
     <>
       <Header />
       <main className="bp-section">
+        <BackButton to="/punkt-krwiodawstwa/dashboard" label="Powrót do panelu punktu krwiodawstwa" />
         <div className="bp-container">
           <header className="dashboard-head">
             <h1 className="dashboard-title">Zgłoszenia zapotrzebowania na krew</h1>
@@ -80,7 +85,7 @@ export default function EmergencyRequestsPage() {
                     <td>{r.id}</td>
                     <td>{r.hospitalNumber} — {r.hospitalCity}</td>
                     <td><strong>{r.bloodTypeLabel}</strong></td>
-                    <td>{r.amount}</td>
+                    <td>{formatAmount(r.amount, 3)} l</td> 
                     <td>
                         <button className="bp-btn bp-btn--ghost" onClick={() => {onAccept(r.id)}}>
                         Akceptuj

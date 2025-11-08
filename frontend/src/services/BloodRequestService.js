@@ -15,3 +15,9 @@ export function getAllNewBloodRequests() {
 export function acceptBloodRequest(requestId, pointId) {
   return api.post(`/request/${requestId}/accept`, null, { params: { pointId } });
 }
+
+export function getHospitalRequests(hospitalId) {
+  return api
+    .get(`/request/requests`, { params: { hospitalId } })
+    .then((r) => r.data);
+}

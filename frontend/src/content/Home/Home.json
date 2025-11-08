@@ -1,14 +1,13 @@
 {
   "hero": {
-    "title": "Umów wizytę",
-    "subtitle": "Wybierz miasto i datę, aby zobaczyć dostępne terminy wizyt.",
+    "title": "Witaj w portalu krwiodawstwa",
+    "subtitle": "Dziękujemy, że jesteś z nami. Twoja pomoc może uratować czyjeś jutro.",
     "note": "Skorzystaj z menu nawigacyjnego, aby uzyskać dostęp do różnych funkcji aplikacji.",
     "cta": {
-      "label": "Przejdź do rezerwacji",
-      "to": "/rezerwacja",
+      "label": "Umów sie oddać krew",
+      "to": "/login-info",
       "ariaLabel": "Przejdź do strony rezerwacji"
-    },
-    "videoSrc": "src/assets/video/rckik_warszawa_animacja1.mp4"
+    }
   },
   "bloodStock": {
     "title": "Stan zapasów krwi"
