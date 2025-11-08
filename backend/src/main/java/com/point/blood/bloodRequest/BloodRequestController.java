@@ -23,4 +23,9 @@ public class BloodRequestController {
     public ResponseEntity<List<BloodRequestListDTO>> getNewRequests() {
         return ResponseEntity.ok(service.getAllNewRequests());
     }
+
+    @GetMapping("/requests")
+    public ResponseEntity<List<BloodRequestListDTO>> listAllByHospital(@RequestParam Long hospitalId) {
+        return ResponseEntity.ok(service.getAllByHospital(hospitalId));
+    }
 }

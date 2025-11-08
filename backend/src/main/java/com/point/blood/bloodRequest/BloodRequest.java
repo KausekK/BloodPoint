@@ -8,8 +8,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -36,10 +38,14 @@ public class BloodRequest {
     @JoinColumn(name = "Blood_Type_id", nullable = false)
     private BloodType bloodType;
 
-    @Column(name = "amount", nullable = false)
+    @Column(name = "amount", nullable = false, precision = 12, scale = 3)
     private BigDecimal amount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "BLOOD_REQUEST_STATUS_ID", nullable = false)
     private BloodRequestStatus status;
+
+    @Column(name = "CREATED_AT", insertable = false, updatable = false, nullable = false)
+    private LocalDateTime createdAt;
+
 }

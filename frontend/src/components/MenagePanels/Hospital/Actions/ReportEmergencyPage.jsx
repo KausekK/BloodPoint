@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import Header from "../../../Header/Header";
 import Footer from "../../../Footer/Footer";
+import { toNum } from "../../../shared/utils/number";
+
 
 import { createBloodRequest } from "../../../../services/BloodRequestService";
 import { listBloodTypes } from "../../../../services/BloodTypeService";
@@ -10,11 +12,11 @@ import { MessageType } from "../../../shared/const/MessageType.model";
 
 import "../../../SharedCSS/MenagePanels.css"
 
-function toNumInt(v) {
-  if (v === null || v === undefined) return 0;
-  const n = typeof v === "number" ? v : Number(String(v).replace(",", "."));
-  return Number.isFinite(n) ? Math.trunc(n) : 0;
-}
+// function toNum(v) {
+//   if (v === null || v === undefined) return 0;
+//   const n = typeof v === "number" ? v : Number(String(v).replace(",", "."));
+//   return Number.isFinite(n) ? n : 0;
+// }
 
 export default function ReportEmergencyPage() {
   const [bloodTypes, setBloodTypes] = useState([]);
@@ -55,10 +57,9 @@ export default function ReportEmergencyPage() {
   }
 
   function validate(f) {
+    const amount = toNum(f.amount);
     if (!f.bloodTypeId) return "Wybierz grupę krwi.";
-    const amountInt = toNumInt(f.amount);
-    if (!Number.isFinite(amountInt) || amountInt <= 0)
-      return "Podaj dodatnią liczbę jednostek.";
+    if (!Number.isFinite(amount) || amount <= 0) return "Podaj dodatnią ilość (np. 1.3).";
     return "";
   }
 
@@ -78,7 +79,7 @@ export default function ReportEmergencyPage() {
 
       await createBloodRequest({
         bloodTypeId: Number(form.bloodTypeId),
-        amount: toNumInt(form.amount),
+        amount: toNum(form.amount),
       });
 
       const ok = "Zapotrzebowanie zostało zgłoszone.";
@@ -144,7 +145,7 @@ export default function ReportEmergencyPage() {
                     name="amount"
                     type="number"
                     min="1"
-                    step="1"
+                    step="0.1" 
                     placeholder="Ilość"
                     value={form.amount}
                     onChange={onChange}

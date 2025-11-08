@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -15,4 +16,6 @@ public class BloodRequestListDTO {
     private String hospitalCity;
     private String bloodTypeLabel;
     private BigDecimal amount;
+    private String status;
+    private LocalDateTime createdAt;
 }

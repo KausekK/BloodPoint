@@ -49,6 +49,7 @@ public class BloodRequestService {
     public List<BloodRequestListDTO> getAllNewRequests() {
         return bloodRequestRepository.findAllNewRequests();
     }
-
-
+    public List<BloodRequestListDTO> getAllByHospital(Long hospitalId) {
+        return bloodRequestRepository.findAllHospitalRequests(hospitalId);
+    }
 }

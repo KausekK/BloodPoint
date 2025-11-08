@@ -18,6 +18,6 @@ export function acceptBloodRequest(requestId, pointId) {
 
 export function getHospitalRequests(hospitalId) {
   return api
-    .get("/request/${hospitalId}/requests", { params: { hospitalId } })
+    .get(`/request/requests`, { params: { hospitalId } })
     .then((r) => r.data);
 }

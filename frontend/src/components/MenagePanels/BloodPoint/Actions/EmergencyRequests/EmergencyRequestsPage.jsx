@@ -6,6 +6,9 @@ import { getAllNewBloodRequests, acceptBloodRequest } from "../../../../../servi
 import { showMessage, showError } from "../../../../shared/services/MessageService";
 import { MessageType } from "../../../../shared/const/MessageType.model";
 
+import { formatAmount } from "../../../../shared/utils/number";
+
+
 export default function EmergencyRequestsPage() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -80,7 +83,7 @@ export default function EmergencyRequestsPage() {
                     <td>{r.id}</td>
                     <td>{r.hospitalNumber} — {r.hospitalCity}</td>
                     <td><strong>{r.bloodTypeLabel}</strong></td>
-                    <td>{r.amount}</td>
+                    <td>{formatAmount(r.amount, 3)} l</td> 
                     <td>
                         <button className="bp-btn bp-btn--ghost" onClick={() => {onAccept(r.id)}}>
                         Akceptuj

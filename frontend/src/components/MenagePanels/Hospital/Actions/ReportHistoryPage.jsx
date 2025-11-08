@@ -1,18 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Header from "../../../Header/Header";
 import Footer from "../../../Footer/Footer";
-import authService from "../../../../services/AuthenticationService";
 import { getHospitalRequests } from "../../../../services/BloodRequestService";
 import { showError } from "../../../shared/services/MessageService";
 import "../../../SharedCSS/MenagePanels.css";
+
+import { formatAmount } from "../../../shared/utils/number";
 
 export default function ReportHistoryPage() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
-  // ID szpitala pobierany z tokena / sesji
-  const hospitalId = authService.getHospitalId();
+  // TODO podlaczyc zalogowany szpital
+  const hospitalId = 1;
 
   const loadRequests = async () => {
     setLoading(true);
@@ -23,7 +25,10 @@ export default function ReportHistoryPage() {
       else setError("Niepoprawna odpowiedź z serwera.");
     } catch (e) {
       console.error(e);
-      const msg = e?.response?.data?.message || e?.message || "Błąd podczas pobierania zgłoszeń.";
+      const msg =
+        e?.response?.data?.message ||
+        e?.message ||
+        "Błąd podczas pobierania zgłoszeń.";
       showError(msg);
       setError(msg);
     } finally {
@@ -34,6 +39,18 @@ export default function ReportHistoryPage() {
   useEffect(() => {
     if (hospitalId) loadRequests();
   }, [hospitalId]);
+
+  const filtered = useMemo(() => {
+    if (!statusFilter) return requests;
+    return requests.filter(
+      (r) => r.status?.toLowerCase() === statusFilter.toLowerCase()
+    );
+  }, [requests, statusFilter]);
+
+  const availableStatuses = useMemo(() => {
+    const all = Array.from(new Set(requests.map((r) => r.status).filter(Boolean)));
+    return all.sort();
+  }, [requests]);
 
   return (
     <>
@@ -48,32 +65,72 @@ export default function ReportHistoryPage() {
           </header>
 
           <section className="bp-card">
+            {/* 🔍 Filtr po statusie */}
+            <form
+              className="bp-form"
+              onSubmit={(e) => e.preventDefault()}
+              style={{ marginBottom: "10px" }}
+            >
+              <div className="form-field">
+                <label htmlFor="statusFilter">Status</label>
+                <select
+                  id="statusFilter"
+                  className="select"
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                >
+                  <option value="">— wszystkie —</option>
+                  {availableStatuses.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-actions">
+                <button
+                  type="button"
+                  className="bp-btn bp-btn--ghost"
+                  onClick={() => setStatusFilter("")}
+                >
+                  Wyczyść filtr
+                </button>
+                <button
+                  type="button"
+                  className="bp-btn"
+                  onClick={loadRequests}
+                  disabled={loading}
+                >
+                  Odśwież listę
+                </button>
+              </div>
+            </form>
+
             {loading && <div className="bp-state">Ładowanie danych...</div>}
             {error && <div className="bp-state error">{error}</div>}
-            {!loading && !error && requests.length === 0 && (
+            {!loading && !error && filtered.length === 0 && (
               <div className="bp-state">Brak zgłoszeń do wyświetlenia.</div>
             )}
 
-            {!loading && !error && requests.length > 0 && (
+            {!loading && !error && filtered.length > 0 && (
               <div className="table-wrap">
                 <table className="bp-table">
                   <thead>
                     <tr>
-                      <th>ID zgłoszenia</th>
                       <th>Grupa krwi</th>
-                      <th>Ilość (ml)</th>
+                      <th>Ilość (l)</th>
                       <th>Status</th>
                       <th>Data utworzenia</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {requests.map((r) => (
+                    {filtered.map((r) => (
                       <tr key={r.id}>
-                        <td data-label="ID">{r.id}</td>
                         <td data-label="Grupa krwi">
                           <strong>{r.bloodTypeLabel}</strong>
                         </td>
-                        <td data-label="Ilość">{r.amount}</td>
+                        <td data-label="Ilość">{formatAmount(r.amount, 3)} l</td> 
                         <td data-label="Status">
                           <span
                             className={
@@ -90,7 +147,7 @@ export default function ReportHistoryPage() {
                         </td>
                         <td data-label="Data">
                           {r.createdAt
-                            ? new Date(r.createdAt).toLocaleDateString()
+                            ? new Date(r.createdAt).toLocaleDateString("pl-PL")
                             : "—"}
                         </td>
                       </tr>
@@ -100,12 +157,6 @@ export default function ReportHistoryPage() {
               </div>
             )}
           </section>
-
-          <div className="form-actions" style={{ marginTop: "20px", justifyContent: "center" }}>
-            <button className="bp-btn" onClick={loadRequests}>
-              Odśwież listę
-            </button>
-          </div>
         </div>
       </main>
       <Footer />
