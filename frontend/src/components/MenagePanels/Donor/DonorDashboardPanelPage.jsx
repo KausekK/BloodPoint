@@ -6,6 +6,7 @@ import "../../SharedCSS/MenagePanels.css";
 export default function DonorDashboardPanelPage() {
   const actions = [
     { label: "Zarezerwuj wizytę", to: "/rezerwacja" },
+    { label: "Przejdź do profilu", to: "/profil" },
   ];
 
   return (
