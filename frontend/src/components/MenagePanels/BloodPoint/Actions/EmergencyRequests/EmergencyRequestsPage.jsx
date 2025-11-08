@@ -11,7 +11,7 @@ export default function EmergencyRequestsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const effectivePointId = 1;
+  const pointId = 1; // TODO do backendu param zalogowanego punktu
 
   const loadRequests = async () => {
     setLoading(true);
@@ -34,7 +34,7 @@ export default function EmergencyRequestsPage() {
 
   async function onAccept(id) {
     try {
-      await acceptBloodRequest(id, effectivePointId);
+      await acceptBloodRequest(id, pointId);
       showMessage("Zgłoszenie zaakceptowane. Stan magazynu został pomniejszony.", MessageType.SUCCESS);
       await loadRequests();
     } catch (e) {

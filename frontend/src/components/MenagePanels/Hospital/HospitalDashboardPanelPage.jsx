@@ -1,7 +1,7 @@
-import Header from "../../../Header/Header";
-import Footer from "../../../Footer/Footer";
-import DashboardPanel from "../../GeneralDashboardPanel";
-import "../../../SharedCSS/MenagePanels.css"
+import Header from "../../Header/Header";
+import Footer from "../../Footer/Footer";
+import DashboardPanel from "../GeneralDashboardPanel";
+import "../../SharedCSS/MenagePanels.css"
 
 export default function HospitalDashboardPanelPage() {
   const hospitalId = 1; // TODO: podłączyć do authService

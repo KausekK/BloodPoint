@@ -14,10 +14,11 @@ import HospitalLoginPage from './components/LoginForms/Hospital/HospitalLoginPag
 import BloodPointLoginPage from './components/LoginForms/BloodPoint/BloodPointLoginPage.jsx';
 import BloodPointDashboardPanelPage from './components/MenagePanels/BloodPoint/BloodPointDashboardPanelPage.jsx';
 import BloodStockManagePage from './components/MenagePanels/BloodPoint/Actions/Stock/BloodStockManagePage.jsx';
-import HospitalDashboardPanelPage from './components/MenagePanels/Hospital/Actions/HospitalDashboardPanelPage.jsx'
+import HospitalDashboardPanelPage from './components/MenagePanels/Hospital/HospitalDashboardPanelPage.jsx'
 import Statistics from './components/MenagePanels/BloodPoint/Actions/Statistics/Statistics.jsx'
 import ReportEmergencyPage from './components/MenagePanels/Hospital/Actions/ReportEmergencyPage.jsx'
 import EmergencyRequestsPage from './components/MenagePanels/BloodPoint/Actions/EmergencyRequests/EmergencyRequestsPage.jsx';
+import DonorDashboardPanelPage from './components/MenagePanels/Donor/DonorDashboardPanelPage.jsx';
 
 
 function App() {
@@ -42,6 +43,7 @@ function App() {
                 <Route path="/statystyki" element={<Statistics/>}/>
                 <Route path="/szpital/zgloszenie-zapotrzebowania" element={<ReportEmergencyPage/>}/>
                 <Route path="/zgloszenia" element={<EmergencyRequestsPage/>}/>
+                <Route path="/dawca/dashboard" element={<DonorDashboardPanelPage/>}/>
             </Routes>
         </Router>
     );
