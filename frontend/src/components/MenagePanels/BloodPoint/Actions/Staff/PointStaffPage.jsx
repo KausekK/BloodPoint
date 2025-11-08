@@ -8,6 +8,7 @@ import {
 } from "../../../../../services/StaffService";
 import content from "../../../../../content/PointStaff/PointStaff.json";
 import "../../../../SharedCSS/MenagePanels.css";
+import BackButton from "../../../../BackButton/BackButton";
 
 const POINT_ID = 1;
 
@@ -125,6 +126,7 @@ export default function PointStaffPage() {
     <>
       <Header />
       <main className="bp-section">
+        <BackButton to="/punkt-krwiodawstwa/dashboard" label="Powrót do panelu punktu krwiodawstwa" />
         <div className="bp-container">
           <header className="dashboard-head">
             <h1 className="dashboard-title">{content.hero.heading}</h1>

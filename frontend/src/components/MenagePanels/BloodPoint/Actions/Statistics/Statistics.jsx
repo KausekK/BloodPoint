@@ -13,6 +13,7 @@ import {
 } from "recharts";
 import { getDonationStatistics } from "../../../../../services/StatisticsService";
 import "../../../../SharedCSS/MenagePanels.css";
+import BackButton from "../../../../BackButton/BackButton";
 
 export default function Statistics() {
   const [from, setFrom] = useState("2025-01-01");
@@ -43,6 +44,7 @@ export default function Statistics() {
     <>
       <Header />
       <main className="bp-section">
+        <BackButton to="/punkt-krwiodawstwa/dashboard" label="Powrót do panelu punktu krwiodawstwa" />
         <div className="bp-container">
           <header className="dashboard-head">
             <h1 className="dashboard-title">Statystyki donacji</h1>

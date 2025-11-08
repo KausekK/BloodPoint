@@ -1,5 +1,6 @@
 import CTA from "../CTA/CTA";
 import "./GeneralDashboardPanel.css";
+import BackButton from "../BackButton/BackButton"
 
 export default function GeneralDashboardPanel({
     title,
@@ -9,6 +10,7 @@ export default function GeneralDashboardPanel({
     className = "",
   }) {
     return (
+      <><BackButton to="/" label="Powrót do strony głównej" />
       <section
         className={`panel-dashboard ${center ? "is-centered" : ""} ${className}`}
         aria-label="Panel"
@@ -50,5 +52,6 @@ export default function GeneralDashboardPanel({
           })}
         </div>
       </section>
+      </>
     );
   }

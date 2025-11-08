@@ -3,13 +3,17 @@ import Footer from "../Footer/Footer";
 import CTA from "../../components/CTA/CTA";
 import content from "../../content/LoginInfo/LoginInfoPage.json";
 import "./LoginInfoPage.css";
+import BackButton from "../BackButton/BackButton";
 
 export default function LoginInfoPage() {
   return (
     <>
       <Header />
+      
       <main className="bp-section login">
+      <BackButton to="/" label="Powrót do strony głównej" />
         <div className="bp-container">
+          
           <header className="login-head">
             <h1 className="login-title">{content.title}</h1>
           </header>

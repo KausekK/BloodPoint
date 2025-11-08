@@ -2,15 +2,12 @@ import { useEffect, useState } from "react";
 import Header from "../../../Header/Header";
 import Footer from "../../../Footer/Footer";
 import { toNum } from "../../../shared/utils/number";
-
-
 import { createBloodRequest } from "../../../../services/BloodRequestService";
 import { listBloodTypes } from "../../../../services/BloodTypeService";
-
 import { showMessage, showError } from "../../../shared/services/MessageService";
 import { MessageType } from "../../../shared/const/MessageType.model";
-
 import "../../../SharedCSS/MenagePanels.css"
+import BackButton from "../../../BackButton/BackButton"
 
 
 export default function ReportEmergencyPage() {
@@ -99,6 +96,7 @@ export default function ReportEmergencyPage() {
     <>
       <Header />
       <main className="bp-section">
+      <BackButton to="/szpital/dashboard" label="Powrót do panelu szpitala" />
         <div className="bp-container">
           <header className="dashboard-head">
             <h1 className="dashboard-title">Zgłoszenie zapotrzebowania</h1>

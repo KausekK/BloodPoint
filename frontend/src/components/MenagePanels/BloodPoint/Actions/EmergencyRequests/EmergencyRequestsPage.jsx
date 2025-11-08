@@ -7,6 +7,7 @@ import { showMessage, showError } from "../../../../shared/services/MessageServi
 import { MessageType } from "../../../../shared/const/MessageType.model";
 
 import { formatAmount } from "../../../../shared/utils/number";
+import BackButton from "../../../../BackButton/BackButton";
 
 
 export default function EmergencyRequestsPage() {
@@ -50,6 +51,7 @@ export default function EmergencyRequestsPage() {
     <>
       <Header />
       <main className="bp-section">
+        <BackButton to="/punkt-krwiodawstwa/dashboard" label="Powrót do panelu punktu krwiodawstwa" />
         <div className="bp-container">
           <header className="dashboard-head">
             <h1 className="dashboard-title">Zgłoszenia zapotrzebowania na krew</h1>

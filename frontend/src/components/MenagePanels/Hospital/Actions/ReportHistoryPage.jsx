@@ -4,6 +4,7 @@ import Footer from "../../../Footer/Footer";
 import { getHospitalRequests } from "../../../../services/BloodRequestService";
 import { showError } from "../../../shared/services/MessageService";
 import "../../../SharedCSS/MenagePanels.css";
+import BackButton from "../../../BackButton/BackButton"
 
 import { formatAmount } from "../../../shared/utils/number";
 
@@ -56,6 +57,7 @@ export default function ReportHistoryPage() {
     <>
       <Header />
       <main className="bp-section">
+      <BackButton to="/szpital/dashboard" label="Powrót do panelu szpitala" />
         <div className="bp-container">
           <header className="dashboard-head">
             <h1 className="dashboard-title">Historia zgłoszeń zapotrzebowania</h1>

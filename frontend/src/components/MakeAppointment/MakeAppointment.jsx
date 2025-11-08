@@ -11,6 +11,7 @@ import { MessageType } from "../shared/const/MessageType.model";
 import { getCities } from "../../services/BloodDonationPointService";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import authService from "../../services/AuthenticationService";
+import BackButton from "../BackButton/BackButton";
 
 export default function MakeAppointment() {
   const [city, setCity] = useState("");
@@ -106,6 +107,7 @@ export default function MakeAppointment() {
     <>
       <Header />
       <main className="page make-appointment">
+        <BackButton to="/dawca/dashboard" label="Powrót do panelu dawcy" />
         <div className="page-content">
           <h1 className="page-heading">
             Umów się na oddanie <br className="desktop-break" /> krwi

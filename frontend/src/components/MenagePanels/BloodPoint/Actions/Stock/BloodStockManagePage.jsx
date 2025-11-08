@@ -2,19 +2,16 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import Header from "../../../../Header/Header";
 import Footer from "../../../../Footer/Footer";
-
 import {
   getBloodStockByDonationPoint,
   postDelivery,
 } from "../../../../../services/BloodStockService";
 import { listBloodTypes } from "../../../../../services/BloodTypeService";
-
 import { showMessage, showError } from "../../../../shared/services/MessageService";
 import { MessageType } from "../../../../shared/const/MessageType.model";
-
 import "../../../../SharedCSS/MenagePanels.css";
-
 import { toNum, addWithScale, formatAmount } from "../../../../shared/utils/number";
+import BackButton from "../../../../BackButton/BackButton";
 
 
 const fmtPL = new Intl.NumberFormat("pl-PL", {
@@ -127,6 +124,7 @@ export default function BloodStockManagePage() {
     <>
       <Header />
       <main className="bp-section">
+      <BackButton to="/punkt-krwiodawstwa/dashboard" label="Powrót do panelu punktu krwiodawstwa" />
         <div className="bp-container">
           <header className="dashboard-head">
             <h1 className="dashboard-title">Zarządzaj zapasami krwi</h1>
