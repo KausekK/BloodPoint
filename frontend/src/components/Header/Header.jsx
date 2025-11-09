@@ -31,20 +31,35 @@ export default function Header() {
   const navigate = useNavigate();
 
   const brand = headerContent.brand;
+  const actionsCfg = headerContent.actions || { guest: { to: "/login", label: "Zaloguj" } };
+
+  // map token role names to keys used in content/Header/Header.json
+  const roleMap = {
+    DAWCA: "donor",
+    PUNKT_KRWIODAWSTWA: "bloodPoint",
+    SZPITAL: "hospital",
+    ADMIN: "admin",
+  };
+
+  // determine current role key for header (falls back to guest)
+  const currentRole = (() => {
+    if (!isAuth || !roles || roles.length === 0) return "guest";
+    for (const r of roles) {
+      if (roleMap[r]) return roleMap[r];
+    }
+    return "guest";
+  })();
+
+  const navLinks = useMemo(() => {
   const common = headerContent.common || [];
-  const rolesCfg = headerContent.roles || {};
-  const actionsCfg = headerContent.actions;
-
-  const isDonor =
-    isAuth &&
-    roles.some((r) => r === "DAWCA");
-
-  const currentRole = isDonor ? "donor" : "guest";
-  const roleLinks = rolesCfg[currentRole] || [];
-  const navLinks = useMemo(() => [...common, ...roleLinks], [common, roleLinks]);
+  const roleLinks = (headerContent.roles || {})[currentRole] || [];
+    return [...common, ...roleLinks];
+  }, [currentRole]);
 
   useEffect(() => {
-    const onResize = () => { if (window.innerWidth > 768) setMenuOpen(false); };
+    const onResize = () => {
+      if (window.innerWidth > 768) setMenuOpen(false);
+    };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
@@ -65,7 +80,9 @@ export default function Header() {
     return () => window.removeEventListener("storage", onStorage);
   }, []);
 
-  useEffect(() => { setMenuOpen(false); }, [location.pathname]);
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
 
   const closeMenu = () => setMenuOpen(false);
 
@@ -89,7 +106,7 @@ export default function Header() {
           aria-label={menuOpen ? "Zamknij menu" : "Otwórz menu"}
           aria-expanded={menuOpen}
           aria-controls="main-menu"
-          onClick={() => setMenuOpen(v => !v)}
+          onClick={() => setMenuOpen((v) => !v)}
         >
           <svg className="menu-toggle-icon" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M3 6h18M3 12h18M3 18h18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -97,15 +114,15 @@ export default function Header() {
         </button>
 
         <nav className="main-nav" aria-label="Główna nawigacja">
-          {navLinks.map(link => (
-            <NavLink key={link.to} to={link.to} end={link.to === "/"} className="nav-link">
+          {navLinks.map((link) => (
+            <NavLink key={link.to} to={link.to} end={link.to === "/"} className="nav-link" onClick={closeMenu}>
               {link.label}
             </NavLink>
           ))}
         </nav>
 
         <div className="header-actions">
-          {isDonor ? (
+          {isAuth ? (
             <CTA label="Wyloguj" onClick={handleLogout} />
           ) : (
             <CTA to={actionsCfg.guest.to} label={actionsCfg.guest.label} />
@@ -127,7 +144,7 @@ export default function Header() {
           </div>
 
           <nav id="main-menu" className="menu-list" aria-label="Menu mobilne">
-            {navLinks.map(link => (
+            {navLinks.map((link) => (
               <NavLink key={link.to} to={link.to} end={link.to === "/"} className="menu-link" onClick={closeMenu}>
                 {link.label}
               </NavLink>
@@ -135,7 +152,7 @@ export default function Header() {
           </nav>
 
           <div className="menu-footer">
-            {isDonor ? (
+            {isAuth ? (
               <CTA label="Wyloguj" onClick={() => { closeMenu(); handleLogout(); }} />
             ) : (
               <CTA to={actionsCfg.guest.to} label={actionsCfg.guest.label} onClick={closeMenu} />

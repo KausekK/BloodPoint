@@ -3,8 +3,8 @@ import Footer from "../../Footer/Footer";
 import DashboardPanel from "../GeneralDashboardPanel";
 import "../../SharedCSS/MenagePanels.css"
 
+
 export default function HospitalDashboardPanelPage() {
-  const hospitalId = 1; // TODO: podłączyć do backendu local storage
   const actions = [
     { label: "Zgłoś zapotrzebowanie", to: `/szpital/zgloszenie-zapotrzebowania` },
     { label: "Przeglądaj historię zgłoszeń", to: "/szpital/historia-zgloszen" },

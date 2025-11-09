@@ -7,6 +7,7 @@ import "../../../SharedCSS/MenagePanels.css";
 import BackButton from "../../../BackButton/BackButton"
 
 import { formatAmount } from "../../../shared/utils/number";
+import authService from "../../../../services/AuthenticationService";
 
 export default function ReportHistoryPage() {
   const [requests, setRequests] = useState([]);
@@ -14,8 +15,7 @@ export default function ReportHistoryPage() {
   const [error, setError] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
-  // TODO podlaczyc zalogowany szpital
-  const hospitalId = 1;
+  const hospitalId = authService.getHospitalId();
 
   const loadRequests = async () => {
     setLoading(true);

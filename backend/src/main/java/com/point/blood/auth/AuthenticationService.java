@@ -3,6 +3,8 @@ package com.point.blood.auth;
 import com.point.blood.config.JwtService;
 import com.point.blood.donationPoint.menageStaff.Staff;
 import com.point.blood.donationPoint.menageStaff.StaffRepository;
+import com.point.blood.hospital.Hospital;
+import com.point.blood.hospital.HospitalRepository;
 import com.point.blood.role.Role;
 import com.point.blood.role.RoleEnum;
 import com.point.blood.role.RoleRepository;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -31,6 +34,7 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final StaffRepository staffRepository;
+    private final HospitalRepository hospitalRepository;
 
     public AuthenticationResponse register(RegisterRequest request) {
         if (request.getEmail() == null || request.getEmail().isBlank()) {
@@ -97,11 +101,21 @@ public class AuthenticationService {
             claims.put("pid", pointId);
         }
 
+        boolean isHospital = roleNames.contains(RoleEnum.SZPITAL.name());
+        if (isHospital) {
+            Long hospitalId = userRepository.findHospitalIdById(user.getId());
+            if (hospitalId == null) {
+                throw new IllegalStateException("Hospital not found");
+            }
+            claims.put("hid", hospitalId);
+        }
+
         String jwtToken = jwtService.generateToken(claims, user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .userId(user.getId())
                 .pointId((Long) claims.get("pid"))
+                .hospitalId((Long) claims.get("hid"))
                 .roles(roleNames)
                 .build();
     }

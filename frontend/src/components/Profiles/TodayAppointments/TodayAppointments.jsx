@@ -5,13 +5,14 @@ import { getAllTodayAppointmentsForBloodPoint } from "../../../services/MakeAppo
 import EditDonationModal from "./EditDonationModal";
 import "./TodayAppointments.css";
 import { APPOINTMENT_STATUS } from "../../shared/const/AppointmentStatus";
+import authService from "../../../services/AuthenticationService";
 
 export default function TodayAppointments() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const donationPointId = 1; // TODO: pobierz ID punktu z kontekstu/logowania
+  const donationPointId = authService.getPointId();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [currentAppt, setCurrentAppt] = useState(null);

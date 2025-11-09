@@ -23,7 +23,7 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
                 bt.bloodGroup,
                 bt.rhFactor,
                 d.lastDonationDate,
-            COALESCE(SUM(COALESCE(do.amountOfBlood, 0) * 1L), 0L)
+            COALESCE(SUM(COALESCE(do.amountOfBlood, 0) * 1), 0L)
                 )
               FROM Users u
               LEFT JOIN u.donor d
@@ -49,6 +49,8 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
 
     Optional<Users> findByEmail(String email);
 
+    Optional<Long> findByHospitalId(Long hospitalId);
 
-
+    @Query("SELECT h.id FROM Users u LEFT JOIN u.hospital h WHERE u.id = :id")
+    Long findHospitalIdById(@Param("id") Long id);
 }

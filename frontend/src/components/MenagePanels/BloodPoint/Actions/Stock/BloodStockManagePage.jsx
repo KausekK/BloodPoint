@@ -13,13 +13,6 @@ import "../../../../SharedCSS/MenagePanels.css";
 import { toNum, addWithScale, formatAmount } from "../../../../shared/utils/number";
 import BackButton from "../../../../BackButton/BackButton";
 
-
-const fmtPL = new Intl.NumberFormat("pl-PL", {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-});
-
-
 export default function BloodStockManagePage() {
   const { pointId } = useParams();
   const effectiveId =

@@ -21,4 +21,5 @@ public class EditResult <T> {
     public boolean hasErrors(){
         return messages.stream().anyMatch(messageDTO -> MessageTypeEnum.ERROR.equals(messageDTO.getType()));
     }
+
 }
