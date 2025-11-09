@@ -1,5 +1,5 @@
 .bp-section {
-  background: #fdfcfc;
+  background: var(--color-bg-light);
   padding: 50px 0;
   min-height: 100vh;
 }

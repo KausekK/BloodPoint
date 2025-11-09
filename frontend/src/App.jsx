@@ -18,7 +18,6 @@ import HospitalDashboardPanelPage from './components/MenagePanels/Hospital/Hospi
 import Statistics from './components/MenagePanels/BloodPoint/Actions/Statistics/Statistics.jsx'
 import ReportEmergencyPage from './components/MenagePanels/Hospital/Actions/ReportEmergencyPage.jsx'
 import EmergencyRequestsPage from './components/MenagePanels/BloodPoint/Actions/EmergencyRequests/EmergencyRequestsPage.jsx';
-import DonorDashboardPanelPage from './components/MenagePanels/Donor/DonorDashboardPanelPage.jsx';
 import ReportHistoryPage from './components/MenagePanels/Hospital/Actions/ReportHistoryPage.jsx';
 
 
@@ -44,7 +43,6 @@ function App() {
                 <Route path="/statystyki" element={<Statistics/>}/>
                 <Route path="/szpital/zgloszenie-zapotrzebowania" element={<ReportEmergencyPage/>}/>
                 <Route path="/zgloszenia" element={<EmergencyRequestsPage/>}/>
-                <Route path="/dawca/dashboard" element={<DonorDashboardPanelPage/>}/>
                 <Route path="/szpital/historia-zgloszen" element={<ReportHistoryPage/>}/>
             </Routes>
         </Router>
