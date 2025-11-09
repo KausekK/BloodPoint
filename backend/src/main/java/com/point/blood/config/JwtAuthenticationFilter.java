@@ -25,31 +25,43 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
-                                    @NonNull  HttpServletResponse response,
-                                    @NonNull  FilterChain filterChain
-    ) throws ServletException, IOException {
-        final String authorizationHeader = request.getHeader("Authorization");
-        final String JWTtoken;
-        final String userEmail;
-        if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
+
+        final String authHeader = request.getHeader("Authorization");
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
-        JWTtoken = authorizationHeader.substring(7);
-        userEmail = jwtService.extractUsername(JWTtoken);
-        if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
-            if(jwtService.isTokenValid(JWTtoken, userDetails)) {
-                Long pid = jwtService.extractPointId(JWTtoken);
-                JwtUserPrincipal principal = new JwtUserPrincipal(userDetails, pid);
 
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        principal, null, userDetails.getAuthorities());
+        final String jwt = authHeader.substring(7);
+        String username;
+        Long pid; //bloodPointId
+        Long hid; //hospitalId
+        try {
+            username = jwtService.extractUsername(jwt);
+            pid = jwtService.extractPointId(jwt);
+            hid = jwtService.extractPointId(jwt);
+        } catch (io.jsonwebtoken.ExpiredJwtException |
+                 io.jsonwebtoken.MalformedJwtException |
+                 io.jsonwebtoken.SignatureException |
+                 IllegalArgumentException e) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            if (jwtService.isTokenValid(jwt, userDetails)) {
+                JwtUserPrincipal principal = new JwtUserPrincipal(userDetails, pid, hid);
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(principal, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
+
         filterChain.doFilter(request, response);
     }
 }

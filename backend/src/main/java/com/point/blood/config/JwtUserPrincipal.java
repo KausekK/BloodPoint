@@ -10,10 +10,12 @@ import java.util.Collection;
 public class JwtUserPrincipal implements UserDetails {
     private final UserDetails delegate;
     private final Long pointId;
+    private final Long hospitalId;
 
-    public JwtUserPrincipal(UserDetails delegate, Long pointId) {
+    public JwtUserPrincipal(UserDetails delegate, Long pointId, Long hospitalId) {
         this.delegate = delegate;
         this.pointId = pointId;
+        this.hospitalId = hospitalId;
     }
 
     @Override public Collection<? extends GrantedAuthority> getAuthorities() { return delegate.getAuthorities(); }

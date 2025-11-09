@@ -40,6 +40,18 @@
         "label": "Zarządzaj wizytami",
         "to": "/admin/wizyty"
       }
+    ],
+    "bloodPoint": [
+      {
+        "label": "Panel krwiodawstwa",
+        "to": "/punkt-krwiodawstwa/dashboard"
+      }
+    ],
+    "hospital": [
+      {
+        "label": "Panel szpitala",
+        "to": "/szpital/dashboard"
+      }
     ]
   },
   "actions": {

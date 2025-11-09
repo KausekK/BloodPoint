@@ -13,5 +13,6 @@ public class AuthenticationResponse {
     private String token;
     private Long userId;
     private Long pointId;
+    private Long hospitalId;
     private java.util.Set<String> roles;
 }

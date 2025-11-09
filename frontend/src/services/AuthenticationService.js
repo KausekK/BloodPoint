@@ -50,7 +50,7 @@ async function login(authenticationRequest) {
     api.defaults.headers.common.Authorization = `Bearer ${data.token}`;
 
     const decoded = jwtDecode(data.token);
-    const { uid, pid, roles, exp } = decoded || {};
+    const { uid, pid, hid, roles, exp } = decoded || {};
 
     if (exp && exp * 1000 <= Date.now()) {
       logout();
@@ -60,6 +60,7 @@ async function login(authenticationRequest) {
     setUser({
       userId: uid ?? null,
       pointId: pid ?? null,
+      hospitalId: hid ?? null,
       roles: Array.isArray(roles) ? roles : [],
       token: data.token,
       exp: exp ?? null,
@@ -99,6 +100,9 @@ function getUserId() {
 function getPointId() {
   return getUser()?.pointId ?? null;
 }
+function getHospitalId() {
+  return getUser()?.hospitalId ?? null;
+}
 function hasRole(roleName) {
   const roles = getUser()?.roles || [];
   return roles.includes(roleName);
@@ -116,6 +120,7 @@ const authService = {
 
   getUserId,
   getPointId,
+  getHospitalId,
   hasRole,
 };
 

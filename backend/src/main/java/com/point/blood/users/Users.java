@@ -1,7 +1,9 @@
 package com.point.blood.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.point.blood.donor.Donor;
+import com.point.blood.hospital.Hospital;
 import com.point.blood.role.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -80,6 +82,11 @@ public class Users implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
     )
     private Set<Role> roles = new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "hospital_id")
+    @JsonIgnoreProperties({"users"})
+    private Hospital hospital;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
