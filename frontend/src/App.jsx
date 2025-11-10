@@ -54,41 +54,13 @@ function App() {
                 <Route path="/login/dawca" element={<DonorLoginPage />} />
                 <Route path="/login/szpital" element={<HospitalLoginPage />} />
                 <Route path="/login/punkt-krwiodawstwa" element={<BloodPointLoginPage />} />
-                <Route path="/punkt-krwiodawstwa/dashboard" element={
-                    <ProtectedRoute allowedRoles={["PUNKT_KRWIODAWSTWA"]}>
-                        <BloodPointDashboardPanelPage />
-                    </ProtectedRoute>
-                } />
-                <Route path="/punkt-krwiodawstwa/:pointId/zapasy" element={
-                    <ProtectedRoute allowedRoles={["PUNKT_KRWIODAWSTWA"]}>
-                        <BloodStockManagePage />
-                    </ProtectedRoute>
-                } />
-                <Route path="/szpital/dashboard" element={
-                    <ProtectedRoute allowedRoles={["SZPITAL"]}>
-                        <HospitalDashboardPanelPage />
-                    </ProtectedRoute>
-                } />
-                <Route path="/statystyki" element={
-                    <ProtectedRoute allowedRoles={["PUNKT_KRWIODAWSTWA"]}>
-                        <Statistics />
-                    </ProtectedRoute>
-                } />
-                <Route path="/szpital/zgloszenie-zapotrzebowania" element={
-                    <ProtectedRoute allowedRoles={["SZPITAL"]}>
-                        <ReportEmergencyPage />
-                    </ProtectedRoute>
-                } />
-                <Route path="/zgloszenia" element={
-                    <ProtectedRoute allowedRoles={["SZPITAL", "PUNKT_KRWIODAWSTWA"]}>
-                        <EmergencyRequestsPage />
-                    </ProtectedRoute>
-                } />
-                <Route path="/szpital/historia-zgloszen" element={
-                    <ProtectedRoute allowedRoles={["SZPITAL"]}>
-                        <ReportHistoryPage />
-                    </ProtectedRoute>
-                } />
+                <Route path="/punkt-krwiodawstwa/dashboard" element={<BloodPointDashboardPanelPage />} />
+                <Route path="/punkt-krwiodawstwa/:pointId/zapasy" element={<BloodStockManagePage />} />
+                <Route path="/szpital/dashboard" element={<HospitalDashboardPanelPage />} />
+                <Route path="/statystyki" element={<Statistics/>}/>
+                <Route path="/szpital/zgloszenie-zapotrzebowania" element={<ReportEmergencyPage/>}/>
+                <Route path="/zgloszenia" element={<EmergencyRequestsPage/>}/>
+                <Route path="/szpital/historia-zgloszen" element={<ReportHistoryPage/>}/>
             </Routes>
         </Router>
     );
