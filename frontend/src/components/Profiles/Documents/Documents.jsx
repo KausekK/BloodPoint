@@ -10,31 +10,86 @@ import {
   TextField,
   Typography
 } from '@mui/material';
-import { getQuestions, submitResponses } from '../../../services/QuestionnaireService';
+import { getQuestions, submitResponses, getQuestionnaireIdByTitle } from '../../../services/QuestionnaireService';
 import './Documents.css';
-// import { showMessage, showError } from "../shared/services/MessageService";
+import { showMessage, showError } from "../../shared/services/MessageService";
+import { getScheduledAppointmentForUser } from '../../../services/ProfileService';
+import authService from '../../../services/AuthenticationService';
 
 export default function Documents() {
-  const donationId = 101;      // TODO: pobierz to z kontekstu/logiki
-  const questionnaireId = 2;   // TODO: albo z questions[0].questionnaireId
+  const userId = authService.getUserId();
+
+  const [donationId, setDonationId] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+    const [questionnaireId, setQuestionnaireId] = useState(null);
 
   useEffect(() => {
-    getQuestions(questionnaireId)
-      .then(qs => {
-        setQuestions(qs);
-        const init = {};
-        qs.forEach(q => {
-          init[q.id] = '';        // dla obu typów trzymamy string: "" / "true" / "false" / dowolny tekst
-        });
-        setAnswers(init);
-      })
-      .catch(err => setError(err.message || 'Błąd ładowania pytań'))
-      .finally(() => setLoading(false));
-  }, [questionnaireId]);
+    let active = true;
+    if (!userId) return;
+    (async () => {
+      try {
+        const scheduled = await getScheduledAppointmentForUser(userId);
+        if (!active) return;
+        const id = scheduled?.appointmentId ?? scheduled?.id ?? scheduled ?? null;
+        setDonationId(id);
+      } catch (e) {
+        console.error(e);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [userId]);
+
+  useEffect(() => {
+    if (!donationId) {
+      setQuestions([]);
+      setAnswers({});
+      setLoading(false);
+      return;
+    }
+      let active = true;
+      setLoading(true);
+      setError(null);
+
+      const resolveAndLoad = async () => {
+        try {
+          const res = await getQuestionnaireIdByTitle("Kwestionariusz dla krwiodawców");
+          if (!active) return;
+          const resolvedId = Number(res);
+          if (!Number.isFinite(resolvedId)) {
+            setError("Nie znaleziono kwestionariusza dla krwiodawców (niepoprawny identyfikator)");
+            setQuestions([]);
+            setAnswers({});
+            setLoading(false);
+            return;
+          }
+          setQuestionnaireId(resolvedId);
+
+          const qs = await getQuestions(resolvedId);
+          if (!active) return;
+          setQuestions(qs || []);
+          const init = {};
+          (qs || []).forEach((q) => {
+            init[q.id] = "";
+          });
+          setAnswers(init);
+        } catch (err) {
+          console.error(err);
+          if (!active) return;
+          setError(err?.message || "Błąd ładowania pytań");
+          setQuestions([]);
+          setAnswers({});
+        } finally {
+          if (active) setLoading(false);
+        }
+      };
+
+      resolveAndLoad();
+    }, [donationId]);
 
   const handleChange = (questionId, value) => {
     setAnswers(prev => ({ ...prev, [questionId]: value }));
@@ -64,21 +119,12 @@ export default function Documents() {
     };
 
     try {
-      // const res = await submitResponses(payload);
-      // if (res && res.messages && res.messages.length) {
-      //         res.messages.forEach((m) => showMessage(m.msg, m.type));
-      //         const hasError = res.messages.some((m) => m.type === MessageType.ERROR);
-      //         const hasSuccess = res.messages.some((m) => m.type === MessageType.SUCCESS);
-      //         if (hasError) setIsOpen(false);
-      //         else if (hasSuccess) setIsOpen(true);
-      //       } else {
-      //         showError("Wystąpił błąd przy zapisywaniu odpowiedzi");
-      //       }
+
       await submitResponses(payload);
-      alert('Odpowiedzi zapisane pomyślnie!');
+      showMessage('Odpowiedzi zapisane pomyślnie', 'success');
     } catch (err) {
       console.error(err);
-      alert('Wystąpił błąd przy zapisywaniu odpowiedzi');
+      showError('Wystąpił błąd przy zapisywaniu odpowiedzi');
     }
   };
 
@@ -92,6 +138,7 @@ export default function Documents() {
 
   if (loading) return <div className="loading">Ładowanie dokumentów...</div>;
   if (error) return <div className="error">Błąd: {error}</div>;
+  if (!donationId) return <div className="no-data">Brak formularzu do wypełnienia</div>;
   if (!questions.length) return <div className="no-data">Brak dokumentów</div>;
 
   return (

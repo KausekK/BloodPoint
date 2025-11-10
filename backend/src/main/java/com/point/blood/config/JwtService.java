@@ -19,7 +19,7 @@ public class JwtService {
     @Value("${jwt.secret-key}")
     private String secretKey;
 
-    private static final long ACCESS_TOKEN_TTL_MS = 1000L * 60 * 60 * 24;
+    private static final long ACCESS_TOKEN_TTL_MS = 1000L * 60 * 60;
 
     public String extractUsername(String jwTtoken) {
         return extractClaim(jwTtoken, Claims::getSubject);

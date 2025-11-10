@@ -27,13 +27,19 @@ public class AppointmentService {
 
 
     private Boolean validateAppointment(AppointmentDTO dto) {
-        return appointmentRepository.existsByUsers_Id(dto.getUserId());
+        LocalDateTime now = LocalDateTime.now();
+        return appointmentRepository.existsRecentOrUpcomingAppointmentForUser(
+                dto.getUserId(),
+                now,
+                now.minusWeeks(8),
+                now.minusWeeks(12)
+        );
     }
 
     public EditResult<AppointmentDTO> insertAppointment(AppointmentDTO dto) {
 
         if (validateAppointment(dto)) {
-            return buildError("Masz już wcześniej umówioną wizytę, odwołaj ją aby umówić nową.");
+            return buildError("Masz już wcześniej umówioną wizytę, lub twoja wizyta odbyła się zbyt niedawno aby ponownie oddać krew.");
         }
 
         try {

@@ -107,7 +107,7 @@ export default function MakeAppointment() {
     <>
       <Header />
       <main className="page make-appointment">
-        <BackButton to="/dawca/dashboard" label="Powrót do panelu dawcy" />
+        <BackButton to="/" label="Powrót do panelu dawcy" />
         <div className="page-content">
           <h1 className="page-heading">
             Umów się na oddanie <br className="desktop-break" /> krwi

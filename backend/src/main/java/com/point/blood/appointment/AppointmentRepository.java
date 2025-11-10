@@ -25,8 +25,30 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             """)
     Optional<ScheduledAppointmentForUserDTO> findScheduledAppointmentForUserByUserId(@Param("userId") Long userId, @Param("now") LocalDateTime now);
 
-    boolean existsByUsers_Id(Long userId);
-
+    @Query("""
+    SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END
+    FROM Appointment a
+    JOIN a.users u
+    JOIN a.donationTimeSlot d
+    WHERE u.id = :userId
+      AND(
+            (a.status = 'UMOWIONA' AND d.startTime >= :now)
+            OR
+            (a.status = 'ZREALIZOWANA'
+             AND d.startTime >=
+                 CASE 
+                     WHEN u.gender = 'M' THEN :nowMinus8Weeks
+                     ELSE :nowMinus12Weeks 
+                 END
+            )
+          )
+""")
+    boolean existsRecentOrUpcomingAppointmentForUser(
+            @Param("userId") Long userId,
+            @Param("now") LocalDateTime now,
+            @Param("nowMinus8Weeks") LocalDateTime nowMinus8Weeks,
+            @Param("nowMinus12Weeks") LocalDateTime nowMinus12Weeks
+    );
 
     @Query("""
                 SELECT DISTINCT new com.point.blood.appointment.AllAppointmentsDetailsDTO(

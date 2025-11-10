@@ -11,7 +11,7 @@ export default function BloodPointDashboardPanelPage() {
     { label: "Przeglądaj statystyki", to: "/statystyki" },
     { label: "Sprawdź predykcje", to: "/prognoza" },
     { label: "Sprawdź zgłoszenia szpitali", to: "/zgloszenia" },
-    { label: "Zarzadzaj pracownikami", to: "/panel/pracownicy" },
+    { label: "Zarzadzaj pracownikami", to: "/panel/pracowniczy" },
   ];
 
   return (
