@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = {"donor", "roles"})
-//@EqualsAndHashCode(exclude = "donor")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Users implements UserDetails {
 

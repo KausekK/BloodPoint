@@ -25,10 +25,6 @@
       {
         "label": "Umów wizytę",
         "to": "/rezerwacja"
-      },
-      {
-        "label": "Mój profil",
-        "to": "/profil"
       }
     ],
     "admin": [

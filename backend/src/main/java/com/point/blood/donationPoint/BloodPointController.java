@@ -1,6 +1,7 @@
 package com.point.blood.donationPoint;
 
 import com.point.blood.config.JwtUserPrincipal;
+import com.point.blood.hospital.HospitalProfileDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -16,13 +17,18 @@ public class BloodPointController {
     private final BloodDonationPointRepository bloodDonationPointRepository;
 
     @GetMapping("/cities")
-    public List<String> getCities() {
-        return bloodDonationPointRepository.getDonationPointCities();
+    public ResponseEntity<List<String>> getCities() {
+        return ResponseEntity.ok(bloodPointService.getCities());
     }
 
     @GetMapping("/points")
     public ResponseEntity<List<BloodDonationPointDTO>> getPoints(
             @RequestParam(required = false) String city) {
-        return ResponseEntity.ok(bloodDonationPointRepository.findPoints(city));
+        return ResponseEntity.ok(bloodPointService.getPoints(city));
+    }
+
+    @GetMapping("/profile/{id}")
+    public ResponseEntity<BloodDonationPointProfileDTO> getProfile(@PathVariable Long id) {
+        return ResponseEntity.ok(bloodPointService.getBloodPointInfo(id));
     }
 }

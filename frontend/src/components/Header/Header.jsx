@@ -33,7 +33,6 @@ export default function Header() {
   const brand = headerContent.brand;
   const actionsCfg = headerContent.actions || { guest: { to: "/login", label: "Zaloguj" } };
 
-  // map token role names to keys used in content/Header/Header.json
   const roleMap = {
     DAWCA: "donor",
     PUNKT_KRWIODAWSTWA: "bloodPoint",
@@ -41,7 +40,6 @@ export default function Header() {
     ADMIN: "admin",
   };
 
-  // determine current role key for header (falls back to guest)
   const currentRole = (() => {
     if (!isAuth || !roles || roles.length === 0) return "guest";
     for (const r of roles) {
@@ -114,6 +112,11 @@ export default function Header() {
         </button>
 
         <nav className="main-nav" aria-label="Główna nawigacja">
+          {isAuth && (
+            <NavLink to="/profil" className="nav-link">
+              Profil
+            </NavLink>
+          )}
           {navLinks.map((link) => (
             <NavLink key={link.to} to={link.to} end={link.to === "/"} className="nav-link" onClick={closeMenu}>
               {link.label}
@@ -144,6 +147,11 @@ export default function Header() {
           </div>
 
           <nav id="main-menu" className="menu-list" aria-label="Menu mobilne">
+            {isAuth && (
+            <NavLink to="/profil" className="menu-link" onClick={closeMenu}>
+              Profil
+            </NavLink>
+            )}
             {navLinks.map((link) => (
               <NavLink key={link.to} to={link.to} end={link.to === "/"} className="menu-link" onClick={closeMenu}>
                 {link.label}
