@@ -58,7 +58,7 @@
     "guest": {
       "type": "link",
       "label": "Zaloguj się",
-      "to": "/login-info"
+      "to": "/login"
     },
     "auth": [ 
       {

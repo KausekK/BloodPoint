@@ -1,32 +1,74 @@
 import { useState } from "react";
 import CTA from "../CTA/CTA";
-import '../SharedCSS/LoginForms.css'
+import authService from "../../services/AuthenticationService";
+import { showMessage, showError } from "../shared/services/MessageService";
+import "../SharedCSS/LoginForms.css";
 
 export default function GeneralLoginForm({
-  loginType,
-  idName = "identifier", 
-  idType = "text",
-  idPlaceholder,
+  title = "Zaloguj się",
+  lead = "Po zalogowaniu automatycznie przeniesiemy Cię do właściwego panelu.",
+  idName = "email",
+  idType = "email",
+  idPlaceholder = "E-mail",
   passwordPlaceholder = "Hasło",
   submitText = "Zaloguj się",
-  onSubmit,
 }) {
   const [vals, setVals] = useState({ [idName]: "", password: "" });
+  const [submitting, setSubmitting] = useState(false);
 
-  function handleChange(e) {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setVals(v => ({ ...v, [name]: value }));
-  }
+    setVals((v) => ({ ...v, [name]: value }));
+  };
 
-  function handleSubmit(e) {
+  const primaryRole = () => {
+    const roles = authService.getUser()?.roles || [];
+    if (!roles.length) return null;
+    return String(roles[0]).replace(/^ROLE_/, "");
+  };
+
+  const landingPath = (role) => {
+    switch (role) {
+      case "DAWCA": return "/profil";
+      case "PUNKT_KRWIODAWSTWA": return "/punkt-krwiodawstwa/dashboard";
+      case "SZPITAL": return "/szpital/dashboard";
+      default: return "/";
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (onSubmit) onSubmit({ type: loginType, identifier: vals[idName], password: vals.password });
-  }
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      const res = await authService.login({
+        email: String(vals[idName] || "").trim(),
+        password: vals.password,
+      });
+      if (res?.token) {
+        showMessage("Zalogowano pomyślnie.", "success");
+        const role = primaryRole();
+        window.location.assign(landingPath(role));
+      } else {
+        showError("Logowanie nie powiodło się.");
+      }
+    } catch (err) {
+      const msg =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        err?.message ||
+        "Logowanie nie powiodło się.";
+      showError(msg);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <article className="bp-card auth-card">
       <div className="auth-card-cap" aria-hidden="true" />
-      {loginType ? <h2 className="auth-card-title">{loginType}</h2> : null}
+      {title ? <h2 className="auth-card-title">{title}</h2> : null}
+      {lead ? <p className="login-lead" style={{ textAlign: "center", marginTop: -6 }}>{lead}</p> : null}
 
       <form className="auth-form" onSubmit={handleSubmit} noValidate>
         <div className="form-field">

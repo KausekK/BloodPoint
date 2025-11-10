@@ -90,7 +90,7 @@ export default function Header() {
     authService.logout();
     setIsAuth(false);
     setRoles([]);
-    navigate("/login-info");
+    navigate("/login");
   };
 
   return (

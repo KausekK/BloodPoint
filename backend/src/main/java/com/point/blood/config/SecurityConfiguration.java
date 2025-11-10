@@ -32,7 +32,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/punkty-krwiodawstwa/**").permitAll()
                         .requestMatchers("/api/krwiodawca/**").authenticated()
                         .requestMatchers("/api/panel/staff/**").authenticated()
-                        .requestMatchers("/api/login-info/**").permitAll()
+                        .requestMatchers("/api/login/**").permitAll()
                         .requestMatchers("/api/login/dawca/**").permitAll()
                         .requestMatchers("/api/login/szpital/**").permitAll()
                         .requestMatchers("/api/login/punkt-krwiodawstwa/**").permitAll()
