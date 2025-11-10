@@ -9,10 +9,13 @@ import {
 import content from "../../../../../content/PointStaff/PointStaff.json";
 import "../../../../SharedCSS/MenagePanels.css";
 import BackButton from "../../../../BackButton/BackButton";
-
-const POINT_ID = 1;
+import authService from "../../../../../services/AuthenticationService";
+import { showMessage, showError } from "../../../../shared/services/MessageService";
+import { MessageType } from "../../../../shared/const/MessageType.model";
 
 export default function PointStaffPage() {
+  const pointId = Number(authService.getPointId());
+
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -20,20 +23,23 @@ export default function PointStaffPage() {
   const [editId, setEditId] = useState(null);
 
   const [form, setForm] = useState({
+    email: "",
     position: "",
-    firstName: "",
-    lastName: "",
   });
 
-  const load = async () => {
+  async function load() {
     setLoading(true);
     try {
       setError("");
-      const data = await getStaffByPoint(POINT_ID);
-      let list = [];
 
-      if (Array.isArray(data)) list = data;
-      else if (data && Array.isArray(data.resultDTO)) list = data.resultDTO;
+      if (!isFinite(pointId) || pointId <= 0) {
+        setRows([]);
+        setError("Brak przypisanego punktu krwiodawstwa w sesji użytkownika.");
+        return;
+      }
+
+      const data = await getStaffByPoint(pointId);
+      const list = Array.isArray(data) ? data : (data && data.resultDTO ? data.resultDTO : []);
 
       if (!Array.isArray(list)) {
         setError(content.messages.invalidResponse);
@@ -42,23 +48,24 @@ export default function PointStaffPage() {
         setRows(list);
       }
     } catch (e) {
-      let msg = content.messages.errorFetch;
-      if (e?.response?.data?.message) msg = e.response.data.message;
-      else if (e?.message) msg = e.message;
+      const msg =
+        (e && e.response && e.response.data && e.response.data.message) ||
+        (e && e.message) ||
+        content.messages.errorFetch;
       setError(msg);
       setRows([]);
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  useEffect(() => {
+  useEffect(function () {
     load();
-  }, []);
+  }, [pointId]);
 
   const s = q.trim().toLowerCase();
   const filteredRows = s
-    ? rows.filter((r) => {
+    ? rows.filter(function (r) {
         const first = (r.firstName || "").toLowerCase();
         const last = (r.lastName || "").toLowerCase();
         const email = (r.email || "").toLowerCase();
@@ -66,82 +73,101 @@ export default function PointStaffPage() {
       })
     : rows;
 
-  const startEdit = (r) => {
+  function startEdit(r) {
     setEditId(r.userId);
     setForm({
+      email: r.email || "",
       position: r.position || "",
-      firstName: r.firstName || "",
-      lastName: r.lastName || "",
     });
-  };
+  }
 
-  const cancelEdit = () => {
+  function cancelEdit() {
     setEditId(null);
-    setForm({
-      position: "",
-      firstName: "",
-      lastName: "",
-    });
-  };
+    setForm({ email: "", position: "" });
+  }
 
-  const saveEdit = async () => {
+  async function saveEdit() {
     try {
       const payload = {
-        position: form.position || null,
-        firstName: form.firstName?.trim() || null,
-        lastName: form.lastName?.trim() || null,
+        email: (form.email || "").trim(),
+        position: form.position || "",
       };
 
       const res = await updateEmployee(editId, payload);
-      const updated = res?.resultDTO || null;
 
-      setRows((prev) =>
-        prev.map((r) =>
-          r.userId === editId ? (updated ? updated : { ...r, ...payload }) : r
-        )
-      );
+
+      var updated = null;
+      if (res && typeof res === "object" && "resultDTO" in res) {
+        updated = res.resultDTO;
+      }
+
+      setRows(function (prev) {
+        return prev.map(function (r) {
+          if (r.userId !== editId) return r;
+
+          if (updated) return updated;
+
+          return {
+            ...r,
+            email: payload.email ? payload.email : r.email,
+            position: payload.position ? payload.position : r.position,
+          };
+        });
+      });
+
       cancelEdit();
+      showMessage(content.messages.saved, MessageType.SUCCESS);
     } catch (e) {
-      let msg = content.messages.errorSave;
-      if (e?.response?.data?.message) msg = e.response.data.message;
-      else if (e?.message) msg = e.message;
-      alert(msg);
+      const msg =
+        (e && e.response && e.response.data && e.response.data.message) ||
+        (e && e.message) ||
+        content.messages.errorSave;
+      showError(msg);
     }
-  };
+  }
 
-  const onRemove = async (userId) => {
+  async function onRemove(userId) {
     if (!window.confirm(content.messages.confirmDelete)) return;
     try {
       await deleteEmployee(userId);
-      setRows((prev) => prev.filter((r) => r.userId !== userId));
+      setRows(function (prev) {
+        return prev.filter(function (r) {
+          return r.userId !== userId;
+        });
+      });
+      showMessage(content.messages.deleted, MessageType.SUCCESS);
     } catch (e) {
-      let msg = content.messages.errorDelete;
-      if (e?.response?.data?.message) msg = e.response.data.message;
-      else if (e?.message) msg = e.message;
-      alert(msg);
+      const msg =
+        (e && e.response && e.response.data && e.response.data.message) ||
+        (e && e.message) ||
+        content.messages.errorDelete;
+      showError(msg);
     }
-  };
+  }
 
   return (
     <>
       <Header />
       <main className="bp-section">
-        <BackButton to="/punkt-krwiodawstwa/dashboard" label="Powrót do panelu punktu krwiodawstwa" />
+        <BackButton
+          to="/punkt-krwiodawstwa/dashboard"
+          label="Powrót do panelu punktu krwiodawstwa"
+        />
         <div className="bp-container">
           <header className="dashboard-head">
             <h1 className="dashboard-title">{content.hero.heading}</h1>
             <p className="dashboard-lead">
-              {content.hero.note.replace("{{POINT_ID}}", POINT_ID)}
+              {content.hero.note.replace("{{POINT_ID}}", String(isFinite(pointId) ? pointId : "—"))}
             </p>
 
-            <div className="bp-form" style={{ marginTop: "12px" }}>
-              <div className="form-field" style={{ flex: 1 }}>
+            <div className="bp-form staff-search">
+              <div className="form-field form-field--grow">
                 <input
                   type="search"
                   className="input"
                   placeholder={content.search.placeholder}
                   value={q}
-                  onChange={(e) => setQ(e.target.value)}
+                  onChange={function (e) { setQ(e.target.value); }}
                 />
               </div>
               <div className="form-actions">
@@ -169,72 +195,39 @@ export default function PointStaffPage() {
                       <th>{content.table.columns.date}</th>
                       <th>{content.table.columns.email}</th>
                       <th>{content.table.columns.pesel}</th>
-                      <th style={{ width: 180 }}>
-                        {content.table.columns.actions}
-                      </th>
+                      <th className="table-actions">{content.table.columns.actions}</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredRows.map((r) => {
+                    {filteredRows.map(function (r) {
                       const isEdit = editId === r.userId;
+
                       return (
                         <tr key={r.userId}>
+                          
                           <td data-label={content.table.columns.name}>
-                            {isEdit ? (
-                              <div className="bp-form" style={{ gap: "6px" }}>
-                                <input
-                                  className="input"
-                                  placeholder="Imię"
-                                  value={form.firstName}
-                                  onChange={(e) =>
-                                    setForm((f) => ({
-                                      ...f,
-                                      firstName: e.target.value,
-                                    }))
-                                  }
-                                />
-                                <input
-                                  className="input"
-                                  placeholder="Nazwisko"
-                                  value={form.lastName}
-                                  onChange={(e) =>
-                                    setForm((f) => ({
-                                      ...f,
-                                      lastName: e.target.value,
-                                    }))
-                                  }
-                                />
-                              </div>
-                            ) : (
-                              <>
-                                <strong>
-                                  {r.firstName} {r.lastName}
-                                </strong>
-                                <div className="bp-state">
-                                  ID: {r.userId}
-                                </div>
-                              </>
-                            )}
+                            <strong>{r.firstName} {r.lastName}</strong>
+                            <div className="bp-state">ID: {r.userId}</div>
                           </td>
 
+                          
                           <td data-label={content.table.columns.position}>
                             {isEdit ? (
                               <select
                                 className="select"
                                 value={form.position}
-                                onChange={(e) =>
-                                  setForm((f) => ({
-                                    ...f,
-                                    position: e.target.value,
-                                  }))
-                                }
+                                onChange={function (e) {
+                                  setForm(function (f) { return { ...f, position: e.target.value }; });
+                                }}
                               >
                                 <option value="">— wybierz —</option>
-                                {content.table.positions.map((p) => (
-                                  <option key={p} value={p}>
-                                    {p}
-                                  </option>
-                                ))}
+                                {content.table.positions.map(function (p) {
+                                  return (
+                                    <option key={p} value={p}>
+                                      {p}
+                                    </option>
+                                  );
+                                })}
                               </select>
                             ) : (
                               r.position || "—"
@@ -243,19 +236,27 @@ export default function PointStaffPage() {
 
                           <td data-label={content.table.columns.date}>
                             {r.employmentStartDay
-                              ? new Date(
-                                  r.employmentStartDay
-                                ).toLocaleDateString("pl-PL")
+                              ? new Date(r.employmentStartDay).toLocaleDateString("pl-PL")
                               : "—"}
                           </td>
 
                           <td data-label={content.table.columns.email}>
-                            {r.email}
+                            {isEdit ? (
+                              <input
+                                className="input"
+                                type="email"
+                                placeholder="email@domena.pl"
+                                value={form.email}
+                                onChange={function (e) {
+                                  setForm(function (f) { return { ...f, email: e.target.value }; });
+                                }}
+                              />
+                            ) : (
+                              r.email
+                            )}
                           </td>
 
-                          <td data-label={content.table.columns.pesel}>
-                            {r.pesel}
-                          </td>
+                          <td data-label={content.table.columns.pesel}>{r.pesel}</td>
 
                           <td data-label={content.table.columns.actions}>
                             {isEdit ? (
@@ -263,24 +264,18 @@ export default function PointStaffPage() {
                                 <button className="bp-btn" onClick={saveEdit}>
                                   {content.actions.save}
                                 </button>
-                                <button
-                                  className="bp-btn bp-btn--ghost"
-                                  onClick={cancelEdit}
-                                >
+                                <button className="bp-btn bp-btn--ghost" onClick={cancelEdit}>
                                   {content.actions.cancel}
                                 </button>
                               </div>
                             ) : (
                               <div className="form-actions">
-                                <button
-                                  className="bp-btn"
-                                  onClick={() => startEdit(r)}
-                                >
+                                <button className="bp-btn" onClick={function () { startEdit(r); }}>
                                   {content.actions.edit}
                                 </button>
                                 <button
                                   className="bp-btn bp-btn--ghost"
-                                  onClick={() => onRemove(r.userId)}
+                                  onClick={function () { onRemove(r.userId); }}
                                 >
                                   {content.actions.delete}
                                 </button>

@@ -10,7 +10,8 @@ export default function GeneralDashboardPanel({
     className = "",
   }) {
     return (
-      <><BackButton to="/" label="Powrót do strony głównej" />
+      <>
+      <BackButton to="/" label="Powrót do strony głównej" />
       <section
         className={`panel-dashboard ${center ? "is-centered" : ""} ${className}`}
         aria-label="Panel"

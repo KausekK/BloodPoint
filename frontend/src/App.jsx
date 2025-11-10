@@ -52,9 +52,13 @@ function App() {
 
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/punkt-krwiodawstwa/dashboard" element={<BloodPointDashboardPanelPage />} />
-                <Route path="/punkt-krwiodawstwa/:pointId/zapasy" element={<BloodStockManagePage />} />
+                <Route path="/punkt-krwiodawstwa/zapasy" element={<BloodStockManagePage />} />
                 <Route path="/szpital/dashboard" element={<HospitalDashboardPanelPage />} />
-                <Route path="/statystyki" element={<Statistics/>}/>
+                <Route path="/statystyki" element={
+                    <ProtectedRoute allowedRoles={["PUNKT_KRWIODAWSTWA"]}>
+                        <Statistics/>
+                    </ProtectedRoute>
+                    }/>
                 <Route path="/szpital/zgloszenie-zapotrzebowania" element={<ReportEmergencyPage/>}/>
                 <Route path="/zgloszenia" element={<EmergencyRequestsPage/>}/>
                 <Route path="/szpital/historia-zgloszen" element={<ReportHistoryPage/>}/>

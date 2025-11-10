@@ -20,15 +20,12 @@ public class StaffController {
         return staffRepository.findAllByBloodDonationPoint_Id(id);
     }
 
-
-    //TODO dodanie pracownika - czeka az bedzie mozliwosc dodania usera i uprawnien
-
     @DeleteMapping("/{id}")
     public ResponseEntity<EditResult<Void>> removeEmployee(@PathVariable Long id) {
         return ResponseEntity.ok(staffService.deleteEmployee(id));
     }
 
-    @PatchMapping("/{id}")// TODO nie podlaczone + do przetestowania
+    @PatchMapping("/{id}")
     public ResponseEntity<EditResult<StaffDTO>> updateStaff(@PathVariable Long id, @RequestBody @Valid StaffUpdateDTO request) {
         return ResponseEntity.ok(staffService.editEmployee(id, request));
     }

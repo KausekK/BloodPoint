@@ -173,6 +173,25 @@
   font-weight: 700;
 }
 
+.staff-search {
+  margin-top: 12px;
+}
+
+.name-edit {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.form-field--grow {
+  flex: 1 1 auto;
+}
+
+.table-actions {
+  width: 180px;
+}
+
+
 @media (max-width: 700px) {
   .bp-form {
     flex-direction: column;

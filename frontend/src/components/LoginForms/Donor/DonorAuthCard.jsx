@@ -196,11 +196,11 @@ export default function DonorAuthCard() {
             </div>
 
             <div
-  className={`auth-note ${passwordsOk ? 'hidden' : ''}`}
-  aria-live="polite"
->
-  Hasła muszą być takie same i mieć co najmniej 6 znaków.
-</div>
+              className={`auth-note ${passwordsOk ? 'hidden' : ''}`}
+              aria-live="polite"
+            >
+              Hasła muszą być takie same i mieć co najmniej 6 znaków.
+            </div>
 
 
             <div className="form-actions">

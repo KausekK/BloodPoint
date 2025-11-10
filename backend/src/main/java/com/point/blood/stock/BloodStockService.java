@@ -39,7 +39,6 @@ public class BloodStockService {
         var point = donationPointRepository.findById(pointId)
                 .orElseThrow(() -> new IllegalArgumentException("Nie znaleziono punktu o id=" + pointId));
 
-        // Ustal skalę (np. 3 miejsca po przecinku)
         BigDecimal liters = req.getLiters().setScale(3, RoundingMode.HALF_UP);
 
         var row = bloodStockRepository
