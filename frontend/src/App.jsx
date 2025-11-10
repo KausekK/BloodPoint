@@ -8,6 +8,7 @@ import DonationPointsPage from './components/DonationPoints/DonationPointsPage.j
 import DonorInfoPage from './components/DonorInfo/DonorInfoPage.jsx';
 import DonorTipsPage from './components/DonorInfo/DonorTipsPage.jsx';
 import PointStaffPage from './components/MenagePanels/BloodPoint/Actions/Staff/PointStaffPage.jsx';
+import ProtectedRoute from './components/shared/ProtectedRoute.jsx';
 import LoginInfoPage from './components/LoginInfo/LoginInfoPage.jsx'
 import DonorLoginPage from './components/LoginForms/Donor/DonorLoginPage.jsx'
 import HospitalLoginPage from './components/LoginForms/Hospital/HospitalLoginPage.jsx';
@@ -25,14 +26,30 @@ function App() {
     return (
         <Router>
             <Routes>
-                <Route path="/rezerwacja" element={<MakeAppointment />} />
+                <Route path="/rezerwacja" element={
+                    <ProtectedRoute allowedRoles={["DAWCA"]}>
+                        <MakeAppointment />
+                    </ProtectedRoute>
+                } />
                 <Route path="/" element={<Home />} />
-                <Route path="/profil/*" element={<Profile />} />
-                <Route path="/prognoza" element={<ForecastOfBloodDemand />} />
+                <Route path="/profil/*" element={ 
+                    <ProtectedRoute allowedRoles={["DAWCA", "SZPITAL", "PUNKT_KRWIODAWSTWA"]}>
+                        <Profile />
+                    </ProtectedRoute>
+                } />
+                <Route path="/prognoza" element={
+                    <ProtectedRoute allowedRoles={["PUNKT_KRWIODAWSTWA"]}>
+                        <ForecastOfBloodDemand />
+                    </ProtectedRoute>
+                } />
                 <Route path="/punkty-krwiodawstwa" element={<DonationPointsPage />} />
                 <Route path="/krwiodawca" element={<DonorInfoPage />} />
                 <Route path="/dla-dawcy" element={<DonorTipsPage />} />
-                <Route path="/panel/pracownicy" element={<PointStaffPage />} />
+                <Route path="/panel/pracowniczy" element={
+                    <ProtectedRoute allowedRoles={["PUNKT_KRWIODAWSTWA"]}>
+                        <PointStaffPage />
+                    </ProtectedRoute>
+                } />
                 <Route path="/login-info" element={<LoginInfoPage />} />
                 <Route path="/login/dawca" element={<DonorLoginPage />} />
                 <Route path="/login/szpital" element={<HospitalLoginPage />} />

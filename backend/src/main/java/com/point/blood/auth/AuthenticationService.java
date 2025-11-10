@@ -1,10 +1,7 @@
 package com.point.blood.auth;
 
 import com.point.blood.config.JwtService;
-import com.point.blood.donationPoint.menageStaff.Staff;
 import com.point.blood.donationPoint.menageStaff.StaffRepository;
-import com.point.blood.hospital.Hospital;
-import com.point.blood.hospital.HospitalRepository;
 import com.point.blood.role.Role;
 import com.point.blood.role.RoleEnum;
 import com.point.blood.role.RoleRepository;
@@ -20,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -34,7 +30,6 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final StaffRepository staffRepository;
-    private final HospitalRepository hospitalRepository;
 
     public AuthenticationResponse register(RegisterRequest request) {
         if (request.getEmail() == null || request.getEmail().isBlank()) {
