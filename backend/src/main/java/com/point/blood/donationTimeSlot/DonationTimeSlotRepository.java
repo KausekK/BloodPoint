@@ -20,11 +20,13 @@ public interface DonationTimeSlotRepository extends JpaRepository<DonationTimeSl
         join s.bloodDonationPoint p
         where s.availableSlot = true
           and p.city = :city
+          and p.id = :pointId
           and s.startTime >= :from and s.startTime < :to
           and s.startTime > :now
     """)
     Page<DonationTimeSlotDTO> findAvailableSlotsForCityAndDay(
             @Param("city") String city,
+            @Param("pointId") Long pointId,
             @Param("from") LocalDateTime from,
             @Param("to") LocalDateTime to,
             @Param("now") LocalDateTime now,

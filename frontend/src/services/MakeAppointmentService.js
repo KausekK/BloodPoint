@@ -1,9 +1,9 @@
 import { api } from "./api";
 
 
-export function getSlotsForDayPaged(city, isoDate, page = 0, size = 12) {
+export function getSlotsForDayPaged(city, pointId, isoDate, page = 0, size = 12) {
   return api
-    .get("/appointment/available", { params: { city, date: isoDate, page, size } })
+    .get("/appointment/available", { params: { city, pointId, date: isoDate, page, size } })
     .then((r) => r.data);
 }
 

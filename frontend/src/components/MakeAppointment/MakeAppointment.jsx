@@ -8,7 +8,7 @@ import Stack from "@mui/material/Stack";
 import { showMessage, showError } from "../shared/services/MessageService";
 import CustomModal from "./CustomModal";
 import { MessageType } from "../shared/const/MessageType.model";
-import { getCities } from "../../services/BloodDonationPointService";
+import { getCities, getPoints } from "../../services/BloodDonationPointService";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import authService from "../../services/AuthenticationService";
 import BackButton from "../BackButton/BackButton";
@@ -16,6 +16,9 @@ import BackButton from "../BackButton/BackButton";
 export default function MakeAppointment() {
   const [city, setCity] = useState("");
   const [cities, setCities] = useState([]);
+
+  const [points, setPoints] = useState([]);
+  const [pointId, setPointId] = useState("");
 
   const [userId, setUserId] = useState(null);
   const [idLoading, setIdLoading] = useState(true);
@@ -35,6 +38,20 @@ export default function MakeAppointment() {
       .then((data) => setCities(data || []))
       .catch(() => showError("Błąd przy pobieraniu miast"));
   }, []);
+
+  useEffect(() => {
+    if (!city) { 
+      setPoints([]);
+      setPointId(""); 
+      return; 
+    }
+    setSelectedDate(null);
+    setSelectedSlot(null);
+    setPage(0);
+    getPoints(city)
+      .then((data) => setPoints(data || []))
+      .catch(() => showError("Błąd przy pobieraniu placówek"));
+  }, [city]);
 
   useEffect(() => {
     let active = true;
@@ -57,16 +74,16 @@ export default function MakeAppointment() {
   }, []);
 
   useEffect(() => {
-    if (!selectedDate) return;
+    if (!selectedDate || !city || !pointId) return;
     setLoading(true);
-    getSlotsForDayPaged(city, selectedDate, page)
+    getSlotsForDayPaged(city, pointId, selectedDate, page)
       .then((resPage) => {
         setTimes((resPage && resPage.content) || []);
         setPageInfo(resPage || { totalPages: 0 });
       })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [city, selectedDate, page]);
+  }, [city, pointId, selectedDate, page]);
 
   const submit = async () => {
     if (!selectedDate || !selectedSlot) return;
@@ -118,6 +135,7 @@ export default function MakeAppointment() {
           {idLoading && <div className="loading">Pobieram identyfikator użytkownika…</div>}
           {idError && <div className="error">Błąd: {idError}</div>}
 
+        <div className="filters" style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 16 }}>
           <FormControl size="small" sx={{ minWidth: 200 }}>
             <InputLabel id="city-label">Miasto</InputLabel>
             <Select
@@ -125,6 +143,7 @@ export default function MakeAppointment() {
               value={city}
               label="Miasto"
               onChange={(e) => setCity(e.target.value)}
+              required
             >
               {cities.map((c, i) => (
                 <MenuItem key={i} value={c}>{c}</MenuItem>
@@ -132,6 +151,29 @@ export default function MakeAppointment() {
             </Select>
           </FormControl>
 
+          <FormControl size="small" sx={{ minWidth: 240 }} disabled={!city}>
+            <InputLabel id="point-label">Placówka</InputLabel>
+            <Select
+              labelId="point-label"
+              value={pointId}
+              label="Placówka"
+              onChange={(e) => {
+                setPointId(e.target.value);
+                setSelectedDate(null);
+                setSelectedSlot(null);
+                setPage(0);
+              }}
+              required
+            >
+              <MenuItem value="" disabled>— wybierz placówkę —</MenuItem>
+              {points.map((p) => (
+                <MenuItem key={p.id} value={String(p.id)}>
+                  {p.street}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
           {!loading && city ? (
             <div className="appt-wrap">
               <div className="appt-left">
@@ -192,7 +234,7 @@ export default function MakeAppointment() {
 
                 <button
                   className="appointment-btn"
-                  disabled={!selectedSlot || !userId || !!idError}
+                  disabled={!pointId || !selectedSlot || !userId || !!idError}
                   onClick={submit}
                 >
                   Umów
