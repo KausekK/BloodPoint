@@ -46,6 +46,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/request/**").authenticated()
                         .requestMatchers("/api/zgloszenia/**").authenticated()
                         .requestMatchers("/api/request/*/accept").authenticated()
+                        .requestMatchers("/api/questionnaires/**").authenticated()
 
                         .anyRequest().authenticated()
                 )

@@ -39,8 +39,9 @@ public class AppointmentController {
 
         LocalDateTime from = date.atStartOfDay();
         LocalDateTime to   = from.plusDays(1);
+        LocalDateTime now = LocalDateTime.now().plusMinutes(10);
 
-        return donationTimeSlotRepository.findAvailableSlotsForCityAndDay(city, from, to, pageable);
+        return donationTimeSlotRepository.findAvailableSlotsForCityAndDay(city, from, to, now, pageable);
     }
 
     @PostMapping("/add")
