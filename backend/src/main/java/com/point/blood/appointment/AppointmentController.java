@@ -31,6 +31,7 @@ public class AppointmentController {
     public Page<DonationTimeSlotDTO> getAvailableSlots(
             @RequestParam String city,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam Long pointId,
             Pageable pageable) {
 
         if (holidayService.isHoliday(date)) {
@@ -41,7 +42,7 @@ public class AppointmentController {
         LocalDateTime to   = from.plusDays(1);
         LocalDateTime now = LocalDateTime.now().plusMinutes(10);
 
-        return donationTimeSlotRepository.findAvailableSlotsForCityAndDay(city, from, to, now, pageable);
+        return donationTimeSlotRepository.findAvailableSlotsForCityAndDay(city, pointId, from, to, now, pageable);
     }
 
     @PostMapping("/add")

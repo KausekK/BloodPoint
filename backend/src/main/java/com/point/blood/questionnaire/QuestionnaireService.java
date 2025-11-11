@@ -8,9 +8,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class QuestionnaireService {
-    private final QuestionnaireQuestionRepository qqRepo;
+    private final QuestionnaireQuestionRepository questionnaireQuestionRepository;
 
     public List<QuestionDTO> getQuestionsFor(Long questionnaireId) {
-        return qqRepo.findByQuestionnaireId(questionnaireId);
+        return questionnaireQuestionRepository.findByQuestionnaireId(questionnaireId);
     }
 }

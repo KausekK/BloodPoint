@@ -149,6 +149,26 @@
     font-size: 0.85rem;
     color: #777;
   }
+
+  .auth-tabs { 
+    display:flex; 
+    gap:8px; 
+    margin:6px 0 14px; 
+    justify-content:center; 
+  }
+  .auth-tab {
+    border:1px solid var(--color-border, #ddd);
+    background:#fff; border-radius:999px; padding:8px 14px;
+    font-weight:700; cursor:pointer; transition:box-shadow 0.2s, border-color 0.2s;
+  }
+  .auth-tab.active {
+    border-color: var(--color-primary, #c0392b);
+    box-shadow:0 0 0 3px rgba(192,57,43,.12);
+  }
+  .auth-note.hidden { 
+    visibility: hidden; 
+  }
+
   
   @media (max-width: 600px) {
     .login .bp-container {

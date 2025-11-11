@@ -13,16 +13,7 @@ public interface StaffRepository extends JpaRepository<Staff, Long> {
 
     @Query("select s.bloodDonationPoint.id from Staff s where s.users.id = :userId")
     Long findPointIdByUserId(@Param("userId") Long userId);
-//    @Query("""
-//        SELECT new com.point.blood.donationPoint.menageStaff.StaffDTO(
-//        s.id, u.firstName, u.lastName, u.email,
-//         u.pesel, s.employmentStartDay, s.position, bd.id)
-//        FROM Staff s
-//        JOIN s.users u
-//        JOIN s.bloodDonationPoint bd
-//        WHERE bd.id = :id
-//
-//        """)
+
 @Query("""
         SELECT new com.point.blood.donationPoint.menageStaff.StaffDTO(
           u.id,

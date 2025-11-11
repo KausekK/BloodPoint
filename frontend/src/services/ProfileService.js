@@ -19,3 +19,11 @@ export function deleteScheduledAppointment(id) {
 export function updateProfileContactInfo(data) {
   return api.put(`/user/profile`, data).then((r) => r.data);
 }
+
+export function getPointProfile(pointId) {
+  return api.get(`/blood_point/profile/${pointId}`).then(r => r.data);
+}
+
+export function getHospitalProfile(hospitalId) {
+  return api.get(`/hospital/profile/${hospitalId}`).then(r => r.data);
+}

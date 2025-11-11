@@ -5,7 +5,7 @@
     "note": "Skorzystaj z menu nawigacyjnego, aby uzyskać dostęp do różnych funkcji aplikacji.",
     "cta": {
       "label": "Umów sie oddać krew",
-      "to": "/login-info",
+      "to": "/login",
       "ariaLabel": "Przejdź do strony rezerwacji"
     }
   },

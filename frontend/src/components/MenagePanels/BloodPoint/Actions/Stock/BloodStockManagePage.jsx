@@ -12,11 +12,10 @@ import { MessageType } from "../../../../shared/const/MessageType.model";
 import "../../../../SharedCSS/MenagePanels.css";
 import { toNum, addWithScale, formatAmount } from "../../../../shared/utils/number";
 import BackButton from "../../../../BackButton/BackButton";
+import authService from "../../../../../services/AuthenticationService";
 
 export default function BloodStockManagePage() {
-  const { pointId } = useParams();
-  const effectiveId =
-    Number(pointId) || Number(localStorage.getItem("pointId")) || 1;
+  const pointId  = authService.getPointId();
 
   const [rows, setRows] = useState([]);
   const [bloodTypes, setBloodTypes] = useState([]);
@@ -35,7 +34,7 @@ export default function BloodStockManagePage() {
       setLoading(true);
       setErr("");
       setMsg("");
-      const data = await getBloodStockByDonationPoint(effectiveId);
+      const data = await getBloodStockByDonationPoint(pointId);
       setRows(Array.isArray(data) ? data : []);
     } catch (e) {
       console.error(e);
@@ -51,7 +50,7 @@ export default function BloodStockManagePage() {
     listBloodTypes()
       .then((opts) => setBloodTypes(Array.isArray(opts) ? opts : []))
       .catch(() => showError("Nie udało się pobrać listy grup krwi."));
-  }, [effectiveId]);
+  }, [pointId]);
 
   const totals = useMemo(
     () => rows.reduce(
@@ -93,7 +92,7 @@ export default function BloodStockManagePage() {
       setErr("");
       setMsg("");
 
-      await postDelivery(effectiveId, {
+      await postDelivery(pointId, {
         bloodTypeId: Number(delivery.bloodTypeId),
         liters: toNum(delivery.liters),
       });
@@ -121,7 +120,7 @@ export default function BloodStockManagePage() {
         <div className="bp-container">
           <header className="dashboard-head">
             <h1 className="dashboard-title">Zarządzaj zapasami krwi</h1>
-            <p className="dashboard-lead">Punkt {effectiveId}</p>
+            <p className="dashboard-lead">Punkt {pointId}</p>
             <div className="dashboard-actions">
               <button className="bp-btn" onClick={load} disabled={loading || submitting}>
                 {loading ? "Ładowanie…" : "Odśwież"}

@@ -11,6 +11,5 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class StaffUpdateDTO {
     private StaffPosition position;
-    private String firstName;
-    private String lastName;
+    private String email;
 }

@@ -1,19 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import CTA from "../../../components/CTA/CTA";
-import GeneralLoginForm from "../GeneralLoginForm";
-import '../../SharedCSS/LoginForms.css'
+import "../../SharedCSS/LoginForms.css";
 import authService from "../../../services/AuthenticationService";
 import { showMessage, showError } from "../../shared/services/MessageService";
 import { ROLES } from "../../shared/const/Roles";
 import { MessageType } from "../../shared/const/MessageType.model";
 
-export default function DonorAuthCard({ onModeChange }) {
-  const [mode, setMode] = useState("login");
+export default function DonorAuthCard() {
+  const [mode, setMode] = useState("register");
   const [submitting, setSubmitting] = useState(false);
-
-  useEffect(() => {
-    onModeChange?.(mode);
-  }, [mode, onModeChange]);
 
   const [reg, setReg] = useState({
     firstName: "",
@@ -29,16 +24,7 @@ export default function DonorAuthCard({ onModeChange }) {
   const [pwd, setPwd] = useState({ pass1: "", pass2: "" });
 
   const canGoNext = useMemo(() => {
-    const {
-      firstName,
-      lastName,
-      pesel,
-      phone,
-      email,
-      agree,
-      gender,
-      birthDate,
-    } = reg;
+    const { firstName, lastName, pesel, phone, email, agree, gender, birthDate } = reg;
     return (
       firstName.trim() &&
       lastName.trim() &&
@@ -66,13 +52,6 @@ export default function DonorAuthCard({ onModeChange }) {
     setPwd((v) => ({ ...v, [name]: value }));
   }
 
-  function goRegister() {
-    setMode("register");
-  }
-
-  function backToLogin() {
-    setMode("login");
-  }
   function goSetPassword(e) {
     e.preventDefault();
     if (canGoNext) setMode("setPassword");
@@ -95,11 +74,8 @@ export default function DonorAuthCard({ onModeChange }) {
         role: ROLES.DAWCA,
         password: pwd.pass1,
       });
-      showMessage(
-        "Konto zostało utworzone. Możesz się teraz zalogować.",
-        MessageType.SUCCESS
-      );
-      setMode("login");
+      showMessage("Konto zostało utworzone. Możesz się teraz zalogować.", MessageType.SUCCESS);
+
       setReg({
         firstName: "",
         lastName: "",
@@ -111,6 +87,8 @@ export default function DonorAuthCard({ onModeChange }) {
         agree: false,
       });
       setPwd({ pass1: "", pass2: "" });
+      setMode("register");
+      window.location.assign("/login");
     } catch (err) {
       const msg =
         err?.response?.data?.message ||
@@ -123,53 +101,8 @@ export default function DonorAuthCard({ onModeChange }) {
     }
   }
 
-  async function handleLoginSubmit({ identifier, password }) {
-    if (submitting) return;
-    setSubmitting(true);
-    try {
-      const res = await authService.login({
-        email: String(identifier || "").trim(),
-        password,
-      });
-      if (res?.token) {
-        showMessage("Zalogowano pomyślnie.", "success");
-        window.location.assign("/");
-      } else {
-        showError("Logowanie nie powiodło się.");
-      }
-    } catch (err) {
-      const msg =
-        err?.response?.data?.message ||
-        err?.response?.data?.error ||
-        err?.message ||
-        "Logowanie nie powiodło się.";
-      showError(msg);
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
   return (
     <div className="donor-auth">
-      {mode === "login" && (
-        <div className="donor-auth-card">
-          <GeneralLoginForm
-            loginType="LOGOWANIE DAWCY"
-            idName="email"
-            idType="email"
-            idPlaceholder="E-mail"
-            passwordPlaceholder="Hasło"
-            submitText={submitting ? "Loguję..." : "Zaloguj się"}
-            onSubmit={handleLoginSubmit}
-          />
-          <div className="auth-switch">
-            <button type="button" className="auth-link" onClick={goRegister}>
-              Nie masz konta? Zarejestruj się
-            </button>
-          </div>
-        </div>
-      )}
-
       {mode === "register" && (
         <article className="bp-card auth-card">
           <div className="auth-card-cap" aria-hidden="true" />
@@ -177,77 +110,29 @@ export default function DonorAuthCard({ onModeChange }) {
 
           <form className="auth-form" onSubmit={goSetPassword} noValidate>
             <div className="form-field">
-              <input
-                className="input"
-                name="firstName"
-                placeholder="Imię"
-                value={reg.firstName}
-                onChange={handleRegChange}
-                required
-              />
+              <input className="input" name="firstName" placeholder="Imię" value={reg.firstName} onChange={handleRegChange} required />
             </div>
 
             <div className="form-field">
-              <input
-                className="input"
-                name="lastName"
-                placeholder="Nazwisko"
-                value={reg.lastName}
-                onChange={handleRegChange}
-                required
-              />
+              <input className="input" name="lastName" placeholder="Nazwisko" value={reg.lastName} onChange={handleRegChange} required />
             </div>
 
             <div className="form-field">
-              <input
-                className="input"
-                name="pesel"
-                placeholder="PESEL"
-                maxLength={11}
-                value={reg.pesel}
-                onChange={handleRegChange}
-                required
-                inputMode="numeric"
-              />
+              <input className="input" name="pesel" placeholder="PESEL" maxLength={11} value={reg.pesel} onChange={handleRegChange} required inputMode="numeric" />
             </div>
 
             <div className="form-field">
-              <input
-                className="input"
-                name="phone"
-                placeholder="Numer telefonu"
-                value={reg.phone}
-                onChange={handleRegChange}
-                inputMode="tel"
-                required
-              />
+              <input className="input" name="phone" placeholder="Numer telefonu" value={reg.phone} onChange={handleRegChange} inputMode="tel" required />
             </div>
 
             <div className="form-field">
-              <input
-                className="input"
-                name="email"
-                type="email"
-                placeholder="E-mail"
-                value={reg.email}
-                onChange={handleRegChange}
-                required
-              />
+              <input className="input" name="email" type="email" placeholder="E-mail" value={reg.email} onChange={handleRegChange} required />
             </div>
 
             <div className="form-field">
               <div className="select-wrap">
-                <select
-                  id="gender"
-                  name="gender"
-                  className="select"
-                  value={reg.gender}
-                  onChange={handleRegChange}
-                  required
-                >
-                  <option value="" disabled>
-                    Wybierz płeć
-                  </option>
+                <select id="gender" name="gender" className="select" value={reg.gender} onChange={handleRegChange} required>
+                  <option value="" disabled>Wybierz płeć</option>
                   <option value="K">Kobieta</option>
                   <option value="M">Mężczyzna</option>
                 </select>
@@ -255,30 +140,26 @@ export default function DonorAuthCard({ onModeChange }) {
             </div>
 
             <div className="form-field">
-              <input
-                className="input"
-                id="birthDate"
-                name="birthDate"
-                type="date"
-                placeholder="Data urodzenia"
-                value={reg.birthDate}
-                onChange={handleRegChange}
-                max={new Date().toISOString().split("T")[0]}
-                required
-              />
-            </div>
+            <label className="field-label" htmlFor="birthDate">
+              Data urodzenia
+            </label>
+
+            <input
+              className="input"
+              id="birthDate"
+              name="birthDate"
+              type="date"
+              value={reg.birthDate}
+              onChange={handleRegChange}
+              max={new Date().toISOString().split("T")[0]}
+              aria-describedby="birthDateHelp"
+              required
+            />
+          </div>
 
             <label className="consent">
-              <input
-                type="checkbox"
-                name="agree"
-                checked={reg.agree}
-                onChange={handleRegChange}
-                required
-              />
-              <span>
-                Oświadczam, że wszystkie podane informacje są zgodne z prawdą.
-              </span>
+              <input type="checkbox" name="agree" checked={reg.agree} onChange={handleRegChange} required />
+              <span>Oświadczam, że wszystkie podane informacje są zgodne z prawdą.</span>
             </label>
 
             <div className="form-actions">
@@ -290,16 +171,12 @@ export default function DonorAuthCard({ onModeChange }) {
             </div>
           </form>
 
-          <div className="auth-switch">
-            <button type="button" className="auth-link" onClick={backToLogin}>
-              Masz już konto? Zaloguj się
-            </button>
+          <div className="auth-switch" style={{textAlign:"center", marginTop:8}}>
+            <a className="auth-link" href="/login">Masz już konto? Zaloguj się</a>
           </div>
 
           {!canGoNext && (
-            <div className="auth-note">
-              Uzupełnij wymagane pola, wybierz płeć i podaj datę urodzenia.
-            </div>
+            <div className="auth-note">Uzupełnij wymagane pola, wybierz płeć i podaj datę urodzenia.</div>
           )}
         </article>
       )}
@@ -311,52 +188,27 @@ export default function DonorAuthCard({ onModeChange }) {
 
           <form className="auth-form" onSubmit={submitRegistration} noValidate>
             <div className="form-field">
-              <input
-                className="input"
-                type="password"
-                name="pass1"
-                placeholder="Hasło (min. 6 znaków)"
-                value={pwd.pass1}
-                onChange={handlePwdChange}
-                minLength={6}
-                required
-              />
+              <input className="input" type="password" name="pass1" placeholder="Hasło (min. 6 znaków)" value={pwd.pass1} onChange={handlePwdChange} minLength={6} required />
             </div>
 
             <div className="form-field">
-              <input
-                className="input"
-                type="password"
-                name="pass2"
-                placeholder="Powtórz hasło"
-                value={pwd.pass2}
-                onChange={handlePwdChange}
-                minLength={6}
-                required
-              />
+              <input className="input" type="password" name="pass2" placeholder="Powtórz hasło" value={pwd.pass2} onChange={handlePwdChange} minLength={6} required />
             </div>
 
-            {!passwordsOk && (
-              <div className="auth-note">
-                Hasła muszą być takie same i mieć co najmniej 6 znaków.
-              </div>
-            )}
+            <div
+              className={`auth-note ${passwordsOk ? 'hidden' : ''}`}
+              aria-live="polite"
+            >
+              Hasła muszą być takie same i mieć co najmniej 6 znaków.
+            </div>
+
 
             <div className="form-actions">
-              <CTA
-                label={submitting ? "Rejestruję..." : "Zarejestruj się"}
-                type="submit"
-                disabled={!passwordsOk || submitting}
-              />
+              <CTA label={submitting ? "Rejestruję..." : "Zarejestruj się"} type="submit" disabled={!passwordsOk || submitting} />
             </div>
 
-            <div className="auth-switch">
-              <button
-                type="button"
-                className="auth-link"
-                onClick={() => setMode("register")}
-                disabled={submitting}
-              >
+            <div className="auth-switch" style={{textAlign:"center", marginTop:8}}>
+              <button type="button" className="auth-link" onClick={() => setMode("register")} disabled={submitting}>
                 Wróć do danych osobowych
               </button>
             </div>

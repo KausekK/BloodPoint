@@ -113,7 +113,7 @@ export default function Documents() {
         return {
           questionId: q.id,
           answerText: null,
-          answerFlag: raw === 'true'   // raw to "true" lub "false"
+          answerFlag: raw === 'true'
         };
       })
     };

@@ -46,11 +46,8 @@ public class StaffService {
         if (req.getPosition() != null) {
             staff.setPosition(req.getPosition());
         }
-        if (req.getFirstName() != null && !req.getFirstName().isBlank()) {
-            staff.getUsers().setFirstName(req.getFirstName());
-        }
-        if (req.getLastName() != null && !req.getLastName().isBlank()) {
-            staff.getUsers().setLastName(req.getLastName());
+        if (req.getEmail() != null && !req.getEmail().isBlank()) {
+            staff.getUsers().setEmail(req.getEmail().trim());
         }
 
         StaffDTO dto = staffMapper.toDto(staff);
@@ -61,11 +58,5 @@ public class StaffService {
                 .build();
     }
 
-//    private List<String> validate(StaffUpdateDTO req) {
-//        List<String> errors = new ArrayList<>();
-//        if (req.getEmploymentStartDay() != null && req.getEmploymentStartDay().isAfter(LocalDate.now())) {
-//            errors.add("Data zatrudnienia nie może być w przyszłości.");
-//        }
-//        return errors;
-//    }
+
 }

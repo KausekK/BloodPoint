@@ -9,10 +9,6 @@ import DonorInfoPage from './components/DonorInfo/DonorInfoPage.jsx';
 import DonorTipsPage from './components/DonorInfo/DonorTipsPage.jsx';
 import PointStaffPage from './components/MenagePanels/BloodPoint/Actions/Staff/PointStaffPage.jsx';
 import ProtectedRoute from './components/shared/ProtectedRoute.jsx';
-import LoginInfoPage from './components/LoginInfo/LoginInfoPage.jsx'
-import DonorLoginPage from './components/LoginForms/Donor/DonorLoginPage.jsx'
-import HospitalLoginPage from './components/LoginForms/Hospital/HospitalLoginPage.jsx';
-import BloodPointLoginPage from './components/LoginForms/BloodPoint/BloodPointLoginPage.jsx';
 import BloodPointDashboardPanelPage from './components/MenagePanels/BloodPoint/BloodPointDashboardPanelPage.jsx';
 import BloodStockManagePage from './components/MenagePanels/BloodPoint/Actions/Stock/BloodStockManagePage.jsx';
 import HospitalDashboardPanelPage from './components/MenagePanels/Hospital/HospitalDashboardPanelPage.jsx'
@@ -20,12 +16,15 @@ import Statistics from './components/MenagePanels/BloodPoint/Actions/Statistics/
 import ReportEmergencyPage from './components/MenagePanels/Hospital/Actions/ReportEmergencyPage.jsx'
 import EmergencyRequestsPage from './components/MenagePanels/BloodPoint/Actions/EmergencyRequests/EmergencyRequestsPage.jsx';
 import ReportHistoryPage from './components/MenagePanels/Hospital/Actions/ReportHistoryPage.jsx';
+import LoginPage from './components/LoginForms/LoginPage.jsx';
+
 
 
 function App() {
     return (
         <Router>
             <Routes>
+                
                 <Route path="/rezerwacja" element={
                     <ProtectedRoute allowedRoles={["DAWCA"]}>
                         <MakeAppointment />
@@ -50,14 +49,16 @@ function App() {
                         <PointStaffPage />
                     </ProtectedRoute>
                 } />
-                <Route path="/login-info" element={<LoginInfoPage />} />
-                <Route path="/login/dawca" element={<DonorLoginPage />} />
-                <Route path="/login/szpital" element={<HospitalLoginPage />} />
-                <Route path="/login/punkt-krwiodawstwa" element={<BloodPointLoginPage />} />
+
+                <Route path="/login" element={<LoginPage />} />
                 <Route path="/punkt-krwiodawstwa/dashboard" element={<BloodPointDashboardPanelPage />} />
-                <Route path="/punkt-krwiodawstwa/:pointId/zapasy" element={<BloodStockManagePage />} />
+                <Route path="/punkt-krwiodawstwa/zapasy" element={<BloodStockManagePage />} />
                 <Route path="/szpital/dashboard" element={<HospitalDashboardPanelPage />} />
-                <Route path="/statystyki" element={<Statistics/>}/>
+                <Route path="/statystyki" element={
+                    <ProtectedRoute allowedRoles={["PUNKT_KRWIODAWSTWA"]}>
+                        <Statistics/>
+                    </ProtectedRoute>
+                    }/>
                 <Route path="/szpital/zgloszenie-zapotrzebowania" element={<ReportEmergencyPage/>}/>
                 <Route path="/zgloszenia" element={<EmergencyRequestsPage/>}/>
                 <Route path="/szpital/historia-zgloszen" element={<ReportHistoryPage/>}/>

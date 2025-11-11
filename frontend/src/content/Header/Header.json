@@ -25,10 +25,6 @@
       {
         "label": "Umów wizytę",
         "to": "/rezerwacja"
-      },
-      {
-        "label": "Mój profil",
-        "to": "/profil"
       }
     ],
     "admin": [
@@ -58,7 +54,7 @@
     "guest": {
       "type": "link",
       "label": "Zaloguj się",
-      "to": "/login-info"
+      "to": "/login"
     },
     "auth": [ 
       {

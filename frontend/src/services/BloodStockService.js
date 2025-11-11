@@ -3,7 +3,7 @@ import { api } from "./api";
 export function getBloodStock() {
   return api.get("/blood_stock").then(r => r.data);
 }
-export function getBloodStockByDonationPoint(pointId = 1) {
+export function getBloodStockByDonationPoint(pointId) {
   return api.get(`/blood_stock/point/${pointId}`).then(r => r.data);
 }
 

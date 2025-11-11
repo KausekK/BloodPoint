@@ -5,7 +5,7 @@ export default function ProtectedRoute({ allowedRoles = [], children }) {
   const isAuth = authService.isAuthenticated();
 
   if (!isAuth) {
-    return <Navigate to="/login-info" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   if (!allowedRoles || allowedRoles.length === 0) {
