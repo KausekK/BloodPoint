@@ -51,7 +51,7 @@ export default function ReportEmergencyPage() {
   function validate(f) {
     const amount = toNum(f.amount);
     if (!f.bloodTypeId) return "Wybierz grupę krwi.";
-    if (!Number.isFinite(amount) || amount <= 0) return "Podaj dodatnią ilość (np. 1.3).";
+    if (!Number.isFinite(amount) || amount <= 0) return "Podaj dodatnią ilość.";
     return "";
   }
 
