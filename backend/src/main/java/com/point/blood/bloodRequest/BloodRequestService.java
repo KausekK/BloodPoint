@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -40,10 +41,11 @@ public class BloodRequestService {
         entity.setBloodType(bt);
         entity.setAmount(dto.getAmount());
         entity.setStatus(newStatus);
+        entity.setCreatedAt(LocalDateTime.now());
 
         BloodRequest saved = bloodRequestRepository.saveAndFlush(entity);
 
-        return new BloodRequestDTO(saved.getId(), bt.getId(), saved.getAmount());
+        return new BloodRequestDTO(saved.getId(), bt.getId(), saved.getAmount(), saved.getCreatedAt());
     }
 
     public List<BloodRequestListDTO> getAllNewRequests() {
