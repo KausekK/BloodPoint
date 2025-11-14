@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class DonationDTO {
     private Long id;
+    private Long bloodTypeId;
     private Double amountOfBlood;
     private LocalDateTime donationDate;
     private DonationTypeEnum donationType;

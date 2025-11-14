@@ -7,6 +7,7 @@ import "./TodayAppointments.css";
 import { APPOINTMENT_STATUS } from "../../shared/const/AppointmentStatus";
 import authService from "../../../services/AuthenticationService";
 
+
 export default function TodayAppointments() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);

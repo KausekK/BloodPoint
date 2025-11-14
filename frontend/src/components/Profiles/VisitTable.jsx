@@ -1,3 +1,4 @@
+
 export default function VisitTable({ visits }) {
   if (visits.length === 0) {
     return <div className="no-data">Brak historii wizyt</div>;

@@ -15,7 +15,7 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
 
 @Query("""
         SELECT new com.point.blood.donation.DonationDTO(
-               d.id, d.amountOfBlood, d.donationDate, d.donationType.type, bd.city, bd.street)
+               d.id, d.bloodType.id, d.amountOfBlood, d.donationDate, d.donationType.type, bd.city, bd.street)
                FROM Donation d
                join d.bloodDonationPoint bd
                WHERE d.donor.users.id = :userId
@@ -24,7 +24,7 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
 
     @Query("""
         SELECT new com.point.blood.donation.DonationDTO(
-               d.id, d.amountOfBlood, d.donationDate, d.donationType.type, bd.city, bd.street)
+               d.id, d.bloodType.id, d.amountOfBlood, d.donationDate, d.donationType.type, bd.city, bd.street)
                FROM Donation d
                join d.bloodDonationPoint bd
                WHERE d.donor.users.id = :userId

@@ -1,5 +1,6 @@
 package com.point.blood.donation;
 
+import com.point.blood.bloodType.BloodType;
 import com.point.blood.donationPoint.BloodDonationPoint;
 import com.point.blood.donationStatus.DonationStatus;
 import com.point.blood.donationType.DonationType;
@@ -11,6 +12,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -26,7 +28,7 @@ public class Donation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-// TODO WAZNE ZMIENIC ILOSC
+
     @Column(name = "amount_of_blood", nullable = false)
     private Double amountOfBlood;
 
@@ -54,4 +56,8 @@ public class Donation {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Donor_Users_id", nullable = false)
     private Donor donor;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "Blood_Type_id", nullable = false)
+    private BloodType bloodType;
 }
