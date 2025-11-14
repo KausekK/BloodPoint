@@ -29,8 +29,8 @@ public class Donation {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "amount_of_blood", nullable = false)
-    private Double amountOfBlood;
+    @Column(name = "amount_of_blood", nullable = false, precision = 4, scale = 2)
+    private BigDecimal amountOfBlood;
 
     @Column(name = "donation_date", nullable = false)
     private LocalDateTime donationDate;
