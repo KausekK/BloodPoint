@@ -5,6 +5,8 @@ import com.point.blood.donationPoint.menageStaff.StaffRepository;
 import com.point.blood.role.Role;
 import com.point.blood.role.RoleEnum;
 import com.point.blood.role.RoleRepository;
+import com.point.blood.shared.EditResult;
+import com.point.blood.shared.MessageDTO;
 import com.point.blood.users.Users;
 import com.point.blood.users.UsersRepository;
 import jakarta.transaction.Transactional;
@@ -31,16 +33,31 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final StaffRepository staffRepository;
 
-    public AuthenticationResponse register(RegisterRequest request) {
+    public EditResult<AuthenticationResponse> register(RegisterRequest request) {
         if (request.getEmail() == null || request.getEmail().isBlank()) {
-            throw new IllegalArgumentException("Email cannot be null");
+            return EditResult.<AuthenticationResponse>builder()
+                    .messages(java.util.List.of(
+                            MessageDTO.createErrorMessage("Podaj email")
+                    ))
+                    .resultDTO(null)
+                    .build();
         }
         if (request.getPassword() == null || request.getPassword().isBlank()) {
-            throw new IllegalArgumentException("Password cannot be null");
+            return EditResult.<AuthenticationResponse>builder()
+                    .messages(java.util.List.of(
+                            MessageDTO.createErrorMessage("Podaj hasło")
+                    ))
+                    .resultDTO(null)
+                    .build();
         }
 
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Email already in use");
+            return EditResult.<AuthenticationResponse>builder()
+                    .messages(java.util.List.of(
+                            MessageDTO.createErrorMessage("Email ma już założone konto. Zaloguj się")
+                    ))
+                    .resultDTO(null)
+                    .build();
         }
 
         Set<Role> roles = resolveRoles(request);
@@ -60,8 +77,15 @@ public class AuthenticationService {
         Users saved = userRepository.save(user);
 
         String jwtToken = jwtService.generateToken(saved);
-        return AuthenticationResponse.builder()
+        AuthenticationResponse authRes = AuthenticationResponse.builder()
                 .token(jwtToken)
+                .build();
+
+        return EditResult.<AuthenticationResponse>builder()
+                .resultDTO(authRes)
+                .messages(java.util.List.of(
+                        MessageDTO.createSuccessMessage("Użytkownik został utworzony")
+                ))
                 .build();
     }
 

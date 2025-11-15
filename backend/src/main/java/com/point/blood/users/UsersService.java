@@ -1,5 +1,6 @@
 package com.point.blood.users;
 
+import com.point.blood.auth.AuthenticationResponse;
 import com.point.blood.shared.ApplicationException;
 import com.point.blood.shared.EditResult;
 import com.point.blood.shared.MessageDTO;
@@ -30,13 +31,18 @@ public class UsersService {
                         "Brak użytkownika o podanym id: {}", dto.getId()));
 
         String newEmail = dto.getEmail();
+
         if (newEmail != null && !newEmail.equalsIgnoreCase(userEntity.getEmail())) {
-            usersRepository.findByEmail(newEmail)
-                    .filter(other -> !other.getId().equals(userEntity.getId()))
-                    .ifPresent(other -> {
-                        throw ApplicationException.createWithMessage(
-                                "Podany adres e-mail jest już używany przez innego użytkownika.");
-                    });
+            var existingOpt = usersRepository.findByEmail(newEmail);
+
+            if (existingOpt.isPresent() && !existingOpt.get().getId().equals(userEntity.getId())) {
+                return EditResult.<UsersProfileDTO>builder()
+                        .messages(java.util.List.of(
+                                MessageDTO.createErrorMessage("Podany adres e-mail jest już używany przez innego użytkownika.")
+                        ))
+                        .resultDTO(null)
+                        .build();
+            }
         }
 
         userEntity.setEmail(newEmail);
@@ -51,9 +57,10 @@ public class UsersService {
 
         return EditResult.<UsersProfileDTO>builder()
                 .resultDTO(resultDto)
-                .messages(List.of(
-                        MessageDTO.createSuccessMessage("Zaaktualizowano dane kontaktowe")
+                .messages(java.util.List.of(
+                        MessageDTO.createSuccessMessage("Zaktualizowano dane kontaktowe.")
                 ))
                 .build();
     }
+
 }

@@ -5,7 +5,7 @@ import { useProfile } from "./hooks/useProfile";
 import { useState, useEffect } from "react";
 import authService from "../../services/AuthenticationService";
 import { updateUserProfileContactInfo } from "../../services/ProfileService";
-import { showMessage, showError } from "../shared/services/MessageService";
+import { showError, showMessages } from "../shared/services/MessageService";
 import { MessageType } from "../shared/const/MessageType.model";
 
 export default function ProfileInfo() {
@@ -90,41 +90,48 @@ export default function ProfileInfo() {
   };
 
   const handleSaveContact = async () => {
-    setSaving(true);
-    try {
-      const res = await updateUserProfileContactInfo({
-        id: profile.id,
-        email,
-        phone,
-      });
+  setSaving(true);
+  try {
+    const res = await updateUserProfileContactInfo({
+      id: profile.id,
+      email,
+      phone,
+    });
 
-      const messages = Array.isArray(res?.messages) ? res.messages : [];
-      const errorMsg = messages.find((m) => m.type === "ERROR");
-      if (errorMsg) {
-        const text =
-          errorMsg.message ||
-          errorMsg.text ||
-          "Nie udało się zaktualizować danych kontaktowych.";
-        showError(text);
-        return;
-      }
+    const messages = Array.isArray(res?.messages) ? res.messages : [];
 
-      const successMsg = messages.find((m) => m.type === "SUCCESS");
-      showMessage(
-        (successMsg && (successMsg.message || successMsg.text)) ||
-          "Zaktualizowano dane kontaktowe.",
-        MessageType.SUCCESS
+    // Jeśli backend przysłał messages z EditResult – pokaż wszystkie
+    if (messages.length > 0) {
+      showMessages(
+        messages.map((m) => ({
+          msg: m.msg,                              // <-- używamy msg, nie message/text
+          type: MessageType[m.type] || MessageType.INFO,
+        }))
       );
-
-    
-      setIsEditing(false);
-    } catch (e) {
-      console.error(e);
-      showError("Wystąpił błąd przy aktualizacji danych kontaktowych.");
-    } finally {
-      setSaving(false);
     }
-  };
+
+    // Sprawdź, czy jest jakiś błąd
+    const hasError = messages.some((m) => m.type === "ERROR");
+    if (hasError) {
+      // przy błędzie po prostu nie zamykamy edycji
+      return;
+    }
+
+    // Jeśli brak błędów, zaktualizuj lokalny stan danymi z resultDTO
+    if (res?.resultDTO) {
+      setPhone(res.resultDTO.phone || "");
+      setEmail(res.resultDTO.email || "");
+    }
+
+    setIsEditing(false);
+  } catch (e) {
+    console.error(e);
+    showError("Wystąpił błąd przy aktualizacji danych kontaktowych.");
+  } finally {
+    setSaving(false);
+  }
+};
+
 
   return (
     <div className="cards">

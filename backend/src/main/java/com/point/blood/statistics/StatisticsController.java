@@ -16,7 +16,7 @@ import java.util.List;
 public class StatisticsController {
     private final StatisticsService statisticsService;
 
-    @GetMapping //TODO nie podlaczone
+    @GetMapping
     public ResponseEntity<List<DonationStatsView>> getStatistics(@RequestParam LocalDate from, @RequestParam LocalDate to) {
         return ResponseEntity.ok(statisticsService.getStatistics(from,to));
     }
