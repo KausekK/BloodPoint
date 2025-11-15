@@ -10,4 +10,6 @@ public interface QuestionnaireRepository extends JpaRepository<Questionnaire, Lo
 
     @Query("SELECT id FROM Questionnaire WHERE title = :questionnaireTitle")
     Long findQuestionaireIdByQuestionnaireTitle(@Param("questionnaireTitle") String questionnaireTitle);
+
+
 }

@@ -4,8 +4,13 @@ import { Bloodtype } from "@mui/icons-material";
 import { getAllTodayAppointmentsForBloodPoint } from "../../../services/MakeAppointmentService";
 import EditDonationModal from "./EditDonationModal";
 import "./TodayAppointments.css";
-import { APPOINTMENT_STATUS } from "../../shared/const/AppointmentStatus";
 import authService from "../../../services/AuthenticationService";
+
+import { showMessage, showError } from "../../shared/services/MessageService";
+import { MessageType } from "../../shared/const/MessageType.model";
+import { createDonationFromAppointment } from "../../../services/DonationService";
+
+
 
 export default function TodayAppointments() {
   const [appointments, setAppointments] = useState([]);
@@ -32,9 +37,11 @@ export default function TodayAppointments() {
   const handleOpenModal = (appt) => {
     setCurrentAppt({
       appointmentId: appt.appointmentId,
-      status: APPOINTMENT_STATUS.UMOWIONA,
+      status: "ZREALIZOWANA",
       amountOfBlood: "",
-      bloodGroup: appt.bloodGroup,
+      bloodTypeId: null,
+      bloodGroupLabel: appt.bloodGroup,
+      existingDonor: !!appt.bloodGroup,
     });
     setModalOpen(true);
   };
@@ -44,14 +51,46 @@ export default function TodayAppointments() {
     setCurrentAppt(null);
   };
 
-  const handleSave = (updated) => {
-    console.log(
-      "Zapisywanie zmienionych danych:",
-      currentAppt.appointmentId,
-      updated
-    );
-    handleCloseModal();
+  const handleSave = async (updated) => {
+    try {
+      const res = await createDonationFromAppointment(currentAppt.appointmentId, {
+        bloodTypeId: updated.bloodTypeId,
+        donationStatus: updated.donationStatus,
+        amountOfBlood: updated.amountOfBlood,
+        donationDate: new Date().toISOString(),
+        donationType: "KREW_PELNA",
+        questionnaireId: null,
+      });
+  
+    
+      const messages = Array.isArray(res.messages) ? res.messages : [];
+    
+      const errors = messages.filter((m) => m.type === "ERROR");
+      const successes = messages.filter((m) => m.type === "SUCCESS");
+    
+      if (errors.length) {
+        const msg =
+          errors.map((e) => e.text).join(" ") ||
+          "Nie udało się zapisać donacji.";
+        showError(msg);
+        return;
+      }
+    
+      const ok =
+        successes[0]?.text || "Donacja została zapisana.";
+      showMessage(ok, MessageType.SUCCESS);
+  
+      const refreshed = await getAllTodayAppointmentsForBloodPoint(donationPointId);
+      setAppointments(refreshed);
+    
+      handleCloseModal();
+    } catch (e) {
+      console.error("Błąd przy tworzeniu donacji:", e);
+      showError("Nie udało się zapisać donacji (błąd połączenia z serwerem).");
+    }
   };
+  
+  
 
   return (
     <>
@@ -66,14 +105,18 @@ export default function TodayAppointments() {
               <th>Pacjent</th>
               <th>PESEL</th>
               <th>E-mail</th>
-              <th>Ostatnia donacja</th>
               <th>Grupa krwi</th>
               <th>Godzina wizyty</th>
               <th>Zrealizuj</th>
             </tr>
           </thead>
           <tbody>
-            {appointments.map((a, idx) => (
+          {appointments.map((a, idx) => {
+          const isDone =
+          a.appointmentStatus === "ZREALIZOWANA" ||
+          a.appointmentStatus === "PRZERWANA";
+
+            return (
               <tr
                 key={a.appointmentId}
                 className={idx % 2 === 0 ? "" : "striped"}
@@ -84,11 +127,7 @@ export default function TodayAppointments() {
                 </td>
                 <td>{a.pesel}</td>
                 <td>{a.email}</td>
-                <td>
-                  {a.lastDonationDate && a.lastDonationDate !== "null"
-                    ? new Date(a.lastDonationDate).toLocaleDateString()
-                    : ""}
-                </td>{" "}
+              
                 <td>{a.bloodGroup}</td>
                 <td>
                   {new Date(a.appointmentDate).toLocaleTimeString([], {
@@ -97,16 +136,22 @@ export default function TodayAppointments() {
                   })}
                 </td>
                 <td>
-                  <IconButton
-                    color="error"
-                    size="small"
-                    onClick={() => handleOpenModal(a)}
-                  >
-                    <Bloodtype />
-                  </IconButton>
+                  {isDone ? (
+                    <span className="done-label">Zakończona</span>
+                  ) : (
+                    <IconButton
+                      color="error"
+                      size="small"
+                      onClick={() => handleOpenModal(a)}
+                    >
+                      <Bloodtype />
+                    </IconButton>
+                  )}
                 </td>
               </tr>
-            ))}
+            );
+          })}
+
           </tbody>
         </table>
       </section>

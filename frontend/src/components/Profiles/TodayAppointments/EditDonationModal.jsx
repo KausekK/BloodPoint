@@ -15,15 +15,13 @@ import {
   Stack
 } from '@mui/material';
 import { Bloodtype, Close } from '@mui/icons-material';
-import { BLOOD_GROUPS } from '../../shared/const/BloodGroups';
-import { APPOINTMENT_STATUS } from '../../shared/const/AppointmentStatus';
+import { listBloodTypes } from '../../../services/BloodTypeService';
+import { listDonationStatuses } from '../../../services/DonationStatusService';
 
-const STATUS_OPTIONS = [
-  { value: APPOINTMENT_STATUS.UMOWIONA, label: "Umówiona" },
-  { value: APPOINTMENT_STATUS.ODWOLANA, label: "Odwołana" },
-  { value: APPOINTMENT_STATUS.ZREALIZOWANA, label: "Zrealizowana" },
-  { value: APPOINTMENT_STATUS.PRZERWANA, label: "Przerwana" },
-];
+const DONATION_STATUS_LABELS = {
+  ZREALIZOWANA: "Zrealizowana",
+  PRZERWANA: "Przerwana",
+};
 
 export default function EditDonationModal({
   open,
@@ -32,18 +30,103 @@ export default function EditDonationModal({
   onSave
 }) {
   const [status, setStatus] = useState(donation.status || '');
-  const [amount, setAmount] = useState(donation.amountOfBlood || '');
-  const [bloodGroup, setBloodGroup] = useState(donation.bloodGroup || '');
+  const [amount, setAmount] = useState(
+    donation.amountOfBlood != null ? String(donation.amountOfBlood) : ''
+  );
+  const [bloodTypeId, setBloodTypeId] = useState(donation.bloodTypeId || '');
+
+  const [bloodTypes, setBloodTypes] = useState([]);
+  const [loadingBloodTypes, setLoadingBloodTypes] = useState(false);
+  const [bloodTypesError, setBloodTypesError] = useState('');
+
+  const [statusOptions, setStatusOptions] = useState([]);
+  const [loadingStatuses, setLoadingStatuses] = useState(false);
+  const [statusesError, setStatusesError] = useState('');
+  const [lockBloodType, setLockBloodType] = useState(false);
+
 
   useEffect(() => {
     setStatus(donation.status || '');
-    setAmount(donation.amountOfBlood || '');
-    setBloodGroup(donation.bloodGroup || '');
+    setAmount(
+      donation.amountOfBlood != null ? String(donation.amountOfBlood) : ''
+    );
+    setBloodTypeId(donation.bloodTypeId || '');
+    setLockBloodType(!!donation.existingDonor); 
   }, [donation]);
 
+  useEffect(() => {
+    if (!open) return;
+    (async () => {
+      try {
+        setLoadingBloodTypes(true);
+        setBloodTypesError('');
+        const bts = await listBloodTypes();
+        const arr = Array.isArray(bts) ? bts : [];
+        setBloodTypes(arr);
+  
+        if (donation.existingDonor && donation.bloodGroupLabel && !donation.bloodTypeId) {
+          const match = arr.find((bt) => bt.label === donation.bloodGroupLabel);
+          if (match) {
+            setBloodTypeId(String(match.id));
+            setLockBloodType(true);
+          }
+        }
+
+      } catch (e) {
+        setBloodTypes([]);
+        setBloodTypesError('Nie udało się pobrać listy grup krwi.');
+      } finally {
+        setLoadingBloodTypes(false);
+      }
+    })();
+  }, [open, donation.existingDonor, donation.bloodGroupLabel, donation.bloodTypeId]);
+
+  useEffect(() => {
+    if (!open) return;
+    (async () => {
+      try {
+        setLoadingStatuses(true);
+        setStatusesError('');
+        const statuses = await listDonationStatuses();
+        const opts = (Array.isArray(statuses) ? statuses : []).map((s) => ({
+          value: s,
+          label: DONATION_STATUS_LABELS[s] || s,
+        }));
+        setStatusOptions(opts);
+      } catch (e) {
+        console.error('Nie udało się pobrać statusów wizyt:', e);
+        setStatusOptions([]);
+        setStatusesError('Nie udało się pobrać listy statusów.');
+      } finally {
+        setLoadingStatuses(false);
+      }
+    })();
+  }, [open]);
+
+  const parsedAmount = (() => {
+    if (!amount && amount !== 0) return NaN;
+    const normalized = String(amount).replace(',', '.');
+    return parseFloat(normalized);
+  })();
+
+  const canSave =
+    status &&
+    bloodTypeId &&
+    !bloodTypesError &&
+    !statusesError &&
+    Number.isFinite(parsedAmount) &&
+    parsedAmount > 0;
+
   const handleSave = () => {
-    onSave({ status, amountOfBlood: amount, bloodGroup });
+    onSave({
+      donationStatus: status,
+      amountOfBlood: parsedAmount,
+      bloodTypeId: Number(bloodTypeId),
+    });
   };
+
+  const statusDisabled = loadingStatuses || !!statusesError;
+  const bloodGroupDisabled = loadingBloodTypes || !!bloodTypesError || lockBloodType;
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
@@ -64,47 +147,57 @@ export default function EditDonationModal({
 
       <DialogContent dividers>
         <Stack spacing={3} mt={1}>
-          <FormControl fullWidth size="small">
+          <FormControl fullWidth size="small" disabled={statusDisabled}>
             <InputLabel id="status-label">Status</InputLabel>
             <Select
               labelId="status-label"
               value={status}
               label="Status"
-              onChange={e => setStatus(e.target.value)}
+              onChange={(e) => setStatus(e.target.value)}
             >
-              {STATUS_OPTIONS.map(opt => (
+              {statusOptions.map((opt) => (
                 <MenuItem key={opt.value} value={opt.value}>
                   {opt.label}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
+          {statusesError && (
+            <Typography variant="body2" color="error">
+              {statusesError}
+            </Typography>
+          )}
 
           <TextField
-            label="Ilość oddanej krwi (ml)"
+            label="Ilość oddanej krwi (l)"
             type="number"
             size="small"
             fullWidth
             value={amount}
-            onChange={e => setAmount(Number(e.target.value))}
-            inputProps={{ min: 0, step: 50 }}
+            onChange={(e) => setAmount(e.target.value)}
+            inputProps={{ min: 0, step: 0.01 }}
           />
 
-          <FormControl fullWidth size="small">
-            <InputLabel id="bloodgroup-label">Grupa krwi</InputLabel>
+          <FormControl fullWidth size="small" disabled={bloodGroupDisabled}>
+            <InputLabel id="bloodtype-label">Grupa krwi</InputLabel>
             <Select
-              labelId="bloodgroup-label"
-              value={bloodGroup}
+              labelId="bloodtype-label"
+              value={bloodTypeId}
               label="Grupa krwi"
-              onChange={e => setBloodGroup(e.target.value)}
+              onChange={(e) => setBloodTypeId(e.target.value)}
             >
-              {BLOOD_GROUPS.map(bg => (
-                <MenuItem key={bg} value={bg}>
-                  {bg}
+              {bloodTypes.map((bt) => (
+                <MenuItem key={bt.id} value={bt.id}>
+                  {bt.label}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
+          {bloodTypesError && (
+            <Typography variant="body2" color="error">
+              {bloodTypesError}
+            </Typography>
+          )}
         </Stack>
       </DialogContent>
 
@@ -113,7 +206,7 @@ export default function EditDonationModal({
         <Button
           variant="contained"
           color="error"
-          disabled={!status || !amount || !bloodGroup}
+          disabled={!canSave}
           onClick={handleSave}
         >
           Zapisz
