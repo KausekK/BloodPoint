@@ -1,7 +1,7 @@
 package com.point.blood.questionnaire.response;
 
-import com.point.blood.donation.Donation;
-import com.point.blood.donation.DonationRepository;
+import com.point.blood.appointment.AppointmentRepository;
+
 import com.point.blood.questionnaire.Question;
 import com.point.blood.questionnaire.QuestionRepository;
 import com.point.blood.questionnaire.Questionnaire;
@@ -17,25 +17,30 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class QuestionnaireResponseService {
 
-    private final DonationRepository donationRepository;
+    private final AppointmentRepository appointmentRepository;
     private final QuestionnaireRepository questionnaireRepository;
     private final QuestionRepository questionRepository;
     private final QuestionnaireResponseRepository responseRepository;
 
 
     public void saveResponses(QuestionnaireResponseDTO dto) {
-        Donation donation = donationRepository.findById(dto.getDonationId())
+
+        if (responseRepository.existsByAppointmentId(dto.getAppointmentId())) {
+            throw ApplicationException.createWithMessage(
+                    "Kwestionariusz dla tej wizyty został już wypełniony.");
+        }
+
+        var appointment = appointmentRepository.findById(dto.getAppointmentId())
                 .orElseThrow(() -> ApplicationException.createWithMessage(
-                        "Nie znaleziono wizyty o id=" + dto.getDonationId()));
+                        "Nie znaleziono wizyty o id=" + dto.getAppointmentId()));
 
         Questionnaire questionnaire = questionnaireRepository.findById(dto.getQuestionnaireId())
                 .orElseThrow(() -> ApplicationException.createWithMessage(
                         "Nie znaleziono kwestionariusza o id=" + dto.getQuestionnaireId()));
 
         QuestionnaireResponse session = QuestionnaireResponse.builder()
-                .donation(donation)
+                .appointment(appointment)
                 .questionnaire(questionnaire)
-//                .filledAt(LocalDateTime.now())
                 .build();
 
         dto.getAnswers().forEach(a -> {
@@ -43,10 +48,7 @@ public class QuestionnaireResponseService {
                     .orElseThrow(() -> ApplicationException.createWithMessage(
                             "Nie znaleziono pytania o id=" + a.questionId()));
 
-            Boolean flag = null;
-            if (a.answerFlag() != null) {
-                flag = a.answerFlag();
-            }
+            Boolean flag = a.answerFlag() != null ? a.answerFlag() : null;
 
             QuestionResponse qr = QuestionResponse.builder()
                     .question(question)

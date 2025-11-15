@@ -10,7 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class QuestionnaireResponseDTO {
-    Long donationId;
+    Long appointmentId;
     Long questionnaireId;
     List<AnswerDTO> answers;
 

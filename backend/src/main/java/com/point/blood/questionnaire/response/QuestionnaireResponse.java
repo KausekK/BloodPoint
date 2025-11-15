@@ -1,5 +1,6 @@
 package com.point.blood.questionnaire.response;
 
+import com.point.blood.appointment.Appointment;
 import com.point.blood.donation.Donation;
 import com.point.blood.questionnaire.Questionnaire;
 import jakarta.persistence.*;
@@ -29,13 +30,17 @@ public class QuestionnaireResponse {
     )
     private Long id;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "donation_id", nullable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "donation_id")
     private Donation donation;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "questionnaire_id", nullable = false, updatable = false)
     private Questionnaire questionnaire;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "appointment_id", nullable = false, updatable = false)
+    private Appointment appointment;
 
 //    @Column(name = "filled_at", nullable = false)
 //    private LocalDateTime filledAt;

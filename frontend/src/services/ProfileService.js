@@ -4,6 +4,12 @@ export function getProfile(id) {
   return api.get(`/user/profile/${id}`).then((r) => r.data);
 }
 
+export function updateUserProfileContactInfo({ id, email, phone }) {
+  return api
+    .put("/user/profile", { id, email, phone })
+    .then((r) => r.data);
+}
+
 export function getDonations(id, dateFrom, dateTo) {
   return api.post(`/donations/${id}`, { dateFrom, dateTo }).then((r) => r.data);
 }

@@ -5,6 +5,8 @@ import com.point.blood.appointment.AppointmentRepository;
 import com.point.blood.bloodType.BloodType;
 import com.point.blood.donor.Donor;
 import com.point.blood.donor.DonorRepository;
+import com.point.blood.questionnaire.response.QuestionnaireResponse;
+import com.point.blood.questionnaire.response.QuestionnaireResponseRepository;
 import com.point.blood.shared.MessageDTO;
 import com.point.blood.bloodType.BloodTypeRepository;
 import com.point.blood.donationStatus.DonationStatus;
@@ -36,7 +38,7 @@ public class DonationService {
     private final DonationStatusRepository donationStatusRepository;
     private final DonationTypeRepository donationTypeRepository;
     private final BloodTypeRepository bloodTypeRepository;
-    private final DonorRepository donorRepository;
+    private final QuestionnaireResponseRepository questionnaireResponseRepository;
 
 
     @PersistenceContext
@@ -80,11 +82,14 @@ public class DonationService {
                             "Brak typu donacji " + typeEnum + " w bazie."));
 
             // TODO
-            Long questionnaireId = dto.getQuestionnaireId() != null
-                    ? dto.getQuestionnaireId()
-                    : 1L;
-
-            Questionnaire questionnaire = em.getReference(Questionnaire.class, questionnaireId);
+//            Long questionnaireId = dto.getQuestionnaireId() != null
+//                    ? dto.getQuestionnaireId()
+//                    : 1L;
+//
+//
+//
+//
+//            Questionnaire questionnaire = em.getReference(Questionnaire.class, questionnaireId);
 
             LocalDateTime donationDate = timeSlot.getStartTime();
 
@@ -115,6 +120,17 @@ public class DonationService {
                 donor.setLastDonationDate(donationDate.toLocalDate());
             }
 
+            var questionnaireResponseOpt =
+                    questionnaireResponseRepository.findByAppointmentId(appointmentId);
+
+            if (questionnaireResponseOpt.isEmpty()) {
+                return buildError("Dawca nie uzupełnił kwestionariusza dla tej wizyty.");
+            }
+
+            QuestionnaireResponse qrEntity = questionnaireResponseOpt.get();
+            Questionnaire questionnaire = qrEntity.getQuestionnaire();
+
+
             Donation entity = new Donation();
             entity.setAmountOfBlood(dto.getAmountOfBlood());
             entity.setDonationDate(donationDate);
@@ -126,6 +142,8 @@ public class DonationService {
             entity.setBloodType(bloodTypeToUse);
 
             Donation saved = donationRepository.saveAndFlush(entity);
+
+            qrEntity.setDonation(saved);
 
             if (dto.getDonationStatus() != null) {
                 switch (dto.getDonationStatus()) {

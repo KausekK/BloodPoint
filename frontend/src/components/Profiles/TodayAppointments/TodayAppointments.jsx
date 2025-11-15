@@ -62,13 +62,12 @@ export default function TodayAppointments() {
         questionnaireId: null,
       });
   
-      console.log("createDonationFromAppointment response:", res);
-  
+    
       const messages = Array.isArray(res.messages) ? res.messages : [];
-  
+    
       const errors = messages.filter((m) => m.type === "ERROR");
       const successes = messages.filter((m) => m.type === "SUCCESS");
-  
+    
       if (errors.length) {
         const msg =
           errors.map((e) => e.text).join(" ") ||
@@ -76,20 +75,21 @@ export default function TodayAppointments() {
         showError(msg);
         return;
       }
-  
+    
       const ok =
         successes[0]?.text || "Donacja została zapisana.";
       showMessage(ok, MessageType.SUCCESS);
-
+  
       const refreshed = await getAllTodayAppointmentsForBloodPoint(donationPointId);
       setAppointments(refreshed);
-  
+    
       handleCloseModal();
     } catch (e) {
       console.error("Błąd przy tworzeniu donacji:", e);
       showError("Nie udało się zapisać donacji (błąd połączenia z serwerem).");
     }
   };
+  
   
 
   return (
@@ -112,7 +112,9 @@ export default function TodayAppointments() {
           </thead>
           <tbody>
           {appointments.map((a, idx) => {
-          const isDone = a.appointmentStatus != null;
+          const isDone =
+          a.appointmentStatus === "ZREALIZOWANA" ||
+          a.appointmentStatus === "PRZERWANA";
 
             return (
               <tr

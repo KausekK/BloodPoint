@@ -25,14 +25,24 @@ public class UsersService {
 
 
     public EditResult<UsersProfileDTO> updateUserProfileContactInfo(UsersProfileDTO dto) {
-        var userEnitty = usersRepository.findById(dto.getId())
-                .orElseThrow(() -> ApplicationException.createWithMessage("Brak użytkownika o podanym id: {}", dto.getId()));
+        var userEntity = usersRepository.findById(dto.getId())
+                .orElseThrow(() -> ApplicationException.createWithMessage(
+                        "Brak użytkownika o podanym id: {}", dto.getId()));
 
-        userEnitty.setEmail(dto.getEmail());
-       userEnitty.setPhone(dto.getPhone());
+        String newEmail = dto.getEmail();
+        if (newEmail != null && !newEmail.equalsIgnoreCase(userEntity.getEmail())) {
+            usersRepository.findByEmail(newEmail)
+                    .filter(other -> !other.getId().equals(userEntity.getId()))
+                    .ifPresent(other -> {
+                        throw ApplicationException.createWithMessage(
+                                "Podany adres e-mail jest już używany przez innego użytkownika.");
+                    });
+        }
 
+        userEntity.setEmail(newEmail);
+        userEntity.setPhone(dto.getPhone());
 
-        var savedUserEntity = usersRepository.save(userEnitty);
+        var savedUserEntity = usersRepository.save(userEntity);
         var resultDto = UsersProfileDTO.builder()
                 .id(savedUserEntity.getId())
                 .email(savedUserEntity.getEmail())

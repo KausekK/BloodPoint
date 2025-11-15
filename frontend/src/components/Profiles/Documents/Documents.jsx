@@ -19,12 +19,15 @@ import authService from '../../../services/AuthenticationService';
 export default function Documents() {
   const userId = authService.getUserId();
 
-  const [donationId, setDonationId] = useState(null);
+  const [appointmentId, setAppointmentId] = useState(null);
+
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-    const [questionnaireId, setQuestionnaireId] = useState(null);
+  const [questionnaireId, setQuestionnaireId] = useState(null);
+  const [submitted, setSubmitted] = useState(false);
+
 
   useEffect(() => {
     let active = true;
@@ -34,7 +37,7 @@ export default function Documents() {
         const scheduled = await getScheduledAppointmentForUser(userId);
         if (!active) return;
         const id = scheduled?.appointmentId ?? scheduled?.id ?? scheduled ?? null;
-        setDonationId(id);
+        setAppointmentId(id);
       } catch (e) {
         console.error(e);
       }
@@ -45,7 +48,7 @@ export default function Documents() {
   }, [userId]);
 
   useEffect(() => {
-    if (!donationId) {
+    if (!appointmentId) {
       setQuestions([]);
       setAnswers({});
       setLoading(false);
@@ -89,7 +92,7 @@ export default function Documents() {
       };
 
       resolveAndLoad();
-    }, [donationId]);
+    }, [appointmentId]);
 
   const handleChange = (questionId, value) => {
     setAnswers(prev => ({ ...prev, [questionId]: value }));
@@ -97,9 +100,9 @@ export default function Documents() {
 
   const handleSubmit = async e => {
     e.preventDefault();
-
+  
     const payload = {
-      donationId,
+      appointmentId,
       questionnaireId,
       answers: questions.map(q => {
         const raw = answers[q.id] ?? '';
@@ -117,16 +120,17 @@ export default function Documents() {
         };
       })
     };
-
+  
     try {
-
-      await submitResponses(payload);
+      await submitResponses(questionnaireId, appointmentId, payload);
       showMessage('Odpowiedzi zapisane pomyślnie', 'success');
+      setSubmitted(true);
     } catch (err) {
       console.error(err);
       showError('Wystąpił błąd przy zapisywaniu odpowiedzi');
     }
   };
+  
 
   const isFormValid = questions.length > 0 && questions.every(q => {
     const val = answers[q.id];
@@ -138,7 +142,21 @@ export default function Documents() {
 
   if (loading) return <div className="loading">Ładowanie dokumentów...</div>;
   if (error) return <div className="error">Błąd: {error}</div>;
-  if (!donationId) return <div className="no-data">Brak formularzu do wypełnienia</div>;
+  if (!appointmentId) return <div className="no-data">Brak formularzu do wypełnienia</div>;
+
+  if (submitted) {
+    return (
+      <section className="card documents-card">
+        <header className="card-header">
+          <h2 className="card-title">Dokumenty / Kwestionariusz</h2>
+        </header>
+        <div className="no-data">
+          Kwestionariusz dla tej wizyty został już wypełniony.
+        </div>
+      </section>
+    );
+  }
+
   if (!questions.length) return <div className="no-data">Brak dokumentów</div>;
 
   return (
