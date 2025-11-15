@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { IconButton } from "@mui/material";
 import { Bloodtype } from "@mui/icons-material";
 import { getAllTodayAppointmentsForBloodPoint } from "../../../services/MakeAppointmentService";
 import EditDonationModal from "./EditDonationModal";
 import "./TodayAppointments.css";
 import authService from "../../../services/AuthenticationService";
-
-import { showMessage, showError } from "../../shared/services/MessageService";
+import { showMessages, showError, showMessage } from "../../shared/services/MessageService";
 import { MessageType } from "../../shared/const/MessageType.model";
 import { createDonationFromAppointment } from "../../../services/DonationService";
-
 
 
 export default function TodayAppointments() {
@@ -52,45 +50,45 @@ export default function TodayAppointments() {
   };
 
   const handleSave = async (updated) => {
-    try {
-      const res = await createDonationFromAppointment(currentAppt.appointmentId, {
-        bloodTypeId: updated.bloodTypeId,
-        donationStatus: updated.donationStatus,
-        amountOfBlood: updated.amountOfBlood,
-        donationDate: new Date().toISOString(),
-        donationType: "KREW_PELNA",
-        questionnaireId: null,
-      });
-  
-    
-      const messages = Array.isArray(res.messages) ? res.messages : [];
-    
-      const errors = messages.filter((m) => m.type === "ERROR");
-      const successes = messages.filter((m) => m.type === "SUCCESS");
-    
-      if (errors.length) {
-        const msg =
-          errors.map((e) => e.text).join(" ") ||
-          "Nie udało się zapisać donacji.";
-        showError(msg);
-        return;
-      }
-    
-      const ok =
-        successes[0]?.text || "Donacja została zapisana.";
-      showMessage(ok, MessageType.SUCCESS);
-  
-      const refreshed = await getAllTodayAppointmentsForBloodPoint(donationPointId);
-      setAppointments(refreshed);
-    
-      handleCloseModal();
-    } catch (e) {
-      console.error("Błąd przy tworzeniu donacji:", e);
-      showError("Nie udało się zapisać donacji (błąd połączenia z serwerem).");
+  try {
+    const res = await createDonationFromAppointment(currentAppt.appointmentId, {
+      bloodTypeId: updated.bloodTypeId,
+      donationStatus: updated.donationStatus,
+      amountOfBlood: updated.amountOfBlood,
+      donationDate: new Date().toISOString(),
+      donationType: "KREW_PELNA",
+      questionnaireId: null,
+    });
+
+    const messages = Array.isArray(res?.messages) ? res.messages : [];
+
+    if (messages.length > 0) {
+      showMessages(
+        messages.map((m) => ({
+          msg: m.msg,
+          type: MessageType[m.type] || MessageType.INFO,
+        }))
+      );
     }
-  };
-  
-  
+
+    const hasError = messages.some((m) => m.type === "ERROR");
+    if (hasError) {
+      return;
+    }
+
+    if (messages.length === 0) {
+      showMessage("Donacja została zapisana.", MessageType.SUCCESS);
+    }
+
+    const refreshed = await getAllTodayAppointmentsForBloodPoint(donationPointId);
+    setAppointments(refreshed);
+
+    handleCloseModal();
+  } catch (e) {
+    console.error("Błąd przy tworzeniu donacji:", e);
+    showError("Nie udało się zapisać donacji (błąd połączenia z serwerem).");
+  }
+};
 
   return (
     <>

@@ -2,7 +2,7 @@ package com.point.blood.statistics;
 
 public interface DonationStatsView {
     String getBloodGroup();
-    String getRh();
+    String getRhFactor();
     String getGender();
     String getAgeBucket();
     Long getDonationsCnt();

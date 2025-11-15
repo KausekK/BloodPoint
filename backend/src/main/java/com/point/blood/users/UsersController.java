@@ -19,6 +19,6 @@ public class UsersController {
 
     @PutMapping("/profile")
     public ResponseEntity<EditResult<UsersProfileDTO>> updateProfile(@RequestBody UsersProfileDTO profileDTO) {
-    return ResponseEntity.ok(usersService.updateUserProfileContactInfo(profileDTO));
+        return ResponseEntity.ok(usersService.updateUserProfileContactInfo(profileDTO));
     }
 }

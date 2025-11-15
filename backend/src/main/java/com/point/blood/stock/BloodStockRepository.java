@@ -12,7 +12,7 @@ import java.util.List;
 
 @Repository
 public interface BloodStockRepository extends JpaRepository<BloodPointBloodTyp, Long> {
-
+//TODO
     @Query("""
         SELECT new com.point.blood.stock.BloodStockDTO(
             bt.id,
