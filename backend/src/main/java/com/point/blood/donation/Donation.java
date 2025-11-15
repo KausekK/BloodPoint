@@ -25,7 +25,12 @@ import java.time.LocalDateTime;
 public class Donation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(
+            name = "donation_seq_gen",
+            sequenceName = "donation_seq",
+            allocationSize = 1
+    )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "donation_seq_gen")
     @Column(name = "id")
     private Long id;
 

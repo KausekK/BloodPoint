@@ -23,7 +23,6 @@ const DONATION_STATUS_LABELS = {
   PRZERWANA: "Przerwana",
 };
 
-
 export default function EditDonationModal({
   open,
   onClose,
@@ -34,7 +33,7 @@ export default function EditDonationModal({
   const [amount, setAmount] = useState(
     donation.amountOfBlood != null ? String(donation.amountOfBlood) : ''
   );
-  const [bloodGroup, setBloodGroup] = useState(donation.bloodGroup || '');
+  const [bloodTypeId, setBloodTypeId] = useState(donation.bloodTypeId || '');
 
   const [bloodTypes, setBloodTypes] = useState([]);
   const [loadingBloodTypes, setLoadingBloodTypes] = useState(false);
@@ -43,13 +42,16 @@ export default function EditDonationModal({
   const [statusOptions, setStatusOptions] = useState([]);
   const [loadingStatuses, setLoadingStatuses] = useState(false);
   const [statusesError, setStatusesError] = useState('');
+  const [lockBloodType, setLockBloodType] = useState(false);
+
 
   useEffect(() => {
     setStatus(donation.status || '');
     setAmount(
       donation.amountOfBlood != null ? String(donation.amountOfBlood) : ''
     );
-    setBloodGroup(donation.bloodGroup || '');
+    setBloodTypeId(donation.bloodTypeId || '');
+    setLockBloodType(!!donation.existingDonor); 
   }, [donation]);
 
   useEffect(() => {
@@ -59,7 +61,17 @@ export default function EditDonationModal({
         setLoadingBloodTypes(true);
         setBloodTypesError('');
         const bts = await listBloodTypes();
-        setBloodTypes(Array.isArray(bts) ? bts : []);
+        const arr = Array.isArray(bts) ? bts : [];
+        setBloodTypes(arr);
+  
+        if (donation.existingDonor && donation.bloodGroupLabel && !donation.bloodTypeId) {
+          const match = arr.find((bt) => bt.label === donation.bloodGroupLabel);
+          if (match) {
+            setBloodTypeId(String(match.id));
+            setLockBloodType(true);
+          }
+        }
+
       } catch (e) {
         setBloodTypes([]);
         setBloodTypesError('Nie udało się pobrać listy grup krwi.');
@@ -67,7 +79,7 @@ export default function EditDonationModal({
         setLoadingBloodTypes(false);
       }
     })();
-  }, [open]);
+  }, [open, donation.existingDonor, donation.bloodGroupLabel, donation.bloodTypeId]);
 
   useEffect(() => {
     if (!open) return;
@@ -99,7 +111,7 @@ export default function EditDonationModal({
 
   const canSave =
     status &&
-    bloodGroup &&
+    bloodTypeId &&
     !bloodTypesError &&
     !statusesError &&
     Number.isFinite(parsedAmount) &&
@@ -107,14 +119,14 @@ export default function EditDonationModal({
 
   const handleSave = () => {
     onSave({
-      status,
+      donationStatus: status,
       amountOfBlood: parsedAmount,
-      bloodGroup,
+      bloodTypeId: Number(bloodTypeId),
     });
   };
 
   const statusDisabled = loadingStatuses || !!statusesError;
-  const bloodGroupDisabled = loadingBloodTypes || !!bloodTypesError;
+  const bloodGroupDisabled = loadingBloodTypes || !!bloodTypesError || lockBloodType;
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
@@ -167,15 +179,15 @@ export default function EditDonationModal({
           />
 
           <FormControl fullWidth size="small" disabled={bloodGroupDisabled}>
-            <InputLabel id="bloodgroup-label">Grupa krwi</InputLabel>
+            <InputLabel id="bloodtype-label">Grupa krwi</InputLabel>
             <Select
-              labelId="bloodgroup-label"
-              value={bloodGroup}
+              labelId="bloodtype-label"
+              value={bloodTypeId}
               label="Grupa krwi"
-              onChange={(e) => setBloodGroup(e.target.value)}
+              onChange={(e) => setBloodTypeId(e.target.value)}
             >
               {bloodTypes.map((bt) => (
-                <MenuItem key={bt.id} value={bt.label}>
+                <MenuItem key={bt.id} value={bt.id}>
                   {bt.label}
                 </MenuItem>
               ))}

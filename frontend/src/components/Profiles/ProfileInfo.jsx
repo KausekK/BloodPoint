@@ -70,7 +70,7 @@ export default function ProfileInfo() {
       <section className="card">
         <h2 className="card-title">Informacje o dawcy</h2>
         <div className="details-grid">
-          <Detail label="Ilość oddanej krwi" value={profile.totalDonatedBlood != null ? `${profile.totalDonatedBlood / 1000} l` : "-"} />
+          <Detail label="Ilość oddanej krwi" value={profile.totalDonatedBlood != null ? `${profile.totalDonatedBlood} l` : "-"} />
           <Detail label="Ostatnia donacja" value={profile.lastDonationDate ? new Date(profile.lastDonationDate).toLocaleDateString() : "-"} />
           <Detail label="Grupa krwi" value={profile.bloodGroup && profile.rhFactor ? `${profile.bloodGroup} Rh${profile.rhFactor}` : "-"} />
         </div>

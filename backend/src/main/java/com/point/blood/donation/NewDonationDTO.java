@@ -18,4 +18,5 @@ public class NewDonationDTO {
     private BigDecimal amountOfBlood;
     private LocalDateTime donationDate;
     private DonationTypeEnum donationType;
+    private Long questionnaireId;
 }
