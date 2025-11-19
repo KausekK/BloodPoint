@@ -16,6 +16,7 @@ import com.point.blood.donationType.DonationTypeEnum;
 import com.point.blood.donationType.DonationTypeRepository;
 import com.point.blood.questionnaire.Questionnaire;
 import com.point.blood.shared.EditResult;
+import com.point.blood.stock.BloodStockRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
@@ -38,6 +39,7 @@ public class DonationService {
     private final DonationTypeRepository donationTypeRepository;
     private final BloodTypeRepository bloodTypeRepository;
     private final QuestionnaireResponseRepository questionnaireResponseRepository;
+    private final BloodStockRepository bloodStockRepository;
 
 
     @PersistenceContext
@@ -69,13 +71,18 @@ public class DonationService {
         if (dto == null) {
             return buildError("Brak danych donacji.");
         }
+        if (dto.getDonationStatus() == null) {
+            return buildError("Brak statusu donacji.");
+        }
+        if (dto.getAmountOfBlood() == null || dto.getAmountOfBlood().signum() <= 0) {
+            return buildError("Ilość oddanej krwi musi być dodatnia.");
+        }
 
         try {
             Appointment appointment = appointmentRepository.findById(appointmentId)
                     .orElseThrow(() -> new IllegalArgumentException("Nie znaleziono wizyty o id=" + appointmentId));
 
             var user = appointment.getUsers();
-
             var timeSlot = appointment.getDonationTimeSlot();
             var point = timeSlot.getBloodDonationPoint();
 
@@ -163,6 +170,20 @@ public class DonationService {
                 appointmentRepository.save(appointment);
             }
 
+            if (dto.getDonationStatus() == com.point.blood.donationStatus.DonationStatusEnum.ZREALIZOWANA) {
+                Long pointId = point.getId();
+                Long bloodTypeId = bloodTypeToUse.getId();
+
+                var stock = bloodStockRepository.findForUpdate(pointId, bloodTypeId)
+                        .orElseThrow(() -> new IllegalStateException(
+                                "W magazynie punktu brak pozycji dla tej grupy krwi."));
+
+                stock.setAvailableQuantity(
+                        stock.getAvailableQuantity().add(dto.getAmountOfBlood())
+                );
+
+                bloodStockRepository.save(stock);
+            }
 
             NewDonationDTO resultDto = new NewDonationDTO();
             resultDto.setBloodTypeId(saved.getBloodType().getId());
