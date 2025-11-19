@@ -38,7 +38,7 @@ export default function DonorAuthCard() {
   );
 
   const phoneValid = useMemo(
-    () => !reg.phone || /^\d{6,}$/.test(reg.phone.replace(/\s+/g, "")),
+    () => !reg.phone || /^\d{9,}$/.test(reg.phone.replace(/\s+/g, "")),
     [reg.phone]
   );
 
@@ -249,7 +249,7 @@ export default function DonorAuthCard() {
               />
               {!phoneValid && reg.phone && (
                 <div className="field-error">
-                  Numer telefonu musi mieć co najmniej 6 cyfr.
+                  Numer telefonu musi mieć mieć 9 cyfr.
                 </div>
               )}
             </div>
