@@ -35,7 +35,7 @@ public class Staff {
     private StaffPosition position;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "blood_donation_point_id")
+    @JoinColumn(name = "Blood_donation_point_id")
     private BloodDonationPoint bloodDonationPoint;
 
 

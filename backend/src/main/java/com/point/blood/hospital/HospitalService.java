@@ -6,15 +6,21 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class HospitalService {
     private final HospitalRepository hospitalRepository;
 
-    public HospitalProfileDTO getHospitalInfo(Long id) {
+    public HospitalProfileDTO getHospitalInfo(Long hospitalId) {
         return hospitalRepository
-                .findProfileById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Szpital nie istnieje: " + id));
+                .findProfileById(hospitalId)
+                .orElseThrow(() -> new EntityNotFoundException("Szpital nie istnieje: " + hospitalId));
     }
+    public List<String> getHospitalProvinces() {
+        return hospitalRepository.getHospitalsProvince();
+    }
+
 }

@@ -2,7 +2,7 @@ import { api } from "./api";
 
 export function getDonationStatistics(from, to) {
     return api
-        .get(`/statistic`, {
+        .get(`/statistics`, {
             params: { from, to },
         })
         .then((r) => r.data);

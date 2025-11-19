@@ -21,12 +21,11 @@ import java.util.Optional;
 public class AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
-    private final DonationTimeSlotRepository timeSlotRepository;
     private final AppointmentMapper appointmentMapper;
     private final DonationTimeSlotRepository donationTimeSlotRepository;
 
 
-    private Boolean validateAppointment(AppointmentDTO dto) {
+    private boolean hasRecentOrUpcomingAppointment(AppointmentDTO dto) {
         LocalDateTime now = LocalDateTime.now();
         return appointmentRepository.existsRecentOrUpcomingAppointmentForUser(
                 dto.getUserId(),
@@ -38,13 +37,25 @@ public class AppointmentService {
 
     public EditResult<AppointmentDTO> insertAppointment(AppointmentDTO dto) {
 
-        if (validateAppointment(dto)) {
+        if (dto == null) {
+            return buildError("Brak danych wizyty.");
+        }
+        if (dto.getUserId() == null) {
+            return buildError("Brak identyfikatora użytkownika.");
+        }
+        if (dto.getSlotId() == null) {
+            return buildError("Brak identyfikatora terminu wizyty.");
+        }
+
+        if (hasRecentOrUpcomingAppointment(dto)) {
             return buildError("Masz już wcześniej umówioną wizytę, lub twoja wizyta odbyła się zbyt niedawno aby ponownie oddać krew.");
         }
 
         try {
 
-            DonationTimeSlot slot = timeSlotRepository.getReferenceById(dto.getSlotId());
+            DonationTimeSlot slot = donationTimeSlotRepository.findById(dto.getSlotId())
+                    .orElseThrow(() -> new EntityNotFoundException("Wybrany termin wizyty nie istnieje."));
+
 
             if (!slot.isAvailableSlot()) {
                 return buildError("Termin jest już zajęty.");
@@ -68,6 +79,10 @@ public class AppointmentService {
     }
 
     public EditResult<AppointmentDTO> deleteAppointment(Long appointmentId) {
+        if (appointmentId == null) {
+            return buildError("Brak identyfikatora wizyty.");
+        }
+
         Appointment appt = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new EntityNotFoundException("Nie znaleziono wizyty"));
 
@@ -76,8 +91,6 @@ public class AppointmentService {
         donationTimeSlotRepository.saveAndFlush(slot);
 
         appointmentRepository.delete(appt);
-
-
 
         return EditResult.<AppointmentDTO>builder()
                 .messages(List.of(MessageDTO.createSuccessMessage("Wizyta została odwołana")))
@@ -99,7 +112,7 @@ public class AppointmentService {
     public List<AllAppointmentsDetailsDTO> getAllAppointmentsForBloodPoint(Long bloodDonationPointId) {
 
 
-        LocalDate fakeToday = LocalDate.of(2025, 11, 17);
+        LocalDate fakeToday = LocalDate.of(2025, 11, 20);
 
 
         LocalDateTime startOfDay = fakeToday.atStartOfDay();

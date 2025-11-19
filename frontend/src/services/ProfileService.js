@@ -10,16 +10,27 @@ export function updateUserProfileContactInfo({ id, email, phone }) {
     .then((r) => r.data);
 }
 
-export function getDonations(id, dateFrom, dateTo) {
-  return api.post(`/donations/${id}`, { dateFrom, dateTo }).then((r) => r.data);
+export function getDonations(userId, dateFrom, dateTo) {
+  const params = {};
+
+  if (dateFrom) {
+    params.dateFrom = dateFrom.slice(0, 10);
+  }
+  if (dateTo) {
+    params.dateTo = dateTo.slice(0, 10);
+  }
+
+  return api
+    .get(`/donations/users/${userId}`, { params })
+    .then((r) => r.data);
 }
 
-export function getScheduledAppointmentForUser(id) {
-  return api.get(`/appointment/${id}`).then((r) => r.data);
+export function getScheduledAppointmentForUser(userId) {
+  return api.get(`/appointment/${userId}`).then((r) => r.data);
 }
 
-export function deleteScheduledAppointment(id) {
-  return api.delete(`/appointment/${id}`).then((r) => r.data);
+export function deleteScheduledAppointment(userId) {
+  return api.delete(`/appointment/${userId}`).then((r) => r.data);
 }
 
 export function updateProfileContactInfo(data) {

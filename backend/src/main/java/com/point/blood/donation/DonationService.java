@@ -4,9 +4,9 @@ import com.point.blood.appointment.Appointment;
 import com.point.blood.appointment.AppointmentRepository;
 import com.point.blood.bloodType.BloodType;
 import com.point.blood.donor.Donor;
-import com.point.blood.donor.DonorRepository;
 import com.point.blood.questionnaire.response.QuestionnaireResponse;
 import com.point.blood.questionnaire.response.QuestionnaireResponseRepository;
+import com.point.blood.shared.ApplicationException;
 import com.point.blood.shared.MessageDTO;
 import com.point.blood.bloodType.BloodTypeRepository;
 import com.point.blood.donationStatus.DonationStatus;
@@ -27,7 +27,6 @@ import com.point.blood.appointment.AppointmentStatusEnum;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @Transactional
@@ -45,11 +44,22 @@ public class DonationService {
     private EntityManager em;
 
 
-    public List<DonationDTO> getUserDonations(Long id, LocalDate dateFrom, LocalDate dateTo) {
-        if (Objects.isNull(dateFrom) && Objects.isNull(dateTo)) {
-            return donationRepository.findAllByDonorUserId(id);
+    public List<DonationDTO> getUserDonations(Long userId, LocalDate dateFrom, LocalDate dateTo) {
+        if (userId == null) {
+            throw ApplicationException.createWithMessage("Brak identyfikatora użytkownika przy pobieraniu donacji.");
         }
-        return donationRepository.findAllByDonorUserIdAndDate(id, dateFrom.atStartOfDay(), dateTo.plusDays(1).atStartOfDay());
+        if (dateFrom == null && dateTo == null) {
+            return donationRepository.findAllByDonorUserId(userId);
+        }
+        if (dateFrom == null || dateTo == null) {
+            throw ApplicationException.createWithMessage("Zakres dat musi zawierać datę początkową i końcową.");
+        }
+
+        return donationRepository.findAllByDonorUserIdAndDate(
+                userId,
+                dateFrom.atStartOfDay(),
+                dateTo.plusDays(1).atStartOfDay()
+        );
     }
 
     public EditResult<NewDonationDTO> createDonationFromAppointment(Long appointmentId, NewDonationDTO dto) {

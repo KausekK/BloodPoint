@@ -100,24 +100,22 @@ export default function ProfileInfo() {
 
     const messages = Array.isArray(res?.messages) ? res.messages : [];
 
-    // Jeśli backend przysłał messages z EditResult – pokaż wszystkie
     if (messages.length > 0) {
       showMessages(
         messages.map((m) => ({
-          msg: m.msg,                              // <-- używamy msg, nie message/text
+          msg: m.msg,
           type: MessageType[m.type] || MessageType.INFO,
         }))
       );
     }
 
-    // Sprawdź, czy jest jakiś błąd
+
     const hasError = messages.some((m) => m.type === "ERROR");
     if (hasError) {
-      // przy błędzie po prostu nie zamykamy edycji
+
       return;
     }
 
-    // Jeśli brak błędów, zaktualizuj lokalny stan danymi z resultDTO
     if (res?.resultDTO) {
       setPhone(res.resultDTO.phone || "");
       setEmail(res.resultDTO.email || "");

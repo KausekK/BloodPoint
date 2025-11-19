@@ -1,6 +1,5 @@
 package com.point.blood.users;
 
-import com.point.blood.auth.AuthenticationResponse;
 import com.point.blood.shared.ApplicationException;
 import com.point.blood.shared.EditResult;
 import com.point.blood.shared.MessageDTO;
@@ -9,7 +8,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Service
 @Transactional

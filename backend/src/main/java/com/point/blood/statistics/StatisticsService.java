@@ -2,6 +2,7 @@ package com.point.blood.statistics;
 
 import com.point.blood.donation.DonationRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -14,6 +15,6 @@ public class StatisticsService {
     private final DonationRepository donationRepository;
 
     public List<DonationStatsView> getStatistics(LocalDate from, LocalDate to) {
-       return  donationRepository.getStats(from, to);
+       return donationRepository.getStats(from, to);
     }
 }
