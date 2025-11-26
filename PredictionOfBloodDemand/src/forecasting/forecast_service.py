@@ -174,19 +174,22 @@ class DemandForecastService:
         return """
             WITH req AS (
               SELECT
-                  br.Blood_Type_id                           AS blood_type_id,
-                  bt.blood_group || bt.rh_factor             AS blood_type,
-                  h.province                                 AS province,
-                  TRUNC(bh.changed_at, 'MM')                 AS month_start,
-                  SUM(br.amount)                             AS demand
+                  br.Blood_Type_id                       AS blood_type_id,
+                  bt.blood_group || bt.rh_factor         AS blood_type,
+                  h.province                             AS province,
+                  TRUNC(br.CREATED_AT, 'MM')             AS month_start,
+                  SUM(br.amount)                         AS demand
               FROM Blood_Request br
-              JOIN Blood_Request_Status_History bh ON bh.Blood_Request_id = br.id
-              JOIN Blood_Request_Status s ON s.id = bh.Blood_Request_Status_id
+              JOIN Blood_Request_Status s ON s.id = br.Blood_Request_Status_id
               JOIN Blood_Type bt ON bt.id = br.Blood_Type_id
               JOIN Hospital h ON h.id = br.Hospital_id
-              WHERE s.type IN ('ZATWIERDZONA','NOWA')
-              GROUP BY br.Blood_Type_id, bt.blood_group || bt.rh_factor, h.province, TRUNC(bh.changed_at, 'MM')
+              WHERE s.type IN ('ZREALIZOWANA', 'NOWA')
+              GROUP BY br.Blood_Type_id,
+                       bt.blood_group || bt.rh_factor,
+                       h.province,
+                       TRUNC(br.CREATED_AT, 'MM')
             )
             SELECT * FROM req
             ORDER BY month_start
         """
+

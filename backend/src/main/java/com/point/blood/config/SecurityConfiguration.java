@@ -27,7 +27,6 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/blood_stock/**").permitAll()
                         .requestMatchers("/api/profile/**").authenticated()
-                        .requestMatchers("/api/forecast/**").authenticated()
                         .requestMatchers("/api/informacje/**").permitAll()
                         .requestMatchers("/api/punkty-krwiodawstwa/**").permitAll()
                         .requestMatchers("/api/krwiodawca/**").authenticated()
@@ -40,7 +39,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/user/**").authenticated()
                         .requestMatchers("/api/blood_point/**").permitAll()
                         .requestMatchers("/api/hospital/provinces/**").permitAll()
-                        .requestMatchers("/api/statistic/**").authenticated()
+                        .requestMatchers("/api/statistic/**").permitAll() // TODO
                         .requestMatchers("/api/blood-types/**").permitAll()
                         .requestMatchers("/api/request/hospitals/*/requests").authenticated()
                         .requestMatchers("/api/request/**").authenticated()
