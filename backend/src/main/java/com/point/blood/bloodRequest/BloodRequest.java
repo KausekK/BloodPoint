@@ -42,10 +42,11 @@ public class BloodRequest {
     private BigDecimal amount;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "BLOOD_REQUEST_STATUS_ID", nullable = false)
+    @JoinColumn(name = "Blood_request_status_id", nullable = false)
     private BloodRequestStatus status;
 
-    @Column(name = "CREATED_AT", insertable = false, updatable = false, nullable = false)
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
 }

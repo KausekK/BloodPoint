@@ -1,15 +1,15 @@
 package com.point.blood.questionnaire.response;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/questionnaires")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class QuestionnaireResponseController {
 
-    private final QuestionnaireResponseService service;
+    private final QuestionnaireResponseService questionnaireResponseService;
 
 //    @PostMapping("/{questionnaireId}/responses")
 //    public ResponseEntity<Void> submit(@RequestBody QuestionnaireResponseDTO dto) {
@@ -25,10 +25,13 @@ public class QuestionnaireResponseController {
     ) {
         dto.setQuestionnaireId(questionnaireId);
         dto.setAppointmentId(appointmentId);
-        service.saveResponses(dto);
+        questionnaireResponseService.saveResponses(dto);
         return ResponseEntity.ok().build();
     }
-
+    @GetMapping("/appointments/{appointmentId}/responses/status")
+    public ResponseEntity<Boolean> getStatus(@PathVariable Long appointmentId) {
+        return ResponseEntity.ok(questionnaireResponseService.hasResponsesForAppointment(appointmentId));
+    }
 
 }
 

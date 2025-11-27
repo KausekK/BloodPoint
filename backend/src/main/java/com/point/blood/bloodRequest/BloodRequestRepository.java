@@ -1,6 +1,5 @@
 package com.point.blood.bloodRequest;
 
-import com.point.blood.BloodRequestStatus.BloodRequestStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

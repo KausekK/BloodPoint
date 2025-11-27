@@ -4,9 +4,9 @@ import com.point.blood.appointment.Appointment;
 import com.point.blood.appointment.AppointmentRepository;
 import com.point.blood.bloodType.BloodType;
 import com.point.blood.donor.Donor;
-import com.point.blood.donor.DonorRepository;
 import com.point.blood.questionnaire.response.QuestionnaireResponse;
 import com.point.blood.questionnaire.response.QuestionnaireResponseRepository;
+import com.point.blood.shared.ApplicationException;
 import com.point.blood.shared.MessageDTO;
 import com.point.blood.bloodType.BloodTypeRepository;
 import com.point.blood.donationStatus.DonationStatus;
@@ -16,6 +16,7 @@ import com.point.blood.donationType.DonationTypeEnum;
 import com.point.blood.donationType.DonationTypeRepository;
 import com.point.blood.questionnaire.Questionnaire;
 import com.point.blood.shared.EditResult;
+import com.point.blood.stock.BloodStockRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
@@ -27,7 +28,6 @@ import com.point.blood.appointment.AppointmentStatusEnum;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @Transactional
@@ -39,17 +39,29 @@ public class DonationService {
     private final DonationTypeRepository donationTypeRepository;
     private final BloodTypeRepository bloodTypeRepository;
     private final QuestionnaireResponseRepository questionnaireResponseRepository;
+    private final BloodStockRepository bloodStockRepository;
 
 
     @PersistenceContext
     private EntityManager em;
 
 
-    public List<DonationDTO> getUserDonations(Long id, LocalDate dateFrom, LocalDate dateTo) {
-        if (Objects.isNull(dateFrom) && Objects.isNull(dateTo)) {
-            return donationRepository.findAllByDonorUserId(id);
+    public List<DonationDTO> getUserDonations(Long userId, LocalDate dateFrom, LocalDate dateTo) {
+        if (userId == null) {
+            throw ApplicationException.createWithMessage("Brak identyfikatora użytkownika przy pobieraniu donacji.");
         }
-        return donationRepository.findAllByDonorUserIdAndDate(id, dateFrom.atStartOfDay(), dateTo.plusDays(1).atStartOfDay());
+        if (dateFrom == null && dateTo == null) {
+            return donationRepository.findAllByDonorUserId(userId);
+        }
+        if (dateFrom == null || dateTo == null) {
+            throw ApplicationException.createWithMessage("Zakres dat musi zawierać datę początkową i końcową.");
+        }
+
+        return donationRepository.findAllByDonorUserIdAndDate(
+                userId,
+                dateFrom.atStartOfDay(),
+                dateTo.plusDays(1).atStartOfDay()
+        );
     }
 
     public EditResult<NewDonationDTO> createDonationFromAppointment(Long appointmentId, NewDonationDTO dto) {
@@ -59,13 +71,18 @@ public class DonationService {
         if (dto == null) {
             return buildError("Brak danych donacji.");
         }
+        if (dto.getDonationStatus() == null) {
+            return buildError("Brak statusu donacji.");
+        }
+        if (dto.getAmountOfBlood() == null || dto.getAmountOfBlood().signum() <= 0) {
+            return buildError("Ilość oddanej krwi musi być dodatnia.");
+        }
 
         try {
             Appointment appointment = appointmentRepository.findById(appointmentId)
                     .orElseThrow(() -> new IllegalArgumentException("Nie znaleziono wizyty o id=" + appointmentId));
 
             var user = appointment.getUsers();
-
             var timeSlot = appointment.getDonationTimeSlot();
             var point = timeSlot.getBloodDonationPoint();
 
@@ -153,6 +170,20 @@ public class DonationService {
                 appointmentRepository.save(appointment);
             }
 
+            if (dto.getDonationStatus() == com.point.blood.donationStatus.DonationStatusEnum.ZREALIZOWANA) {
+                Long pointId = point.getId();
+                Long bloodTypeId = bloodTypeToUse.getId();
+
+                var stock = bloodStockRepository.findForUpdate(pointId, bloodTypeId)
+                        .orElseThrow(() -> new IllegalStateException(
+                                "W magazynie punktu brak pozycji dla tej grupy krwi."));
+
+                stock.setAvailableQuantity(
+                        stock.getAvailableQuantity().add(dto.getAmountOfBlood())
+                );
+
+                bloodStockRepository.save(stock);
+            }
 
             NewDonationDTO resultDto = new NewDonationDTO();
             resultDto.setBloodTypeId(saved.getBloodType().getId());

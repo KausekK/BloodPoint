@@ -8,8 +8,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,7 +16,6 @@ import java.util.List;
 public class StaffService {
 
     private final StaffRepository staffRepository;
-    private final BloodDonationPointRepository bloodDonationPointRepository;
     private final StaffMapper staffMapper;
 
     public EditResult<Void> deleteEmployee(Long employeeId) {

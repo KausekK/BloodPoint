@@ -9,12 +9,12 @@ import java.util.List;
 @RequestMapping("/api/questionnaires")
 @RequiredArgsConstructor
 public class QuestionnaireController {
-    private final QuestionnaireService service;
+    private final QuestionnaireService questionnaireService;
     private final QuestionnaireRepository questionnaireRepository;
 
     @GetMapping("/{id}/questions")
     public List<QuestionDTO> getQuestions(@PathVariable Long id) {
-        return service.getQuestionsFor(id);
+        return questionnaireService.getQuestionsFor(id);
     }
 
     @GetMapping("/id")

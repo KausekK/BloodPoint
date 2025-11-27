@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/user")
+@RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class UsersController {
 
@@ -19,6 +19,6 @@ public class UsersController {
 
     @PutMapping("/profile")
     public ResponseEntity<EditResult<UsersProfileDTO>> updateProfile(@RequestBody UsersProfileDTO profileDTO) {
-    return ResponseEntity.ok(usersService.updateUserProfileContactInfo(profileDTO));
+        return ResponseEntity.ok(usersService.updateUserProfileContactInfo(profileDTO));
     }
 }

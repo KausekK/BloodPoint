@@ -8,26 +8,27 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/blood_point/staff")
+@RequestMapping("/api/blood_point/staff")
 @RequiredArgsConstructor
 public class StaffController {
 
     private final StaffService staffService;
     private final StaffRepository staffRepository;
 
-    @GetMapping("/{id}")
-    public List<StaffDTO> getStaffByPoint(@PathVariable("id") Long id) {
-        return staffRepository.findAllByBloodDonationPoint_Id(id);
+    @GetMapping("/{pointId}")
+    public ResponseEntity<List<StaffDTO>> getStaffByPoint(@PathVariable Long pointId) {
+        return ResponseEntity.ok(staffRepository.findAllByBloodDonationPoint_Id(pointId));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<EditResult<Void>> removeEmployee(@PathVariable Long id) {
-        return ResponseEntity.ok(staffService.deleteEmployee(id));
+
+    @DeleteMapping("/{staffId}")
+    public ResponseEntity<EditResult<Void>> removeEmployee(@PathVariable Long staffId) {
+        return ResponseEntity.ok(staffService.deleteEmployee(staffId));
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<EditResult<StaffDTO>> updateStaff(@PathVariable Long id, @RequestBody @Valid StaffUpdateDTO request) {
-        return ResponseEntity.ok(staffService.editEmployee(id, request));
+    @PatchMapping("/{staffId}")
+    public ResponseEntity<EditResult<StaffDTO>> updateStaff(@PathVariable Long staffId, @RequestBody @Valid StaffUpdateDTO request) {
+        return ResponseEntity.ok(staffService.editEmployee(staffId, request));
     }
 
 }

@@ -1,23 +1,23 @@
 import { api } from "./api";
 
-const HOSPITAL_ID = 1;
 
-export function createBloodRequest({ bloodTypeId, amount }) {
+
+export function createBloodRequest(hospitalId, { bloodTypeId, amount }) {
   return api
-    .post(`/request/hospitals/${HOSPITAL_ID}/requests`, { bloodTypeId, amount })
-    .then(r => r.data);
+    .post(`/requests/hospitals/${hospitalId}`, { bloodTypeId, amount })
+    .then((r) => r.data);
 }
 
 export function getAllNewBloodRequests() {
-  return api.get("/request/new").then(r => r.data);
+  return api.get("/requests/new").then(r => r.data);
 }
 
 export function acceptBloodRequest(requestId, pointId) {
-  return api.post(`/request/${requestId}/accept`, null, { params: { pointId } });
+  return api.post(`/requests/${requestId}/accept`, null, { params: { pointId } });
 }
 
 export function getHospitalRequests(hospitalId) {
   return api
-    .get(`/request/requests`, { params: { hospitalId } })
+    .get(`/requests`, { params: { hospitalId } })
     .then((r) => r.data);
 }

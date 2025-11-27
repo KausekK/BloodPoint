@@ -24,6 +24,18 @@ public class QuestionnaireResponseService {
 
 
     public void saveResponses(QuestionnaireResponseDTO dto) {
+        if (dto == null) {
+            throw ApplicationException.createWithMessage("Brak danych kwestionariusza.");
+        }
+        if (dto.getAppointmentId() == null) {
+            throw ApplicationException.createWithMessage("Brak identyfikatora wizyty w kwestionariuszu.");
+        }
+        if (dto.getQuestionnaireId() == null) {
+            throw ApplicationException.createWithMessage("Brak identyfikatora kwestionariusza.");
+        }
+        if (dto.getAnswers() == null || dto.getAnswers().isEmpty()) {
+            throw ApplicationException.createWithMessage("Brak odpowiedzi w kwestionariuszu.");
+        }
 
         if (responseRepository.existsByAppointmentId(dto.getAppointmentId())) {
             throw ApplicationException.createWithMessage(
@@ -48,7 +60,7 @@ public class QuestionnaireResponseService {
                     .orElseThrow(() -> ApplicationException.createWithMessage(
                             "Nie znaleziono pytania o id=" + a.questionId()));
 
-            Boolean flag = a.answerFlag() != null ? a.answerFlag() : null;
+            Boolean flag = a.answerFlag();
 
             QuestionResponse qr = QuestionResponse.builder()
                     .question(question)
@@ -62,4 +74,11 @@ public class QuestionnaireResponseService {
 
         responseRepository.save(session);
     }
+    public boolean hasResponsesForAppointment(Long appointmentId) {
+        if (appointmentId == null) {
+            throw ApplicationException.createWithMessage("Brak identyfikatora wizyty.");
+        }
+        return responseRepository.existsByAppointmentId(appointmentId);
+    }
+
 }

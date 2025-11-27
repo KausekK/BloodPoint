@@ -6,13 +6,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/request")
+@RequestMapping("api/requests")
 @RequiredArgsConstructor
 public class BloodRequestApprovalController {
     private final BloodRequestApprovalService approvalService;
 
-    @PostMapping("/{id}/accept")
-    public ResponseEntity<EditResult<Void>> accept(@PathVariable Long id, @RequestParam Long pointId) {
-        return ResponseEntity.ok(approvalService.acceptRequest(id, pointId));
+    @PostMapping("/{requestId}/accept")
+    public ResponseEntity<EditResult<Void>> accept(@PathVariable Long requestId, @RequestParam Long pointId) {
+        return ResponseEntity.ok(approvalService.acceptRequest(requestId, pointId));
     }
 }

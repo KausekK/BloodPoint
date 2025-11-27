@@ -14,9 +14,9 @@ import lombok.NoArgsConstructor;
 public class BloodRequestStatus {
 
     @Id
-    @Column(name = "ID")
+    @Column(name = "id")
     private Long id;
 
-    @Column(name = "TYPE", nullable = false, length = 255)
+    @Column(name = "type", nullable = false, length = 255)
     private String type;
 }

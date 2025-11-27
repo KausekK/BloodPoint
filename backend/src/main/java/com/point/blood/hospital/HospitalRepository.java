@@ -1,6 +1,5 @@
 package com.point.blood.hospital;
 
-import com.point.blood.users.UsersProfileDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,7 +26,7 @@ public interface HospitalRepository extends JpaRepository<Hospital, Long> {
             h.phone
         )
         FROM Hospital h
-        WHERE h.id = :id
+        WHERE h.id = :hospitalId
     """)
-    Optional<HospitalProfileDTO> findProfileById(@Param("id") Long id);
+    Optional<HospitalProfileDTO> findProfileById(@Param("hospitalId") Long hospitalId);
 }

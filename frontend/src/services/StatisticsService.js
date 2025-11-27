@@ -1,13 +1,8 @@
-import axios from "axios";
-
-const api = axios.create({
-    baseURL: "/api/statistic",
-    timeout: 8000,
-});
+import { api } from "./api";
 
 export function getDonationStatistics(from, to) {
     return api
-        .get("", {
+        .get(`/statistics`, {
             params: { from, to },
         })
         .then((r) => r.data);

@@ -36,3 +36,9 @@
     font-size: 3rem;
   }
 }
+
+.field-error {
+  color: #d32f2f;
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
