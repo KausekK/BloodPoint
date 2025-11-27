@@ -89,27 +89,27 @@ public class AppointmentService {
         return appointmentRepository.findScheduledAppointmentForUserByUserId(userId, now);
     }
 
-    public List<AllAppointmentsDetailsDTO> getAllAppointmentsForBloodPoint(Long bloodDonationPointId) {
-        LocalDateTime today = LocalDate.now().atStartOfDay();
-        LocalDateTime tomorrow = today.plusDays(1);
-
-        return appointmentRepository.findAllTodayAppointmentsForBloodPoint(
-                bloodDonationPointId, today, tomorrow);
-    }
-    // fake dane do testow
 //    public List<AllAppointmentsDetailsDTO> getAllAppointmentsForBloodPoint(Long bloodDonationPointId) {
-//
-//
-//        LocalDate fakeToday = LocalDate.of(2025, 11, 17);
-//
-//
-//        LocalDateTime startOfDay = fakeToday.atStartOfDay();
-//        LocalDateTime tomorrow = startOfDay.plusDays(1);
+//        LocalDateTime today = LocalDate.now().atStartOfDay();
+//        LocalDateTime tomorrow = today.plusDays(1);
 //
 //        return appointmentRepository.findAllTodayAppointmentsForBloodPoint(
-//                bloodDonationPointId, startOfDay, tomorrow
-//        );
+//                bloodDonationPointId, today, tomorrow);
 //    }
+    // fake dane do testow
+    public List<AllAppointmentsDetailsDTO> getAllAppointmentsForBloodPoint(Long bloodDonationPointId) {
+
+
+        LocalDate fakeToday = LocalDate.of(2025, 11, 28);
+
+
+        LocalDateTime startOfDay = fakeToday.atStartOfDay();
+        LocalDateTime tomorrow = startOfDay.plusDays(1);
+
+        return appointmentRepository.findAllTodayAppointmentsForBloodPoint(
+                bloodDonationPointId, startOfDay, tomorrow
+        );
+    }
 
 
     private EditResult<AppointmentDTO> buildError(String msg) {
