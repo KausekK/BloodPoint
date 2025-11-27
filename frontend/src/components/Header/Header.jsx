@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { NavLink, Link, useLocation, useNavigate } from "react-router-dom";
 import CTA from "../CTA/CTA";
 import "./header.css";
@@ -6,32 +6,56 @@ import headerContent from "../../content/Header/Header.json";
 import authService from "../../services/AuthenticationService";
 
 function getRolesFromToken() {
-  const t = authService.getToken?.();
-  if (!t) return [];
+  const getTokenFn = authService.getToken;
+
+  if (typeof getTokenFn !== "function") {
+    return [];
+  }
+
+  const token = getTokenFn();
+  if (!token) {
+    return [];
+  }
+
   try {
-    const [, payload] = t.split(".");
-    const json = JSON.parse(
-      atob(payload.replace(/-/g, "+").replace(/_/g, "/"))
-    );
-    const raw =
-      json?.roles ??
-      json?.authorities ??
-      (typeof json?.scope === "string" ? json.scope.split(" ") : []);
-    return Array.isArray(raw) ? raw : [raw].filter(Boolean);
-  } catch {
+    const parts = token.split(".");
+    if (parts.length < 2) {
+      return [];
+    }
+
+    const base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const jsonString = atob(base64);
+    const data = JSON.parse(jsonString);
+
+    let rawRoles = null;
+
+    if (data && data.roles) {
+      rawRoles = data.roles;
+    } else if (data && data.authorities) {
+      rawRoles = data.authorities;
+    } else if (data && typeof data.scope === "string") {
+      rawRoles = data.scope.split(" ");
+    }
+
+    if (!rawRoles) {
+      return [];
+    }
+
+    if (Array.isArray(rawRoles)) {
+      return rawRoles;
+    }
+
+    const arr = [rawRoles];
+    return arr.filter(Boolean);
+  } catch (error) {
     return [];
   }
 }
 
-export default function Header() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [isAuth, setIsAuth] = useState(authService.isAuthenticated());
-  const [roles, setRoles] = useState(getRolesFromToken());
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const brand = headerContent.brand;
-  const actionsCfg = headerContent.actions || { guest: { to: "/login", label: "Zaloguj" } };
+function getCurrentRole(isAuth, roles) {
+  if (!isAuth || !roles || roles.length === 0) {
+    return "guest";
+  }
 
   const roleMap = {
     DAWCA: "donor",
@@ -40,61 +64,134 @@ export default function Header() {
     ADMIN: "admin",
   };
 
-  const currentRole = (() => {
-    if (!isAuth || !roles || roles.length === 0) return "guest";
-    for (const r of roles) {
-      if (roleMap[r]) return roleMap[r];
+  for (let i = 0; i < roles.length; i++) {
+    const roleName = roles[i];
+    if (roleMap[roleName]) {
+      return roleMap[roleName];
     }
-    return "guest";
-  })();
+  }
 
-  const navLinks = useMemo(() => {
-  const common = headerContent.common || [];
-  const roleLinks = (headerContent.roles || {})[currentRole] || [];
-    return [...common, ...roleLinks];
-  }, [currentRole]);
+  return "guest";
+}
 
-  useEffect(() => {
-    const onResize = () => {
-      if (window.innerWidth > 768) setMenuOpen(false);
+export default function Header() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isAuth, setIsAuth] = useState(authService.isAuthenticated());
+  const [roles, setRoles] = useState(getRolesFromToken());
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const brand = headerContent.brand || {
+    link: "/",
+    labelMain: "Blood",
+    labelAccent: "Point",
+  };
+
+  const actionsConfig = headerContent.actions || {};
+  if (!actionsConfig.guest) {
+    actionsConfig.guest = { to: "/login", label: "Zaloguj" };
+  }
+
+  const currentRole = getCurrentRole(isAuth, roles);
+
+  const commonLinks = headerContent.common || [];
+  const rolesConfig = headerContent.roles || {};
+  const roleLinks = rolesConfig[currentRole] || [];
+  const navLinks = commonLinks.concat(roleLinks);
+
+  useEffect(function () {
+    function handleResize() {
+      if (window.innerWidth > 768) {
+        setMenuOpen(false);
+      }
+    }
+
+    window.addEventListener("resize", handleResize);
+    return function () {
+      window.removeEventListener("resize", handleResize);
     };
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  useEffect(() => {
-    document.body.classList.toggle("no-scroll", menuOpen);
-    return () => document.body.classList.remove("no-scroll");
-  }, [menuOpen]);
+  useEffect(
+    function () {
+      if (menuOpen) {
+        document.body.classList.add("no-scroll");
+      } else {
+        document.body.classList.remove("no-scroll");
+      }
 
-  useEffect(() => {
-    const onStorage = (e) => {
-      if (e.key === "userToken") {
+      return function () {
+        document.body.classList.remove("no-scroll");
+      };
+    },
+    [menuOpen]
+  );
+
+  useEffect(function () {
+    function handleStorage(event) {
+      if (event.key === "userToken") {
         setIsAuth(authService.isAuthenticated());
         setRoles(getRolesFromToken());
       }
+    }
+
+    window.addEventListener("storage", handleStorage);
+    return function () {
+      window.removeEventListener("storage", handleStorage);
     };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
   }, []);
 
-  useEffect(() => {
+  useEffect(
+    function () {
+      setMenuOpen(false);
+    },
+    [location.pathname]
+  );
+
+  function closeMenu() {
     setMenuOpen(false);
-  }, [location.pathname]);
+  }
 
-  const closeMenu = () => setMenuOpen(false);
+  function toggleMenu() {
+    setMenuOpen(function (prev) {
+      return !prev;
+    });
+  }
 
-  const handleLogout = () => {
+  function handleLogout() {
     authService.logout();
     setIsAuth(false);
     setRoles([]);
     navigate("/login");
-  };
+  }
+
+  function handleOverlayClick() {
+    closeMenu();
+  }
+
+  function handleMenuPanelClick(event) {
+    event.stopPropagation();
+  }
+
+  function handleMobileLogout() {
+    closeMenu();
+    handleLogout();
+  }
+
+  function handleMobileLoginClick() {
+    closeMenu();
+  }
 
   return (
     <header className="site-header">
       <div className="header-inner">
-        <Link to={brand.link} className="brand" aria-label="Strona główna" onClick={closeMenu}>
+        <Link
+          to={brand.link}
+          className="brand"
+          aria-label="Strona główna"
+          onClick={closeMenu}
+        >
           {brand.labelMain}
           <span className="brand-accent">{brand.labelAccent}</span>
         </Link>
@@ -104,10 +201,20 @@ export default function Header() {
           aria-label={menuOpen ? "Zamknij menu" : "Otwórz menu"}
           aria-expanded={menuOpen}
           aria-controls="main-menu"
-          onClick={() => setMenuOpen((v) => !v)}
+          onClick={toggleMenu}
         >
-          <svg className="menu-toggle-icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M3 6h18M3 12h18M3 18h18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          <svg
+            className="menu-toggle-icon"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              d="M3 6h18M3 12h18M3 18h18"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
           </svg>
         </button>
 
@@ -117,53 +224,96 @@ export default function Header() {
               Profil
             </NavLink>
           )}
-          {navLinks.map((link) => (
-            <NavLink key={link.to} to={link.to} end={link.to === "/"} className="nav-link" onClick={closeMenu}>
-              {link.label}
-            </NavLink>
-          ))}
+          {navLinks.map(function (link) {
+            const isRoot = link.to === "/";
+
+            return (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                end={isRoot}
+                className="nav-link"
+                onClick={closeMenu}
+              >
+                {link.label}
+              </NavLink>
+            );
+          })}
         </nav>
 
         <div className="header-actions">
           {isAuth ? (
             <CTA label="Wyloguj" onClick={handleLogout} />
           ) : (
-            <CTA to={actionsCfg.guest.to} label={actionsCfg.guest.label} />
+            <CTA
+              to={actionsConfig.guest.to}
+              label={actionsConfig.guest.label}
+            />
           )}
         </div>
       </div>
 
-      <div className={"menu-overlay" + (menuOpen ? " is-open" : "")} onClick={closeMenu}>
+      <div
+        className={"menu-overlay" + (menuOpen ? " is-open" : "")}
+        onClick={handleOverlayClick}
+      >
         <div
           className="menu-panel"
           role="dialog"
           aria-modal="true"
           aria-labelledby="mobile-menu-title"
-          onClick={(e) => e.stopPropagation()}
+          onClick={handleMenuPanelClick}
         >
           <div className="menu-head">
-            <span id="mobile-menu-title" className="menu-title">Menu</span>
-            <button className="menu-close" aria-label="Zamknij menu" onClick={closeMenu}>✕</button>
+            <span id="mobile-menu-title" className="menu-title">
+              Menu
+            </span>
+            <button
+              className="menu-close"
+              aria-label="Zamknij menu"
+              onClick={closeMenu}
+            >
+              ✕
+            </button>
           </div>
 
-          <nav id="main-menu" className="menu-list" aria-label="Menu mobilne">
+          <nav
+            id="main-menu"
+            className="menu-list"
+            aria-label="Menu mobilne"
+          >
             {isAuth && (
-            <NavLink to="/profil" className="menu-link" onClick={closeMenu}>
-              Profil
-            </NavLink>
-            )}
-            {navLinks.map((link) => (
-              <NavLink key={link.to} to={link.to} end={link.to === "/"} className="menu-link" onClick={closeMenu}>
-                {link.label}
+              <NavLink to="/profil" className="menu-link" onClick={closeMenu}>
+                Profil
               </NavLink>
-            ))}
+            )}
+
+            {navLinks.map(function (link) {
+              const isRoot = link.to === "/";
+
+              return (
+                <NavLink
+                  key={link.to}
+                  to={link.to}
+                  end={isRoot}
+                  className="menu-link"
+                  onClick={closeMenu}
+                >
+                  {link.label}
+                </NavLink>
+              );
+            })}
           </nav>
 
           <div className="menu-footer">
             {isAuth ? (
-              <CTA label="Wyloguj" onClick={() => { closeMenu(); handleLogout(); }} />
+              <CTA label="Wyloguj" onClick={handleMobileLogout} />
             ) : (
-              <CTA to={actionsCfg.guest.to} label={actionsCfg.guest.label} onClick={closeMenu} />
+              <CTA
+                to={actionsConfig.guest.to}
+                label={actionsConfig.guest.label}
+                onClick={handleMobileLoginClick}
+              />
             )}
           </div>
         </div>

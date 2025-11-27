@@ -22,29 +22,40 @@ export default function Statistics() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchStats = async () => {
+  async function fetchStats() {
     setLoading(true);
     setError(null);
     try {
       const data = await getDonationStatistics(from, to);
-      setStats(data);
+      setStats(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Błąd pobierania statystyk:", err);
       setError("Nie udało się pobrać danych z serwera.");
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  useEffect(() => {
+  useEffect(function () {
     fetchStats();
   }, []);
+
+  function handleFromChange(event) {
+    setFrom(event.target.value);
+  }
+
+  function handleToChange(event) {
+    setTo(event.target.value);
+  }
 
   return (
     <>
       <Header />
       <main className="bp-section">
-        <BackButton to="/punkt-krwiodawstwa/dashboard" label="Powrót do panelu punktu krwiodawstwa" />
+        <BackButton
+          to="/punkt-krwiodawstwa/dashboard"
+          label="Powrót do panelu punktu krwiodawstwa"
+        />
         <div className="bp-container">
           <header className="dashboard-head">
             <h1 className="dashboard-title">Statystyki donacji</h1>
@@ -61,7 +72,7 @@ export default function Statistics() {
                   id="from"
                   type="date"
                   value={from}
-                  onChange={(e) => setFrom(e.target.value)}
+                  onChange={handleFromChange}
                 />
               </div>
 
@@ -71,7 +82,7 @@ export default function Statistics() {
                   id="to"
                   type="date"
                   value={to}
-                  onChange={(e) => setTo(e.target.value)}
+                  onChange={handleToChange}
                 />
               </div>
 
@@ -97,15 +108,17 @@ export default function Statistics() {
                       </tr>
                     </thead>
                     <tbody>
-                      {stats.map((s, i) => (
-                        <tr key={i}>
-                          <td>{s.bloodGroup}</td>
-                          <td>{s.rhFactor}</td>
-                          <td>{s.gender}</td>
-                          <td>{s.ageBucket}</td>
-                          <td>{s.donationsCnt}</td>
-                        </tr>
-                      ))}
+                      {stats.map(function (s, i) {
+                        return (
+                          <tr key={i}>
+                            <td>{s.bloodGroup}</td>
+                            <td>{s.rhFactor}</td>
+                            <td>{s.gender}</td>
+                            <td>{s.ageBucket}</td>
+                            <td>{s.donationsCnt}</td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>

@@ -1,11 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Header from "../../../../Header/Header";
 import Footer from "../../../../Footer/Footer";
-import {
-  getBloodStockByDonationPoint,
-  postDelivery,
-} from "../../../../../services/BloodStockService";
+import { getBloodStockByDonationPoint, postDelivery } from "../../../../../services/BloodStockService";
 import { listBloodTypes } from "../../../../../services/BloodTypeService";
 import { showMessage, showError } from "../../../../shared/services/MessageService";
 import { MessageType } from "../../../../shared/const/MessageType.model";
@@ -15,7 +11,7 @@ import BackButton from "../../../../BackButton/BackButton";
 import authService from "../../../../../services/AuthenticationService";
 
 export default function BloodStockManagePage() {
-  const pointId  = authService.getPointId();
+  const pointId = authService.getPointId();
 
   const [rows, setRows] = useState([]);
   const [bloodTypes, setBloodTypes] = useState([]);
@@ -35,7 +31,11 @@ export default function BloodStockManagePage() {
       setErr("");
       setMsg("");
       const data = await getBloodStockByDonationPoint(pointId);
-      setRows(Array.isArray(data) ? data : []);
+      if (Array.isArray(data)) {
+        setRows(data);
+      } else {
+        setRows([]);
+      }
     } catch (e) {
       console.error(e);
       setErr("Nie udało się pobrać danych magazynowych.");
@@ -45,48 +45,67 @@ export default function BloodStockManagePage() {
     }
   }
 
-  useEffect(() => {
+  useEffect(function () {
     load();
     listBloodTypes()
-      .then((opts) => setBloodTypes(Array.isArray(opts) ? opts : []))
-      .catch(() => showError("Nie udało się pobrać listy grup krwi."));
+      .then(function (opts) {
+        if (Array.isArray(opts)) {
+          setBloodTypes(opts);
+        } else {
+          setBloodTypes([]);
+        }
+      })
+      .catch(function () {
+        showError("Nie udało się pobrać listy grup krwi.");
+      });
   }, [pointId]);
 
-  const totals = useMemo(
-    () => rows.reduce(
-      (acc, r) => ({
-        available: addWithScale(acc.available, r.totalAvailable, 2),
-        reserved:  addWithScale(acc.reserved,  r.totalReserved,  2),
-        free:      addWithScale(acc.free,      r.totalFree,      2),
-      }),
-      { available: 0, reserved: 0, free: 0 }
-    ),
-    [rows]
-  );
-  
+  let totals = { available: 0, reserved: 0, free: 0 };
 
-  function onDeliveryChange(e) {
-    const { name, value } = e.target;
-    setDelivery((v) => ({ ...v, [name]: value }));
+  rows.forEach(function (r) {
+    totals = {
+      available: addWithScale(totals.available, r.totalAvailable, 2),
+      reserved: addWithScale(totals.reserved, r.totalReserved, 2),
+      free: addWithScale(totals.free, r.totalFree, 2),
+    };
+  });
+
+  function onDeliveryChange(event) {
+    const name = event.target.name;
+    const value = event.target.value;
+
+    setDelivery(function (prev) {
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
+
     setErr("");
     setMsg("");
   }
 
   function validateDelivery(d) {
-    if (!d.bloodTypeId) return "Wybierz grupę krwi.";
+    if (!d.bloodTypeId) {
+      return "Wybierz grupę krwi.";
+    }
     const liters = toNum(d.liters);
-    if (!Number.isFinite(liters) || liters <= 0) return "Podaj dodatnią ilość (l).";
+    if (!Number.isFinite(liters) || liters <= 0) {
+      return "Podaj dodatnią ilość (l).";
+    }
     return "";
   }
 
-  async function submitDelivery(e) {
-    e.preventDefault();
-    const v = validateDelivery(delivery);
-    if (v) {
-      setErr(v);
-      showError(v);
+  async function submitDelivery(event) {
+    event.preventDefault();
+
+    const validationMsg = validateDelivery(delivery);
+    if (validationMsg) {
+      setErr(validationMsg);
+      showError(validationMsg);
       return;
     }
+
     try {
       setSubmitting(true);
       setErr("");
@@ -102,9 +121,11 @@ export default function BloodStockManagePage() {
       showMessage(success, MessageType.SUCCESS);
       setDelivery({ bloodTypeId: "", liters: "" });
       await load();
-    } catch (e2) {
-      const emsg =
-        e2?.response?.data?.message || "Nie udało się zarejestrować dostawy.";
+    } catch (e) {
+      let emsg = "Nie udało się zarejestrować dostawy.";
+      if (e && e.response && e.response.data && e.response.data.message) {
+        emsg = e.response.data.message;
+      }
       setErr(emsg);
       showError(emsg);
     } finally {
@@ -116,13 +137,19 @@ export default function BloodStockManagePage() {
     <>
       <Header />
       <main className="bp-section">
-      <BackButton to="/punkt-krwiodawstwa/dashboard" label="Powrót do panelu punktu krwiodawstwa" />
+        <BackButton
+          to="/punkt-krwiodawstwa/dashboard"
+          label="Powrót do panelu punktu krwiodawstwa"
+        />
         <div className="bp-container">
           <header className="dashboard-head">
             <h1 className="dashboard-title">Zarządzaj zapasami krwi</h1>
-            <p className="dashboard-lead">Punkt {pointId}</p>
             <div className="dashboard-actions">
-              <button className="bp-btn" onClick={load} disabled={loading || submitting}>
+              <button
+                className="bp-btn"
+                onClick={load}
+                disabled={loading || submitting}
+              >
                 {loading ? "Ładowanie…" : "Odśwież"}
               </button>
             </div>
@@ -149,25 +176,40 @@ export default function BloodStockManagePage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {rows.map((r) => (
-                      <tr key={r.bloodTypeId ?? r.bloodGroup}>
-                        <td className="col-group">
-                          {r.bloodGroupLabel ?? r.bloodGroup}
-                        </td>
-                        <td>{formatAmount(r.totalAvailable, 2)} l</td>
-                        <td>{formatAmount(r.totalReserved, 2)} l</td>
-                        <td className="col-free">{formatAmount(r.totalFree, 2)} l</td>
-                      </tr>
-                    ))}
+                    {rows.map(function (r) {
+                      const key =
+                        r.bloodTypeId !== null && r.bloodTypeId !== undefined
+                          ? r.bloodTypeId
+                          : r.bloodGroup;
+
+                      const label =
+                        r.bloodGroupLabel !== null &&
+                        r.bloodGroupLabel !== undefined
+                          ? r.bloodGroupLabel
+                          : r.bloodGroup;
+
+                      return (
+                        <tr key={key}>
+                          <td className="col-group">{label}</td>
+                          <td>{formatAmount(r.totalAvailable, 2)} l</td>
+                          <td>{formatAmount(r.totalReserved, 2)} l</td>
+                          <td className="col-free">
+                            {formatAmount(r.totalFree, 2)} l
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                   <tfoot>
-                  <tr>
-                    <th>Razem</th>
-                    <th>{formatAmount(totals.available, 2)} l</th>
-                    <th>{formatAmount(totals.reserved, 2)} l</th>
-                    <th className="col-free">{formatAmount(totals.free, 2)} l</th>
-                  </tr>
-                </tfoot>
+                    <tr>
+                      <th>Razem</th>
+                      <th>{formatAmount(totals.available, 2)} l</th>
+                      <th>{formatAmount(totals.reserved, 2)} l</th>
+                      <th className="col-free">
+                        {formatAmount(totals.free, 2)} l
+                      </th>
+                    </tr>
+                  </tfoot>
                 </table>
               </div>
             )}
@@ -186,11 +228,13 @@ export default function BloodStockManagePage() {
                   disabled={submitting}
                 >
                   <option value="">Wybierz grupę krwi</option>
-                  {bloodTypes.map((bt) => (
-                    <option key={bt.id} value={bt.id}>
-                      {bt.label}
-                    </option>
-                  ))}
+                  {bloodTypes.map(function (bt) {
+                    return (
+                      <option key={bt.id} value={bt.id}>
+                        {bt.label}
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
 
@@ -210,7 +254,11 @@ export default function BloodStockManagePage() {
               </div>
 
               <div className="form-actions">
-                <button type="submit" className="bp-btn" disabled={submitting}>
+                <button
+                  type="submit"
+                  className="bp-btn"
+                  disabled={submitting}
+                >
                   {submitting ? "Rejestrowanie…" : "Zarejestruj dostawę"}
                 </button>
               </div>

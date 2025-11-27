@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../Footer/Footer";
 import { getPoints, getCities } from "../../services/BloodDonationPointService";
@@ -15,48 +15,118 @@ export default function DonationPointsPage() {
   const [mapCity, setMapCity] = useState("");
   const [page, setPage] = useState(1);
 
-  const labels = content.labels || {};
-  const buttons = content.buttons || {};
-
-  const hoursText = `${content.hoursFixedStart ?? "08:00"}${content.hoursSeparator ?? " – "}${content.hoursFixedEnd ?? "16:00"}`;
-
-  useEffect(() => {
-    getCities().then(setCities).catch(() => setCities([]));
-    getPoints()
-      .then((list) => {
-        setPoints(list);
-        if (list.length > 0) setMapCity(list[0].city);
-      })
-      .catch(console.error);
-  }, []);
-
-  useEffect(() => {
-    setPage(1);
-    getPoints(filterCity || undefined)
-      .then((list) => {
-        setPoints(list);
-        if (list.length > 0) setMapCity(list[0].city);
-      })
-      .catch(console.error);
-  }, [filterCity]);
-
-  const paged = useMemo(() => {
-    const totalPages = Math.max(1, Math.ceil(points.length / PAGE_SIZE));
-    const safePage = Math.min(page, totalPages);
-    const start = (safePage - 1) * PAGE_SIZE;
-    return {
-      items: points.slice(start, start + PAGE_SIZE),
-      totalPages,
-      page: safePage,
-    };
-  }, [points, page]);
-
-  function prev() {
-    setPage((p) => Math.max(1, p - 1));
+  let labels = {};
+  if (content && content.labels) {
+    labels = content.labels;
   }
 
-  function next() {
-    setPage((p) => Math.min(paged.totalPages, p + 1));
+  let buttons = {};
+  if (content && content.buttons) {
+    buttons = content.buttons;
+  }
+
+  let hoursStart = content.hoursFixedStart;
+  if (hoursStart === null || hoursStart === undefined) {
+    hoursStart = "08:00";
+  }
+
+  let hoursEnd = content.hoursFixedEnd;
+  if (hoursEnd === null || hoursEnd === undefined) {
+    hoursEnd = "16:00";
+  }
+
+  let hoursSeparator = content.hoursSeparator;
+  if (hoursSeparator === null || hoursSeparator === undefined) {
+    hoursSeparator = " – ";
+  }
+
+  const hoursText = hoursStart + hoursSeparator + hoursEnd;
+
+  useEffect(function () {
+    getCities()
+      .then(function (list) {
+        setCities(list);
+      })
+      .catch(function () {
+        setCities([]);
+      });
+
+    getPoints()
+      .then(function (list) {
+        setPoints(list);
+        if (list.length > 0) {
+          setMapCity(list[0].city);
+        }
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  }, []);
+
+  useEffect(
+    function () {
+      setPage(1);
+
+      let cityParam;
+      if (filterCity && filterCity.trim() !== "") {
+        cityParam = filterCity;
+      } else {
+        cityParam = undefined;
+      }
+
+      getPoints(cityParam)
+        .then(function (list) {
+          setPoints(list);
+          if (list.length > 0) {
+            setMapCity(list[0].city);
+          }
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
+    },
+    [filterCity]
+  );
+
+  const totalPages = Math.max(1, Math.ceil(points.length / PAGE_SIZE));
+  const currentPage = page > totalPages ? totalPages : page;
+  const startIndex = (currentPage - 1) * PAGE_SIZE;
+  const itemsOnPage = points.slice(startIndex, startIndex + PAGE_SIZE);
+
+  function handlePrev() {
+    setPage(function (prevPage) {
+      if (prevPage <= 1) {
+        return 1;
+      }
+      return prevPage - 1;
+    });
+  }
+
+  function handleNext() {
+    setPage(function (prevPage) {
+      return prevPage + 1;
+    });
+  }
+
+  function handleCityFilterChange(event) {
+    setFilterCity(event.target.value);
+  }
+
+  function handleClearFilter() {
+    setFilterCity("");
+  }
+
+  function handleCardClick(city) {
+    setMapCity(city);
+  }
+
+  function handleShowOnMapClick(event, city) {
+    event.stopPropagation();
+    setMapCity(city);
+  }
+
+  function handleOpenMapsClick(event) {
+    event.stopPropagation();
   }
 
   return (
@@ -78,14 +148,18 @@ export default function DonationPointsPage() {
                     id="cityFilter"
                     className="select"
                     value={filterCity}
-                    onChange={(e) => setFilterCity(e.target.value)}
+                    onChange={handleCityFilterChange}
                   >
-                    <option value="">{content.allCities || "Wszystkie miasta"}</option>
-                    {cities.map((c) => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
-                    ))}
+                    <option value="">
+                      {content.allCities || "Wszystkie miasta"}
+                    </option>
+                    {cities.map(function (city) {
+                      return (
+                        <option key={city} value={city}>
+                          {city}
+                        </option>
+                      );
+                    })}
                   </select>
                 </div>
               </div>
@@ -93,7 +167,7 @@ export default function DonationPointsPage() {
               <button
                 type="button"
                 className="bp-btn bp-btn--ghost clear-btn"
-                onClick={() => setFilterCity("")}
+                onClick={handleClearFilter}
                 disabled={!filterCity}
               >
                 Wyczyść
@@ -103,34 +177,44 @@ export default function DonationPointsPage() {
 
           <div className="points-layout">
             <section className="points-grid" aria-label="Punkty krwiodawstwa">
-              {paged.items.map((p) => {
-                const isSelected = mapCity === p.city;
-                const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                  p.city + " " + p.street
-                )}`;
+              {itemsOnPage.map(function (point) {
+                const isSelected = mapCity === point.city;
+                const mapsUrl =
+                  "https://www.google.com/maps/search/?api=1&query=" +
+                  encodeURIComponent(point.city + " " + point.street);
 
                 return (
                   <article
-                    key={p.id}
-                    className={`bp-card point ${isSelected ? "is-selected" : ""}`}
-                    onClick={() => setMapCity(p.city)}
+                    key={point.id}
+                    className={
+                      "bp-card point" + (isSelected ? " is-selected" : "")
+                    }
+                    onClick={function () {
+                      handleCardClick(point.city);
+                    }}
                     tabIndex={0}
                   >
                     <div className="point-head">
-                      <h2 className="point-city">{p.city}</h2>
-                      <span className="point-phone">{p.phone}</span>
+                      <h2 className="point-city">{point.city}</h2>
+                      <span className="point-phone">{point.phone}</span>
                     </div>
 
                     <div className="point-rows">
                       <div className="point-row">
-                        <span className="point-label">{labels.address || "Adres"}</span>
+                        <span className="point-label">
+                          {labels.address || "Adres"}
+                        </span>
                         <span className="point-val">
-                          {p.street}, {p.zipCode}
+                          {point.street}, {point.zipCode}
                         </span>
                       </div>
                       <div className="point-row">
-                        <span className="point-label">{labels.hours || "Godziny"}</span>
-                        <span className="point-val point-hours">{hoursText}</span>
+                        <span className="point-label">
+                          {labels.hours || "Godziny"}
+                        </span>
+                        <span className="point-val point-hours">
+                          {hoursText}
+                        </span>
                       </div>
                     </div>
 
@@ -138,9 +222,8 @@ export default function DonationPointsPage() {
                       <button
                         type="button"
                         className="bp-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setMapCity(p.city);
+                        onClick={function (event) {
+                          handleShowOnMapClick(event, point.city);
                         }}
                       >
                         {buttons.showOnMap || "Pokaż na mapie"}
@@ -150,7 +233,7 @@ export default function DonationPointsPage() {
                         href={mapsUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
+                        onClick={handleOpenMapsClick}
                       >
                         {buttons.openInGoogleMaps || "Otwórz w Google Maps"}
                       </a>
@@ -167,28 +250,51 @@ export default function DonationPointsPage() {
             </section>
 
             <aside className="points-map">
-              {mapCity ? <Map key={mapCity} city={mapCity} /> : <div className="map-placeholder">{content.mapPlaceholder}</div>}
+              {mapCity ? (
+                <Map key={mapCity} city={mapCity} />
+              ) : (
+                <div className="map-placeholder">
+                  {content.mapPlaceholder}
+                </div>
+              )}
             </aside>
           </div>
 
           {points.length > PAGE_SIZE && (
             <nav className="points-pagination">
-              <button className="bp-btn bp-btn--ghost" onClick={prev} disabled={paged.page === 1}>
+              <button
+                className="bp-btn bp-btn--ghost"
+                onClick={handlePrev}
+                disabled={currentPage === 1}
+              >
                 {buttons.prev || "Poprzednia"}
               </button>
               <ul className="pages">
-                {Array.from({ length: paged.totalPages }, (_, i) => i + 1).map((n) => (
-                  <li key={n}>
-                    <button
-                      className={`page ${n === paged.page ? "is-active" : ""}`}
-                      onClick={() => setPage(n)}
-                    >
-                      {n}
-                    </button>
-                  </li>
-                ))}
+                {Array.from({ length: totalPages }, function (_, index) {
+                  const pageNumber = index + 1;
+                  const isActive = pageNumber === currentPage;
+
+                  return (
+                    <li key={pageNumber}>
+                      <button
+                        className={
+                          "page" + (isActive ? " is-active" : "")
+                        }
+                        onClick={function () {
+                          setPage(pageNumber);
+                        }}
+                      >
+                        {pageNumber}
+                      </button>
+                    </li>
+                  );
+                })}
               </ul>
-              <button className="bp-btn bp-btn--ghost" onClick={next} disabled={paged.page === paged.totalPages}>
+              <button
+                className="bp-btn bp-btn--ghost"
+                onClick={handleNext}
+                disabled={currentPage === totalPages}
+              >
                 {buttons.next || "Następna"}
               </button>
             </nav>

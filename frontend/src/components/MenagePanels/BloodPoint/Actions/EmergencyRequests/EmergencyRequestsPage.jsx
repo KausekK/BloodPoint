@@ -5,13 +5,11 @@ import {
   getAllNewBloodRequests,
   acceptBloodRequest,
 } from "../../../../../services/BloodRequestService";
-
 import {
   showMessage,
   showError,
 } from "../../../../shared/services/MessageService";
 import { MessageType } from "../../../../shared/const/MessageType.model";
-
 import { formatAmount } from "../../../../shared/utils/number";
 import BackButton from "../../../../BackButton/BackButton";
 import authService from "../../../../../services/AuthenticationService";
@@ -23,38 +21,56 @@ export default function EmergencyRequestsPage() {
 
   const pointId = authService.getPointId();
 
-  const loadRequests = async () => {
+  async function loadRequests() {
     setLoading(true);
     setError("");
     try {
       const data = await getAllNewBloodRequests();
-      if (Array.isArray(data)) setRequests(data);
-      else setError("Niepoprawna odpowiedź z serwera.");
+      if (Array.isArray(data)) {
+        setRequests(data);
+      } else {
+        setError("Niepoprawna odpowiedź z serwera.");
+      }
     } catch (e) {
       console.error(e);
-      setError(e?.message || "Błąd podczas pobierania danych.");
+      let msg = "Błąd podczas pobierania danych.";
+      if (e && e.message) {
+        msg = e.message;
+      }
+      setError(msg);
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  useEffect(() => {
+  useEffect(function () {
     loadRequests();
   }, []);
 
   async function onAccept(id) {
     try {
       const res = await acceptBloodRequest(id, pointId);
-      if (res.data && res.data.messages && res.data.messages.length) {
-        res.data.messages.forEach((m) => showMessage(m.msg, m.type));
+      let messages = null;
+
+      if (res && res.data && Array.isArray(res.data.messages)) {
+        messages = res.data.messages;
+      }
+
+      if (messages && messages.length > 0) {
+        messages.forEach(function (m) {
+          showMessage(m.msg, m.type);
+        });
+        await loadRequests();
       } else {
         showError("Nieoczekiwana odpowiedź serwera");
       }
     } catch (e) {
-      const msg =
-        e?.response?.data?.message ||
-        e?.message ||
-        "Nie udało się zaakceptować zgłoszenia.";
+      let msg = "Nie udało się zaakceptować zgłoszenia.";
+      if (e && e.response && e.response.data && e.response.data.message) {
+        msg = e.response.data.message;
+      } else if (e && e.message) {
+        msg = e.message;
+      }
       showError(msg);
     }
   }
@@ -97,28 +113,30 @@ export default function EmergencyRequestsPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {requests.map((r) => (
-                      <tr key={r.id}>
-                        <td>{r.id}</td>
-                        <td>
-                          {r.hospitalNumber} — {r.hospitalCity}
-                        </td>
-                        <td>
-                          <strong>{r.bloodTypeLabel}</strong>
-                        </td>
-                        <td>{formatAmount(r.amount, 3)} l</td>
-                        <td>
-                          <button
-                            className="bp-btn bp-btn--ghost"
-                            onClick={() => {
-                              onAccept(r.id);
-                            }}
-                          >
-                            Akceptuj
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
+                    {requests.map(function (r) {
+                      return (
+                        <tr key={r.id}>
+                          <td>{r.id}</td>
+                          <td>
+                            {r.hospitalNumber} — {r.hospitalCity}
+                          </td>
+                          <td>
+                            <strong>{r.bloodTypeLabel}</strong>
+                          </td>
+                          <td>{formatAmount(r.amount, 3)} l</td>
+                          <td>
+                            <button
+                              className="bp-btn bp-btn--ghost"
+                              onClick={function () {
+                                onAccept(r.id);
+                              }}
+                            >
+                              Akceptuj
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

@@ -1,58 +1,78 @@
 import CTA from "../CTA/CTA";
 import "./GeneralDashboardPanel.css";
-import BackButton from "../BackButton/BackButton"
+import BackButton from "../BackButton/BackButton";
 
 export default function GeneralDashboardPanel({
-    title,
-    subtitle,
-    actions = [],
-    center = true,
-    className = "",
-  }) {
+  title,
+  subtitle,
+  actions,
+  center,
+  className,
+}) {
+  const isCentered = center !== false;
+  const list = Array.isArray(actions) ? actions : [];
+  const extraClass = className ? " " + className : "";
+  const sectionClass =
+    "panel-dashboard" + (isCentered ? " is-centered" : "") + extraClass;
+
+  function renderAction(action, index) {
+    const isGhost = action.variant === "ghost";
+
+    if (action.to) {
+      const actionClass = "panel-cta" + (isGhost ? " is-ghost" : "");
+      return (
+        <CTA
+          key={index}
+          to={action.to}
+          label={action.label}
+          className={actionClass}
+        />
+      );
+    }
+
+    if (action.href) {
+      const linkClass = "cta panel-cta" + (isGhost ? " is-ghost" : "");
+      return (
+        <a
+          key={index}
+          href={action.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={linkClass}
+        >
+          {action.label}
+        </a>
+      );
+    }
+
+    const btnClass =
+      "bp-btn panel-btn" + (isGhost ? " bp-btn--ghost" : "");
+
     return (
-      <>
-      <BackButton to="/" label="Powrót do strony głównej" />
-      <section
-        className={`panel-dashboard ${center ? "is-centered" : ""} ${className}`}
-        aria-label="Panel"
+      <button
+        key={index}
+        type="button"
+        onClick={action.onClick}
+        className={btnClass}
       >
+        {action.label}
+      </button>
+    );
+  }
+
+  return (
+    <>
+      <BackButton to="/" label="Powrót do strony głównej" />
+      <section className={sectionClass} aria-label="Panel">
         <header className="panel-head">
           {title && <h1 className="panel-title">{title}</h1>}
           {subtitle && <p className="panel-lead">{subtitle}</p>}
         </header>
-  
+
         <div className="panel-actions">
-          {actions.map((a, i) => {
-            const isGhost = a.variant === "ghost";
-            if (a.to) {
-              return <CTA key={i} to={a.to} label={a.label} className={`panel-cta ${isGhost ? "is-ghost" : ""}`} />;
-            }
-            if (a.href) {
-              return (
-                <a
-                  key={i}
-                  href={a.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`cta panel-cta ${isGhost ? "is-ghost" : ""}`}
-                >
-                  {a.label}
-                </a>
-              );
-            }
-            return (
-              <button
-                key={i}
-                type="button"
-                onClick={a.onClick}
-                className={`bp-btn panel-btn ${isGhost ? "bp-btn--ghost" : ""}`}
-              >
-                {a.label}
-              </button>
-            );
-          })}
+          {list.map(renderAction)}
         </div>
       </section>
-      </>
-    );
-  }
+    </>
+  );
+}
