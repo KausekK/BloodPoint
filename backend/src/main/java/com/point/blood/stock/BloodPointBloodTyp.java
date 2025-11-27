@@ -29,11 +29,11 @@ public class BloodPointBloodTyp {
     private BigDecimal reservedQuantity;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "blood_donation_point_id", nullable = false)
+    @JoinColumn(name = "Blood_donation_point_id", nullable = false)
     private BloodDonationPoint donationPoint;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "blood_type_id", nullable = false)
+    @JoinColumn(name = "Blood_type_id", nullable = false)
     private BloodType bloodType;
 
 }

@@ -7,7 +7,9 @@ import { listBloodTypes } from "../../../../services/BloodTypeService";
 import { showMessage, showError } from "../../../shared/services/MessageService";
 import { MessageType } from "../../../shared/const/MessageType.model";
 import "../../../SharedCSS/MenagePanels.css"
+
 import BackButton from "../../../BackButton/BackButton"
+import authService from "../../../../services/AuthenticationService";
 
 
 export default function ReportEmergencyPage() {
@@ -17,6 +19,7 @@ export default function ReportEmergencyPage() {
 
   const [err, setErr] = useState("");
   const [msg, setMsg] = useState("");
+  const hospitalId = authService.getHospitalId();
 
   const [form, setForm] = useState({
     bloodTypeId: "",
@@ -69,7 +72,7 @@ export default function ReportEmergencyPage() {
       setErr("");
       setMsg("");
 
-      await createBloodRequest({
+      await createBloodRequest(hospitalId, {
         bloodTypeId: Number(form.bloodTypeId),
         amount: toNum(form.amount),
       });

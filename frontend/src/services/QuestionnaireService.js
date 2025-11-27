@@ -19,3 +19,9 @@ export async function submitResponses(questionnaireId, appointmentId, payload) {
 export function getQuestionnaireIdByTitle(title) {
   return api.get(`/questionnaires/id`, { params: { title } }).then((r) => r.data);
 }
+
+export function hasQuestionnaireForAppointment(appointmentId) {
+  return api
+    .get(`/questionnaires/appointments/${appointmentId}/responses/status`)
+    .then(r => r.data);
+}

@@ -35,6 +35,6 @@ public class DonationTimeSlot {
     private boolean availableSlot;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "blood_donation_point_id", nullable = false)
+    @JoinColumn(name = "Blood_donation_point_id", nullable = false)
     private BloodDonationPoint bloodDonationPoint;
 }

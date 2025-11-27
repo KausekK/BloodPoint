@@ -13,16 +13,19 @@ import lombok.*;
 public class QuestionResponse {
 
     @Id
+    @SequenceGenerator(
+            name = "qresp_seq",
+            sequenceName = "question_response_seq",
+            allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "qresp_seq")
-    @SequenceGenerator(name = "qresp_seq", sequenceName = "QUESTION_RESPONSE_SEQ", allocationSize = 1)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "QUESTIONNAIRE_RESPONSE_ID", nullable = false)
+    @JoinColumn(name = "Questionnaire_response_id", nullable = false)
     private QuestionnaireResponse questionnaireResponse;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "question_id", nullable = false)
+    @JoinColumn(name = "Question_id", nullable = false)
     private com.point.blood.questionnaire.Question question;
 
     @Column(name = "answer_text", length = 4000)

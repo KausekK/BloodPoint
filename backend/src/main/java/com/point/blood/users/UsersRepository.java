@@ -45,11 +45,9 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
             """)
     Optional<UsersProfileDTO> findProfileById(@Param("id") Long id);
 
-    Optional<Users> findByPesel(String pesel);
 
     Optional<Users> findByEmail(String email);
 
-    Optional<Long> findByHospitalId(Long hospitalId);
 
     @Query("SELECT h.id FROM Users u LEFT JOIN u.hospital h WHERE u.id = :id")
     Long findHospitalIdById(@Param("id") Long id);

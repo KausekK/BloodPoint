@@ -25,6 +25,7 @@ public class BloodRequestApprovalService {
                 .orElseThrow(() -> new IllegalArgumentException("Nie znaleziono zgłoszenia."));
 
         var btId = req.getBloodType().getId();
+        //TODO czy to powinein byc throw error czy blad na froncie?
         var stock = stockRepository.findForUpdate(pointId, btId)
                 .orElseThrow(() -> new IllegalStateException(
                         "W magazynie punktu brak pozycji dla tej grupy krwi."));

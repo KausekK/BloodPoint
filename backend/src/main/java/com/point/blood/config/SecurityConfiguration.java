@@ -3,7 +3,6 @@ package com.point.blood.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -21,7 +20,7 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http//TODO ustawic dostepy, zmienic permitALl
+        http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()
@@ -39,10 +38,10 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/user/**").authenticated()
                         .requestMatchers("/api/blood_point/**").permitAll()
                         .requestMatchers("/api/hospital/provinces/**").permitAll()
-                        .requestMatchers("/api/statistic/**").permitAll() // TODO
+                        .requestMatchers("/api/statistics/**").authenticated()
                         .requestMatchers("/api/blood-types/**").permitAll()
                         .requestMatchers("/api/request/hospitals/*/requests").authenticated()
-                        .requestMatchers("/api/request/**").authenticated()
+                        .requestMatchers("/api/requests/**").authenticated()
                         .requestMatchers("/api/zgloszenia/**").authenticated()
                         .requestMatchers("/api/request/*/accept").authenticated()
                         .requestMatchers("/api/questionnaires/**").authenticated()

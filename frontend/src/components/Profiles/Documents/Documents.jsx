@@ -10,7 +10,7 @@ import {
   TextField,
   Typography
 } from '@mui/material';
-import { getQuestions, submitResponses, getQuestionnaireIdByTitle } from '../../../services/QuestionnaireService';
+import { getQuestions, submitResponses, getQuestionnaireIdByTitle, hasQuestionnaireForAppointment } from '../../../services/QuestionnaireService';
 import './Documents.css';
 import { showMessage, showError } from "../../shared/services/MessageService";
 import { getScheduledAppointmentForUser } from '../../../services/ProfileService';
@@ -60,6 +60,17 @@ export default function Documents() {
 
       const resolveAndLoad = async () => {
         try {
+          const alreadyFilled = await hasQuestionnaireForAppointment(appointmentId);
+          if (!active) return;
+
+          if (alreadyFilled) {
+            setSubmitted(true);
+            setQuestions([]);
+            setAnswers({});
+            setLoading(false);
+            return;
+          }
+
           const res = await getQuestionnaireIdByTitle("Kwestionariusz dla krwiodawców");
           if (!active) return;
           const resolvedId = Number(res);

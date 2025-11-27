@@ -2,6 +2,7 @@ import { useState } from "react";
 import CTA from "../CTA/CTA";
 import authService from "../../services/AuthenticationService";
 import { showMessage, showError } from "../shared/services/MessageService";
+import { MessageType } from "../shared/const/MessageType.model";
 import "../SharedCSS/LoginForms.css";
 
 export default function GeneralLoginForm({
@@ -29,10 +30,14 @@ export default function GeneralLoginForm({
 
   const landingPath = (role) => {
     switch (role) {
-      case "DAWCA": return "/profil";
-      case "PUNKT_KRWIODAWSTWA": return "/punkt-krwiodawstwa/dashboard";
-      case "SZPITAL": return "/szpital/dashboard";
-      default: return "/";
+      case "DAWCA":
+        return "/profil";
+      case "PUNKT_KRWIODAWSTWA":
+        return "/punkt-krwiodawstwa/dashboard";
+      case "SZPITAL":
+        return "/szpital/dashboard";
+      default:
+        return "/";
     }
   };
 
@@ -45,20 +50,27 @@ export default function GeneralLoginForm({
         email: String(vals[idName] || "").trim(),
         password: vals.password,
       });
+
       if (res?.token) {
-        showMessage("Zalogowano pomyślnie.", "success");
+        showMessage("Zalogowano pomyślnie.", MessageType.SUCCESS);
         const role = primaryRole();
         window.location.assign(landingPath(role));
       } else {
         showError("Logowanie nie powiodło się.");
       }
     } catch (err) {
-      const msg =
-        err?.response?.data?.message ||
-        err?.response?.data?.error ||
-        err?.message ||
-        "Logowanie nie powiodło się.";
-      showError(msg);
+      const status = err?.response?.status;
+
+      if (status === 401 || status === 403) {
+        showError("Nieprawidłowy e-mail lub hasło.");
+      } else {
+        const msg =
+          err?.response?.data?.message ||
+          err?.response?.data?.error ||
+          err?.message ||
+          "Logowanie nie powiodło się.";
+        showError(msg);
+      }
     } finally {
       setSubmitting(false);
     }
@@ -68,7 +80,14 @@ export default function GeneralLoginForm({
     <article className="bp-card auth-card">
       <div className="auth-card-cap" aria-hidden="true" />
       {title ? <h2 className="auth-card-title">{title}</h2> : null}
-      {lead ? <p className="login-lead" style={{ textAlign: "center", marginTop: -6 }}>{lead}</p> : null}
+      {lead ? (
+        <p
+          className="login-lead"
+          style={{ textAlign: "center", marginTop: -6 }}
+        >
+          {lead}
+        </p>
+      ) : null}
 
       <form className="auth-form" onSubmit={handleSubmit} noValidate>
         <div className="form-field">
