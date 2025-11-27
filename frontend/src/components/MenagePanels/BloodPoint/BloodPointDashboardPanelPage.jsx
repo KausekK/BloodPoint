@@ -8,7 +8,6 @@ export default function BloodPointDashboardPanelPage() {
   const actions = [
     { label: "Zarządzaj zapasami krwi", to: `/punkt-krwiodawstwa/zapasy` },
     { label: "Przeglądaj statystyki", to: "/statystyki" },
-    { label: "Sprawdź predykcje", to: "/prognoza" },
     { label: "Sprawdź zgłoszenia szpitali", to: "/zgloszenia" },
     { label: "Zarzadzaj pracownikami", to: "/panel/pracowniczy" },
   ];

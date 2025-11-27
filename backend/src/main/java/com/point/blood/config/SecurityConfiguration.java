@@ -26,7 +26,6 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/blood_stock/**").permitAll()
                         .requestMatchers("/api/profile/**").authenticated()
-                        .requestMatchers("/api/forecast/**").authenticated()
                         .requestMatchers("/api/informacje/**").permitAll()
                         .requestMatchers("/api/punkty-krwiodawstwa/**").permitAll()
                         .requestMatchers("/api/krwiodawca/**").authenticated()

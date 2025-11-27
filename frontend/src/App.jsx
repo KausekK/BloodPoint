@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MakeAppointment from './components/MakeAppointment/MakeAppointment.jsx';
 import Home from './components/Home/Home.jsx';
 import Profile from './components/Profiles/Profile.jsx';
-import ForecastOfBloodDemand from './components/ForecastOfBloodDemand/ForecastOfBloodDemand.jsx';
 import DonationPointsPage from './components/DonationPoints/DonationPointsPage.jsx';
 import DonorInfoPage from './components/DonorInfo/DonorInfoPage.jsx';
 import DonorTipsPage from './components/DonorInfo/DonorTipsPage.jsx';
@@ -36,11 +35,7 @@ function App() {
                         <Profile />
                     </ProtectedRoute>
                 } />
-                <Route path="/prognoza" element={
-                    <ProtectedRoute allowedRoles={["PUNKT_KRWIODAWSTWA"]}>
-                        <ForecastOfBloodDemand />
-                    </ProtectedRoute>
-                } />
+
                 <Route path="/punkty-krwiodawstwa" element={<DonationPointsPage />} />
                 <Route path="/krwiodawca" element={<DonorInfoPage />} />
                 <Route path="/dla-dawcy" element={<DonorTipsPage />} />
