@@ -38,7 +38,7 @@ public class AppointmentService {
 
     public EditResult<AppointmentDTO> insertAppointment(AppointmentDTO dto) {
 
-        if (validateAppointment(dto)) {
+        if ( hasRecentOrUpcomingAppointment(dto)) {
             return buildError("Masz już wcześniej umówioną wizytę, lub twoja wizyta odbyła się zbyt niedawno aby ponownie oddać krew.");
         }
 
