@@ -112,7 +112,7 @@ public class AppointmentService {
         LocalDateTime tomorrow = startOfDay.plusDays(1);
 
         return appointmentRepository.findAllTodayAppointmentsForBloodPoint(
-                bloodDonationPointId, today, tomorrow);
+                bloodDonationPointId, startOfDay, tomorrow);
     }
     // fake dane do testow
 //    public List<AllAppointmentsDetailsDTO> getAllAppointmentsForBloodPoint(Long bloodDonationPointId) {
