@@ -139,6 +139,68 @@ public class AuthenticationService {
                 .build();
     }
 
+    public EditResult<Void> changePassword(ChangePasswordRequest request, String username) {
+
+        if (request.getCurrentPassword() == null || request.getCurrentPassword().isBlank()) {
+            return EditResult.<Void>builder()
+                    .messages(java.util.List.of(
+                            MessageDTO.createErrorMessage("Podaj obecne hasło")
+                    ))
+                    .resultDTO(null)
+                    .build();
+        }
+
+        if (request.getNewPassword() == null || request.getNewPassword().isBlank()) {
+            return EditResult.<Void>builder()
+                    .messages(java.util.List.of(
+                            MessageDTO.createErrorMessage("Podaj nowe hasło")
+                    ))
+                    .resultDTO(null)
+                    .build();
+        }
+
+        if (!request.getNewPassword().equals(request.getConfirmNewPassword())) {
+            return EditResult.<Void>builder()
+                    .messages(java.util.List.of(
+                            MessageDTO.createErrorMessage("Nowe hasła nie są takie same")
+                    ))
+                    .resultDTO(null)
+                    .build();
+        }
+
+        Users user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            return EditResult.<Void>builder()
+                    .messages(java.util.List.of(
+                            MessageDTO.createErrorMessage("Obecne hasło jest nieprawidłowe")
+                    ))
+                    .resultDTO(null)
+                    .build();
+        }
+
+        if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
+            return EditResult.<Void>builder()
+                    .messages(java.util.List.of(
+                            MessageDTO.createErrorMessage("Nowe hasło nie może być takie samo jak obecne")
+                    ))
+                    .resultDTO(null)
+                    .build();
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+
+        return EditResult.<Void>builder()
+                .messages(java.util.List.of(
+                        MessageDTO.createSuccessMessage("Hasło zostało zmienione")
+                ))
+                .resultDTO(null)
+                .build();
+    }
+
+
     private Set<Role> resolveRoles(RegisterRequest request) {
         RoleEnum roleEnum = (request.getRoleName() != null)
                 ? request.getRoleName()

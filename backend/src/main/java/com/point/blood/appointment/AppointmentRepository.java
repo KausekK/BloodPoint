@@ -22,6 +22,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             LEFT JOIN d.bloodDonationPoint b
             WHERE u.id = :userId
             AND d.startTime >= :now
+            AND a.status = "UMOWIONA"
             """)
     Optional<ScheduledAppointmentForUserDTO> findScheduledAppointmentForUserByUserId(@Param("userId") Long userId, @Param("now") LocalDateTime now);
 
