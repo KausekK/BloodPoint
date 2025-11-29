@@ -77,8 +77,6 @@ public class AppointmentService {
 
         appointmentRepository.delete(appt);
 
-
-
         return EditResult.<AppointmentDTO>builder()
                 .messages(List.of(MessageDTO.createSuccessMessage("Wizyta została odwołana")))
                 .build();
@@ -97,12 +95,10 @@ public class AppointmentService {
                 bloodDonationPointId, today, tomorrow);
     }
 
-
     private EditResult<AppointmentDTO> buildError(String msg) {
         return EditResult.<AppointmentDTO>builder()
                 .messages(List.of(MessageDTO.createErrorMessage(msg)))
                 .build();
     }
-
 
 }
