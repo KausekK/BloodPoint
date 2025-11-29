@@ -2,10 +2,7 @@ package com.point.blood.questionnaire.response;
 
 import com.point.blood.appointment.AppointmentRepository;
 
-import com.point.blood.questionnaire.Question;
-import com.point.blood.questionnaire.QuestionRepository;
-import com.point.blood.questionnaire.Questionnaire;
-import com.point.blood.questionnaire.QuestionnaireRepository;
+import com.point.blood.questionnaire.*;
 import com.point.blood.shared.ApplicationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -80,5 +77,36 @@ public class QuestionnaireResponseService {
         }
         return responseRepository.existsByAppointmentId(appointmentId);
     }
+
+    public QuestionnairePreviewDTO getResponsesForAppointment(Long appointmentId) {
+        if (appointmentId == null) {
+            throw ApplicationException.createWithMessage("Brak identyfikatora wizyty.");
+        }
+
+        QuestionnaireResponse qr = responseRepository.findByAppointmentId(appointmentId)
+                .orElseThrow(() -> ApplicationException.createWithMessage(
+                        "Kwestionariusz dla tej wizyty nie został wypełniony.")
+                );
+
+        var questionnaire = qr.getQuestionnaire();
+
+        var answers = qr.getResponses().stream()
+                .map(r -> QuestionnairePreviewDTO.QuestionAnswerPreviewDTO.builder()
+                        .questionId(r.getQuestion().getId())
+                        .questionText(r.getQuestion().getText())
+                        .answerText(r.getAnswerText())
+                        .answerFlag(r.getAnswerFlag())
+                        .build()
+                )
+                .toList();
+
+        return QuestionnairePreviewDTO.builder()
+                .questionnaireId(questionnaire.getId())
+                .questionnaireTitle(questionnaire.getTitle())
+                .answers(answers)
+                .build();
+
+    }
+
 
 }
