@@ -39,7 +39,11 @@ export default function PointStaffPage() {
       }
 
       const data = await getStaffByPoint(pointId);
-      const list = Array.isArray(data) ? data : (data && data.resultDTO ? data.resultDTO : []);
+      const list = Array.isArray(data)
+        ? data
+        : data && data.resultDTO
+        ? data.resultDTO
+        : [];
 
       if (!Array.isArray(list)) {
         setError(content.messages.invalidResponse);
@@ -48,10 +52,12 @@ export default function PointStaffPage() {
         setRows(list);
       }
     } catch (e) {
-      const msg =
-        (e && e.response && e.response.data && e.response.data.message) ||
-        (e && e.message) ||
-        content.messages.errorFetch;
+      let msg = content.messages.errorFetch;
+      if (e && e.response && e.response.data && e.response.data.message) {
+        msg = e.response.data.message;
+      } else if (e && e.message) {
+        msg = e.message;
+      }
       setError(msg);
       setRows([]);
     } finally {
@@ -63,21 +69,21 @@ export default function PointStaffPage() {
     load();
   }, [pointId]);
 
-  const s = q.trim().toLowerCase();
-  const filteredRows = s
+  const search = q.trim().toLowerCase();
+  const filteredRows = search
     ? rows.filter(function (r) {
         const first = (r.firstName || "").toLowerCase();
         const last = (r.lastName || "").toLowerCase();
         const email = (r.email || "").toLowerCase();
-        return (first + " " + last + " " + email).includes(s);
+        return (first + " " + last + " " + email).includes(search);
       })
     : rows;
 
-  function startEdit(r) {
-    setEditId(r.userId);
+  function startEdit(row) {
+    setEditId(row.userId);
     setForm({
-      email: r.email || "",
-      position: r.position || "",
+      email: row.email || "",
+      position: row.position || "",
     });
   }
 
@@ -95,17 +101,20 @@ export default function PointStaffPage() {
 
       const res = await updateEmployee(editId, payload);
 
-
-      var updated = null;
+      let updated = null;
       if (res && typeof res === "object" && "resultDTO" in res) {
         updated = res.resultDTO;
       }
 
       setRows(function (prev) {
         return prev.map(function (r) {
-          if (r.userId !== editId) return r;
+          if (r.userId !== editId) {
+            return r;
+          }
 
-          if (updated) return updated;
+          if (updated) {
+            return updated;
+          }
 
           return {
             ...r,
@@ -118,16 +127,20 @@ export default function PointStaffPage() {
       cancelEdit();
       showMessage(content.messages.saved, MessageType.SUCCESS);
     } catch (e) {
-      const msg =
-        (e && e.response && e.response.data && e.response.data.message) ||
-        (e && e.message) ||
-        content.messages.errorSave;
+      let msg = content.messages.errorSave;
+      if (e && e.response && e.response.data && e.response.data.message) {
+        msg = e.response.data.message;
+      } else if (e && e.message) {
+        msg = e.message;
+      }
       showError(msg);
     }
   }
 
   async function onRemove(userId) {
-    if (!window.confirm(content.messages.confirmDelete)) return;
+    if (!window.confirm(content.messages.confirmDelete)) {
+      return;
+    }
     try {
       await deleteEmployee(userId);
       setRows(function (prev) {
@@ -137,12 +150,18 @@ export default function PointStaffPage() {
       });
       showMessage(content.messages.deleted, MessageType.SUCCESS);
     } catch (e) {
-      const msg =
-        (e && e.response && e.response.data && e.response.data.message) ||
-        (e && e.message) ||
-        content.messages.errorDelete;
+      let msg = content.messages.errorDelete;
+      if (e && e.response && e.response.data && e.response.data.message) {
+        msg = e.response.data.message;
+      } else if (e && e.message) {
+        msg = e.message;
+      }
       showError(msg);
     }
+  }
+
+  function handleSearchChange(event) {
+    setQ(event.target.value);
   }
 
   return (
@@ -156,9 +175,6 @@ export default function PointStaffPage() {
         <div className="bp-container">
           <header className="dashboard-head">
             <h1 className="dashboard-title">{content.hero.heading}</h1>
-            <p className="dashboard-lead">
-              {content.hero.note.replace("{{POINT_ID}}", String(isFinite(pointId) ? pointId : "—"))}
-            </p>
 
             <div className="bp-form staff-search">
               <div className="form-field form-field--grow">
@@ -167,7 +183,7 @@ export default function PointStaffPage() {
                   className="input"
                   placeholder={content.search.placeholder}
                   value={q}
-                  onChange={function (e) { setQ(e.target.value); }}
+                  onChange={handleSearchChange}
                 />
               </div>
               <div className="form-actions">
@@ -195,7 +211,9 @@ export default function PointStaffPage() {
                       <th>{content.table.columns.date}</th>
                       <th>{content.table.columns.email}</th>
                       <th>{content.table.columns.pesel}</th>
-                      <th className="table-actions">{content.table.columns.actions}</th>
+                      <th className="table-actions">
+                        {content.table.columns.actions}
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -204,20 +222,24 @@ export default function PointStaffPage() {
 
                       return (
                         <tr key={r.userId}>
-                          
                           <td data-label={content.table.columns.name}>
-                            <strong>{r.firstName} {r.lastName}</strong>
-                            <div className="bp-state">ID: {r.userId}</div>
+                            <strong>
+                              {r.firstName} {r.lastName}
+                            </strong>
                           </td>
 
-                          
                           <td data-label={content.table.columns.position}>
                             {isEdit ? (
                               <select
                                 className="select"
                                 value={form.position}
                                 onChange={function (e) {
-                                  setForm(function (f) { return { ...f, position: e.target.value }; });
+                                  setForm(function (f) {
+                                    return {
+                                      ...f,
+                                      position: e.target.value,
+                                    };
+                                  });
                                 }}
                               >
                                 <option value="">— wybierz —</option>
@@ -236,7 +258,9 @@ export default function PointStaffPage() {
 
                           <td data-label={content.table.columns.date}>
                             {r.employmentStartDay
-                              ? new Date(r.employmentStartDay).toLocaleDateString("pl-PL")
+                              ? new Date(
+                                  r.employmentStartDay
+                                ).toLocaleDateString("pl-PL")
                               : "—"}
                           </td>
 
@@ -248,7 +272,12 @@ export default function PointStaffPage() {
                                 placeholder="email@domena.pl"
                                 value={form.email}
                                 onChange={function (e) {
-                                  setForm(function (f) { return { ...f, email: e.target.value }; });
+                                  setForm(function (f) {
+                                    return {
+                                      ...f,
+                                      email: e.target.value,
+                                    };
+                                  });
                                 }}
                               />
                             ) : (
@@ -256,26 +285,41 @@ export default function PointStaffPage() {
                             )}
                           </td>
 
-                          <td data-label={content.table.columns.pesel}>{r.pesel}</td>
+                          <td data-label={content.table.columns.pesel}>
+                            {r.pesel}
+                          </td>
 
                           <td data-label={content.table.columns.actions}>
                             {isEdit ? (
                               <div className="form-actions">
-                                <button className="bp-btn" onClick={saveEdit}>
+                                <button
+                                  className="bp-btn"
+                                  onClick={saveEdit}
+                                >
                                   {content.actions.save}
                                 </button>
-                                <button className="bp-btn bp-btn--ghost" onClick={cancelEdit}>
+                                <button
+                                  className="bp-btn bp-btn--ghost"
+                                  onClick={cancelEdit}
+                                >
                                   {content.actions.cancel}
                                 </button>
                               </div>
                             ) : (
                               <div className="form-actions">
-                                <button className="bp-btn" onClick={function () { startEdit(r); }}>
+                                <button
+                                  className="bp-btn"
+                                  onClick={function () {
+                                    startEdit(r);
+                                  }}
+                                >
                                   {content.actions.edit}
                                 </button>
                                 <button
                                   className="bp-btn bp-btn--ghost"
-                                  onClick={function () { onRemove(r.userId); }}
+                                  onClick={function () {
+                                    onRemove(r.userId);
+                                  }}
                                 >
                                   {content.actions.delete}
                                 </button>

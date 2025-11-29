@@ -1,12 +1,11 @@
 import Header from "../../Header/Header";
 import Footer from "../../Footer/Footer";
 import DashboardPanel from "../GeneralDashboardPanel";
-import "../../SharedCSS/MenagePanels.css"
-
+import "../../SharedCSS/MenagePanels.css";
 
 export default function HospitalDashboardPanelPage() {
   const actions = [
-    { label: "Zgłoś zapotrzebowanie", to: `/szpital/zgloszenie-zapotrzebowania` },
+    { label: "Zgłoś zapotrzebowanie", to: "/szpital/zgloszenie-zapotrzebowania" },
     { label: "Przeglądaj historię zgłoszeń", to: "/szpital/historia-zgloszen" },
   ];
 

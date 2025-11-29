@@ -19,7 +19,6 @@ export const muiIcon = L.divIcon({
 });
 
 export default function Map({ city }) {
-  //TODO zmienić na dynamiczne pobieranie z backendu jak beda dane w bazie
   const markers = [
     {
       geocode: [52.232748, 21.060196],
