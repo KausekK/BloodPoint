@@ -77,6 +77,12 @@ public class DonationService {
         if (dto.getAmountOfBlood() == null || dto.getAmountOfBlood().signum() <= 0) {
             return buildError("Ilość oddanej krwi musi być dodatnia.");
         }
+        var questionnaireResponseOpt =
+                questionnaireResponseRepository.findByAppointmentId(appointmentId);
+
+        if (questionnaireResponseOpt.isEmpty()) {
+            return buildError("Dawca nie uzupełnił kwestionariusza dla tej wizyty.");
+        }
 
         try {
             Appointment appointment = appointmentRepository.findById(appointmentId)
@@ -97,16 +103,6 @@ public class DonationService {
                     .findByType(typeEnum)
                     .orElseThrow(() -> new IllegalStateException(
                             "Brak typu donacji " + typeEnum + " w bazie."));
-
-            // TODO
-//            Long questionnaireId = dto.getQuestionnaireId() != null
-//                    ? dto.getQuestionnaireId()
-//                    : 1L;
-//
-//
-//
-//
-//            Questionnaire questionnaire = em.getReference(Questionnaire.class, questionnaireId);
 
             LocalDateTime donationDate = timeSlot.getStartTime();
 
@@ -135,13 +131,6 @@ public class DonationService {
             } else {
                 bloodTypeToUse = donor.getBloodType();
                 donor.setLastDonationDate(donationDate.toLocalDate());
-            }
-
-            var questionnaireResponseOpt =
-                    questionnaireResponseRepository.findByAppointmentId(appointmentId);
-
-            if (questionnaireResponseOpt.isEmpty()) {
-                return buildError("Dawca nie uzupełnił kwestionariusza dla tej wizyty.");
             }
 
             QuestionnaireResponse qrEntity = questionnaireResponseOpt.get();
