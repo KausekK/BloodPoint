@@ -1,5 +1,6 @@
 package com.point.blood.auth;
 
+import com.point.blood.config.JwtUserPrincipal;
 import com.point.blood.shared.EditResult;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +17,12 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public ResponseEntity<EditResult<AuthenticationResponse>> register(@RequestBody RegisterRequest request){
+    public ResponseEntity<EditResult<AuthenticationResponse>> register(@RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authenticationService.register(request));
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request){
+    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 
@@ -30,4 +31,10 @@ public class AuthenticationController {
         return Map.of("id", user.getId());
     }
 
+    //TODO Podlaczyc do frontu
+    @PostMapping("/change-password")
+    public ResponseEntity<EditResult<Void>> changePassword(@RequestBody ChangePasswordRequest request,
+                                                           @AuthenticationPrincipal JwtUserPrincipal principal) {
+        return ResponseEntity.ok(authenticationService.changePassword(request, principal.getUsername()));
+    }
 }

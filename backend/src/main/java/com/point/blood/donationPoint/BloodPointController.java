@@ -1,10 +1,7 @@
 package com.point.blood.donationPoint;
 
-import com.point.blood.config.JwtUserPrincipal;
-import com.point.blood.hospital.HospitalProfileDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,7 +11,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BloodPointController {
     private final BloodPointService bloodPointService;
-    private final BloodDonationPointRepository bloodDonationPointRepository;
 
     @GetMapping("/cities")
     public ResponseEntity<List<String>> getCities() {

@@ -22,6 +22,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             LEFT JOIN d.bloodDonationPoint b
             WHERE u.id = :userId
             AND d.startTime >= :now
+            AND a.status = "UMOWIONA"
             """)
     Optional<ScheduledAppointmentForUserDTO> findScheduledAppointmentForUserByUserId(@Param("userId") Long userId, @Param("now") LocalDateTime now);
 
@@ -30,15 +31,16 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     FROM Appointment a
     JOIN a.users u
     JOIN a.donationTimeSlot d
+    JOIN u.donor do
     WHERE u.id = :userId
-      AND(
+        AND(
             (a.status = 'UMOWIONA' AND d.startTime >= :now)
             OR
             (a.status = 'ZREALIZOWANA'
-             AND d.startTime >=
-                 CASE 
+             AND do.lastDonationDate >=
+                 CASE
                      WHEN u.gender = 'M' THEN :nowMinus8Weeks
-                     ELSE :nowMinus12Weeks 
+                     ELSE :nowMinus12Weeks
                  END
             )
           )
@@ -49,6 +51,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             @Param("nowMinus8Weeks") LocalDateTime nowMinus8Weeks,
             @Param("nowMinus12Weeks") LocalDateTime nowMinus12Weeks
     );
+
 
     @Query("""
                 SELECT DISTINCT new com.point.blood.appointment.AllAppointmentsDetailsDTO(

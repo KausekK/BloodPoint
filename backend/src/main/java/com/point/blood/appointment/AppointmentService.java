@@ -37,8 +37,7 @@ public class AppointmentService {
     }
 
     public EditResult<AppointmentDTO> insertAppointment(AppointmentDTO dto) {
-
-        if ( hasRecentOrUpcomingAppointment(dto)) {
+        if (hasRecentOrUpcomingAppointment(dto)) {
             return buildError("Masz już wcześniej umówioną wizytę, lub twoja wizyta odbyła się zbyt niedawno aby ponownie oddać krew.");
         }
 
@@ -77,8 +76,6 @@ public class AppointmentService {
 
         appointmentRepository.delete(appt);
 
-
-
         return EditResult.<AppointmentDTO>builder()
                 .messages(List.of(MessageDTO.createSuccessMessage("Wizyta została odwołana")))
                 .build();
@@ -111,12 +108,10 @@ public List<AllAppointmentsDetailsDTO> getAllAppointmentsForBloodPoint(Long bloo
 }
 
 
-
     private EditResult<AppointmentDTO> buildError(String msg) {
         return EditResult.<AppointmentDTO>builder()
                 .messages(List.of(MessageDTO.createErrorMessage(msg)))
                 .build();
     }
-
 
 }
