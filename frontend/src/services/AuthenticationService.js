@@ -63,6 +63,7 @@ async function login(authenticationRequest) {
       hospitalId: hid ?? null,
       roles: Array.isArray(roles) ? roles : [],
       token: data.token,
+      mustChangePassword: data.mustChangePassword ?? mcp ?? false,
       exp: exp ?? null,
     });
   }
@@ -107,6 +108,9 @@ function hasRole(roleName) {
   const roles = getUser()?.roles || [];
   return roles.includes(roleName);
 }
+function mustChangePassword() {
+  return !!getUser()?.mustChangePassword;
+}
 
 const authService = {
   register,
@@ -122,6 +126,7 @@ const authService = {
   getPointId,
   getHospitalId,
   hasRole,
+  mustChangePassword,
 };
 
 export default authService;

@@ -53,8 +53,15 @@ export default function GeneralLoginForm({
 
       if (res?.token) {
         showMessage("Zalogowano pomyślnie.", MessageType.SUCCESS);
+
         const role = primaryRole();
-        window.location.assign(landingPath(role));
+        const user = authService.getUser();
+
+        if (user?.mustChangePassword) {
+          window.location.assign("/pierwsze-logowanie/zmiana-hasla");
+        } else {
+          window.location.assign(landingPath(role));
+        }
       } else {
         showError("Logowanie nie powiodło się.");
       }

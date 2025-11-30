@@ -1,5 +1,6 @@
 package com.point.blood.hospital;
 
+import com.point.blood.users.Users;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,10 +16,18 @@ import lombok.NoArgsConstructor;
 public class Hospital {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(
+            name = "hospital_seq_gen",
+            sequenceName = "HOSPITAL_SEQ",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "hospital_seq_gen"
+    )
     private Long id;
 
-    @Column(name="hospital_number", nullable = false)
+    @Column(name = "hospital_number", nullable = false)
     private Long hospitalNumber;
 
     @Column(nullable = false)
@@ -35,4 +44,8 @@ public class Hospital {
 
     @Column(name = "phone", nullable = false, length = 15)
     private String phone;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "users_id", nullable = false, unique = true)
+    private Users user;
 }

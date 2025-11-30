@@ -31,7 +31,6 @@ public class AuthenticationController {
         return Map.of("id", user.getId());
     }
 
-    //TODO Podlaczyc do frontu
     @PostMapping("/change-password")
     public ResponseEntity<EditResult<Void>> changePassword(@RequestBody ChangePasswordRequest request,
                                                            @AuthenticationPrincipal JwtUserPrincipal principal) {

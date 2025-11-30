@@ -107,13 +107,13 @@ public class AuthenticationService {
                 .map(r -> r.getName().name())
                 .collect(java.util.stream.Collectors.toSet());
 
-        System.out.println("AUTH: user = " + user.getEmail());
-        System.out.println("AUTH: roles from DB = " + user.getRoles());
-        System.out.println("AUTH: roleNames = " + roleNames);
 
         Map<String, Object> claims = new java.util.HashMap<>();
         claims.put("roles", roleNames);
         claims.put("uid", user.getId());
+
+        boolean mustChangePassword = user.isMustChangePassword();
+
 
 //        boolean isStaff = roleNames.contains(RoleEnum.PUNKT_KRWIODAWSTWA.name());
         boolean isStaff = roleNames.contains(RoleEnum.PUNKT_KRWIODAWSTWA.name()) || roleNames.contains(RoleEnum.MANAGER_PUNKTU_KRWIODAWSTWA.name());
@@ -142,6 +142,7 @@ public class AuthenticationService {
                 .pointId((Long) claims.get("pid"))
                 .hospitalId((Long) claims.get("hid"))
                 .roles(roleNames)
+                .mustChangePassword(mustChangePassword)
                 .build();
     }
 
@@ -196,6 +197,7 @@ public class AuthenticationService {
         }
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.setMustChangePassword(false);
         userRepository.save(user);
 
         return EditResult.<Void>builder()

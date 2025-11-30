@@ -29,4 +29,9 @@ public interface HospitalRepository extends JpaRepository<Hospital, Long> {
         WHERE h.id = :hospitalId
     """)
     Optional<HospitalProfileDTO> findProfileById(@Param("hospitalId") Long hospitalId);
+
+
+    @Query(value = "SELECT HOSPITAL_NUMBER_SEQ.NEXTVAL FROM dual", nativeQuery = true)
+    Long getNextHospitalNumber();
+
 }
