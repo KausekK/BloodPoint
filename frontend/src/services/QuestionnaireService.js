@@ -25,3 +25,10 @@ export function hasQuestionnaireForAppointment(appointmentId) {
     .get(`/questionnaires/appointments/${appointmentId}/responses/status`)
     .then(r => r.data);
 }
+
+
+export function getQuestionnaireResponses(appointmentId) {
+  return api
+    .get(`/questionnaires/appointments/${appointmentId}/responses`)
+    .then((r) => r.data);
+}

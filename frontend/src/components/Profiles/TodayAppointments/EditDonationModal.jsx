@@ -12,11 +12,13 @@ import {
   Select,
   MenuItem,
   Button,
-  Stack
+  Stack,
+  Divider
 } from '@mui/material';
 import { Bloodtype, Close } from '@mui/icons-material';
 import { listBloodTypes } from '../../../services/BloodTypeService';
 import { listDonationStatuses } from '../../../services/DonationStatusService';
+import { getQuestionnaireResponses } from '../../../services/QuestionnaireService';
 
 const DONATION_STATUS_LABELS = {
   ZREALIZOWANA: 'Zrealizowana',
@@ -45,6 +47,13 @@ export default function EditDonationModal({
   const [loadingStatuses, setLoadingStatuses] = useState(false);
   const [statusesError, setStatusesError] = useState('');
   const [lockBloodType, setLockBloodType] = useState(false);
+
+
+  const [questionnaire, setQuestionnaire] = useState(null);
+  const [questionnaireError, setQuestionnaireError] = useState('');
+  const [showQuestionnaire, setShowQuestionnaire] = useState(false);
+
+  const appointmentId = donation.appointmentId;
 
   useEffect(() => {
     setStatus(donation.status || '');
@@ -106,6 +115,29 @@ export default function EditDonationModal({
     })();
   }, [open]);
 
+  useEffect(() => {
+    if (!open || !appointmentId) {
+      if (!open) {
+        setQuestionnaire(null);
+        setQuestionnaireError('');
+        setShowQuestionnaire(false);
+      }
+      return;
+    }
+
+    (async () => {
+      try {
+        setQuestionnaireError('');
+        const data = await getQuestionnaireResponses(appointmentId);
+        setQuestionnaire(data);
+      } catch (e) {
+        console.error('Błąd pobierania odpowiedzi z kwestionariusza:', e);
+        setQuestionnaire(null);
+        setQuestionnaireError('Nie udało się pobrać odpowiedzi z kwestionariusza.');
+      }
+    })();
+  }, [open, appointmentId]);
+
   const parsedAmount = (() => {
     if (!amount && amount !== 0) return NaN;
     const normalized = String(amount).replace(',', '.');
@@ -125,7 +157,6 @@ export default function EditDonationModal({
       donationStatus: status,
       amountOfBlood: parsedAmount,
     };
-
 
     if (!donation.existingDonor) {
       payload.bloodTypeId = Number(bloodTypeId);
@@ -157,6 +188,84 @@ export default function EditDonationModal({
 
       <DialogContent dividers>
         <Stack spacing={3} mt={1}>
+          <Stack spacing={1}>
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <Typography variant="subtitle1">Kwestionariusz</Typography>
+
+              <Button
+                size="small"
+                variant="outlined"
+                onClick={() => setShowQuestionnaire((prev) => !prev)}
+                disabled={!questionnaire && !questionnaireError}
+              >
+                {showQuestionnaire ? 'Ukryj odpowiedzi' : 'Pokaż odpowiedzi'}
+              </Button>
+            </Stack>
+
+            {questionnaireError && (
+              <Typography variant="body2" color="error">
+                {questionnaireError}
+              </Typography>
+            )}
+
+            {showQuestionnaire && questionnaire && (
+              <Stack
+                spacing={1}
+                sx={{
+                  maxHeight: 220,
+                  overflowY: 'auto',
+                  border: '1px solid rgba(0,0,0,0.12)',
+                  borderRadius: 1,
+                  p: 1.5,
+                  bgcolor: '#fafafa',
+                }}
+              >
+                {questionnaire.questionnaireTitle && (
+                  <>
+                    <Typography variant="subtitle2" gutterBottom>
+                      {questionnaire.questionnaireTitle}
+                    </Typography>
+                    <Divider />
+                  </>
+                )}
+
+                {(questionnaire.answers || []).map((ans, index) => (
+                  <Stack key={ans.questionId ?? index} spacing={0.5} sx={{ pt: 1 }}>
+                    <Typography variant="body2" fontWeight={600}>
+                      {ans.questionText}
+                    </Typography>
+
+                    {ans.answerFlag != null && (
+                      <Typography variant="body2">
+                        Odpowiedź: {ans.answerFlag ? 'TAK' : 'NIE'}
+                      </Typography>
+                    )}
+
+                    {ans.answerText && (
+                      <Typography variant="body2">
+                        Odpowiedź: {ans.answerText}
+                      </Typography>
+                    )}
+
+                    {index < (questionnaire.answers.length - 1) && (
+                      <Divider sx={{ mt: 1 }} />
+                    )}
+                  </Stack>
+                ))}
+
+                {(!questionnaire.answers || questionnaire.answers.length === 0) && (
+                  <Typography variant="body2">
+                    Brak odpowiedzi w kwestionariuszu.
+                  </Typography>
+                )}
+              </Stack>
+            )}
+          </Stack>
+
           <FormControl fullWidth size="small" disabled={statusDisabled}>
             <InputLabel id="status-label">Status</InputLabel>
             <Select
