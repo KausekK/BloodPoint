@@ -107,11 +107,17 @@ public class AuthenticationService {
                 .map(r -> r.getName().name())
                 .collect(java.util.stream.Collectors.toSet());
 
+        System.out.println("AUTH: user = " + user.getEmail());
+        System.out.println("AUTH: roles from DB = " + user.getRoles());
+        System.out.println("AUTH: roleNames = " + roleNames);
+
         Map<String, Object> claims = new java.util.HashMap<>();
         claims.put("roles", roleNames);
         claims.put("uid", user.getId());
 
-        boolean isStaff = roleNames.contains(RoleEnum.PUNKT_KRWIODAWSTWA.name());
+//        boolean isStaff = roleNames.contains(RoleEnum.PUNKT_KRWIODAWSTWA.name());
+        boolean isStaff = roleNames.contains(RoleEnum.PUNKT_KRWIODAWSTWA.name()) || roleNames.contains(RoleEnum.MANAGER_PUNKTU_KRWIODAWSTWA.name());
+
         if (isStaff) {
             Long pointId = staffRepository.findPointIdByUserId(user.getId());
             if (pointId == null) {

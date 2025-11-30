@@ -16,6 +16,7 @@ import ReportEmergencyPage from './components/MenagePanels/Hospital/Actions/Repo
 import EmergencyRequestsPage from './components/MenagePanels/BloodPoint/Actions/EmergencyRequests/EmergencyRequestsPage.jsx';
 import ReportHistoryPage from './components/MenagePanels/Hospital/Actions/ReportHistoryPage.jsx';
 import LoginPage from './components/LoginForms/LoginPage.jsx';
+import AdminDashboardPanelPage from './components/MenagePanels/Admin/AdminDashboardPanelPage.jsx';
 
 
 
@@ -57,6 +58,8 @@ function App() {
                 <Route path="/szpital/zgloszenie-zapotrzebowania" element={<ReportEmergencyPage/>}/>
                 <Route path="/zgloszenia" element={<EmergencyRequestsPage/>}/>
                 <Route path="/szpital/historia-zgloszen" element={<ReportHistoryPage/>}/>
+
+                <Route path="/admin/dashboard" element={<AdminDashboardPanelPage />} />
             </Routes>
         </Router>
     );
