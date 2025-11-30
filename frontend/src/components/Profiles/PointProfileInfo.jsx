@@ -9,6 +9,7 @@ export default function PointProfileInfo() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+
   useEffect(function () {
     if (!pointId) {
       setLoading(false);
@@ -37,6 +38,7 @@ export default function PointProfileInfo() {
   if (error) return <div className="bp-state error">{error}</div>;
   if (!profile) return <div className="bp-state">Brak danych.</div>;
 
+  
   return (
     <div className="cards">
       <section className="card">
