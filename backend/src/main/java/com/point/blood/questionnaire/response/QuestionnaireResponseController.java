@@ -1,5 +1,6 @@
 package com.point.blood.questionnaire.response;
 
+import com.point.blood.questionnaire.QuestionnairePreviewDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,13 @@ public class QuestionnaireResponseController {
     @GetMapping("/appointments/{appointmentId}/responses/status")
     public ResponseEntity<Boolean> getStatus(@PathVariable Long appointmentId) {
         return ResponseEntity.ok(questionnaireResponseService.hasResponsesForAppointment(appointmentId));
+    }
+
+    @GetMapping("/appointments/{appointmentId}/responses")
+    public QuestionnairePreviewDTO getResponsesForAppointment(
+            @PathVariable Long appointmentId
+    ) {
+        return questionnaireResponseService.getResponsesForAppointment(appointmentId);
     }
 
 }
