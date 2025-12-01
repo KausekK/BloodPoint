@@ -32,6 +32,7 @@ export default function MakeAppointment() {
   const [pageInfo, setPageInfo] = useState({ totalPages: 0 });
   const [isOpen, setIsOpen] = useState(false);
   const [modalData, setModalData] = useState({ dateString: "", timeString: "" });
+  const selectedPointIdNumber = pointId ? Number(pointId) : (points[0]?.id || null);
 
   useEffect(() => {
     getCities()
@@ -249,7 +250,17 @@ export default function MakeAppointment() {
               </div>
 
               <div className="appt-right">
-                <Map key={city} city={city} />
+                {points.length > 0 ? (
+                  <Map
+                    key={selectedPointIdNumber || "no-point"}
+                    points={points}
+                    selectedPointId={selectedPointIdNumber}
+                  />
+                ) : (
+                  <div className="map-placeholder">
+                    Wybierz miasto i placówkę, aby zobaczyć lokalizację na mapie.
+                  </div>
+                )}
               </div>
             </div>
           ) : null}

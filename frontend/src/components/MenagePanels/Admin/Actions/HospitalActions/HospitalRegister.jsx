@@ -13,9 +13,11 @@ import { registerHospital } from "../../../../../services/AdminHospitalService";
 import "../../../../SharedCSS/LoginForms.css";
 import "../../../../SharedCSS/MenagePanels.css";
 import { PROVINCES } from "../../../../../constants/provinces";
+import { useNavigate } from "react-router-dom"; 
 
 export default function HospitalRegister() {
   const [submitting, setSubmitting] = useState(false);
+  const navigate = useNavigate(); 
 
   const [form, setForm] = useState({
     province: "",
@@ -23,7 +25,6 @@ export default function HospitalRegister() {
     zipCode: "",
     street: "",
     phone: "",
-
     firstName: "",
     lastName: "",
     email: "",
@@ -152,6 +153,15 @@ export default function HospitalRegister() {
         birthDate: "",
         gender: "K",
       });
+
+      showMessage(
+        "Za 3 sekundy nastąpi przejście do panelu administratora.",
+        MessageType.INFO
+      );
+
+      setTimeout(() => {
+        navigate("/admin/panel/szpital");
+      }, 3000);
     } catch (err) {
       const backendData = err?.response?.data;
       const backendMessages = backendData?.messages;

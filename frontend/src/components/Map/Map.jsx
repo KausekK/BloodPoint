@@ -18,72 +18,82 @@ export const muiIcon = L.divIcon({
   iconAnchor: [16, 32],
 });
 
-export default function Map({ city }) {
-  const markers = [
-    {
-      geocode: [52.232748, 21.060196],
-      popup: "RCKiK Warszawa – ul. Saska 63/75",
-    },
-    {
-      geocode: [52.225769, 21.001981],
-      popup: "OT RCKiK – ul. Nowogrodzka 59, Warszawa",
-    },
-    {
-      geocode: [52.20713, 21.191227],
-      popup: "OT RCKiK – al. Dzieci Polskich 20, Warszawa",
-    },
-    {
-      geocode: [50.0588, 19.9555],
-      popup: "Regionalne Centrum Krwiodawstwa i Krwiolecznictwa , Kraków",
-    },
+const createClusterCustomIcon = (cluster) => {
+  return new divIcon({
+    html: `<span class="cluster-icon">${cluster.getChildCount()}</span>`,
+    className: "custom-marker-cluster",
+    iconSize: point(33, 33, true),
+  });
+};
+
+function isValidCoord(value) {
+  const n = Number(value);
+  return Number.isFinite(n);
+}
+
+export default function Map({ points = [], selectedPointId }) {
+  if (!Array.isArray(points)) {
+    points = [];
+  }
+
+  const validPoints = points.filter(
+    (p) => isValidCoord(p.latitude) && isValidCoord(p.longitude)
+  );
+
+  if (validPoints.length === 0) {
+    return (
+      <div className="map-placeholder">
+        Brak poprawnych współrzędnych punktów do wyświetlenia na mapie.
+      </div>
+    );
+  }
+
+  let selectedPoint = validPoints[0];
+
+  if (selectedPointId != null && selectedPointId !== "") {
+    const found = validPoints.find(
+      (p) => String(p.id) === String(selectedPointId)
+    );
+    if (found) {
+      selectedPoint = found;
+    }
+  }
+
+  const center = [
+    Number(selectedPoint.latitude),
+    Number(selectedPoint.longitude),
   ];
-
-  const citiesCoords = {
-    Warszawa: [52.2297, 21.0122],
-    Kraków: [50.0614, 19.9366],
-    Wrocław: [51.1079, 17.0385],
-    Gdańsk: [54.352, 18.6466],
-    Poznań: [52.4064, 16.9252],
-    Łódź: [51.7592, 19.455],
-    Rzeszów: [50.0413, 21.999],
-    Szczecin: [53.4289, 14.553],
-    Toruń: [53.0138, 18.5984],
-    Bydgoszcz: [53.1235, 18.0084],
-    Białystok: [53.1325, 23.1688],
-    Katowice: [50.2649, 19.0238],
-    Olsztyn: [53.7784, 20.4801],
-  };
-
-  const createClusterCustomIcon = function (cluster) {
-    return new divIcon({
-      html: `<span class="cluster-icon">${cluster.getChildCount()}</span>`,
-      className: "custom-marker-cluster",
-      iconSize: point(33, 33, true),
-    });
-  };
 
   return (
     <MapContainer
-      center={citiesCoords[city] || [52.2297, 21.0122]}
+      center={center}
       zoom={13}
-      style={{ height: "70vh", width: "80%" }}
+      style={{ height: "70vh", width: "100%" }}
     >
-      {
-        <TileLayer
-          attribution="Google Maps"
-          url="http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
-          maxZoom={20}
-          subdomains={["mt0", "mt1", "mt2", "mt3"]}
-        />
-      }
+      <TileLayer
+        attribution="Google Maps"
+        url="http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+        maxZoom={20}
+        subdomains={["mt0", "mt1", "mt2", "mt3"]}
+      />
 
       <MarkerClusterGroup
         chunkedLoading
         iconCreateFunction={createClusterCustomIcon}
       >
-        {markers.map((m, i) => (
-          <Marker key={i} position={m.geocode} icon={muiIcon}>
-            <Popup>{m.popup}</Popup>
+        {validPoints.map((p) => (
+          <Marker
+            key={p.id}
+            position={[Number(p.latitude), Number(p.longitude)]}
+            icon={muiIcon}
+          >
+            <Popup>
+              <strong>{p.city}</strong>
+              <br />
+              {p.street}, {p.zipCode}
+              <br />
+              tel. {p.phone}
+            </Popup>
           </Marker>
         ))}
       </MarkerClusterGroup>

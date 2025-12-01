@@ -17,7 +17,7 @@ public interface BloodDonationPointRepository extends JpaRepository<BloodDonatio
 
     @Query("""
         SELECT new com.point.blood.donationPoint.BloodDonationPointDTO(
-            b.id, b.city, b.street, b.zipCode, b.phone
+            b.id, b.city, b.street, b.zipCode, b.phone, b.latitude, b.longitude
         )
         FROM BloodDonationPoint b
         WHERE (:city IS NULL OR :city = '' OR LOWER(b.city) = LOWER(:city))
