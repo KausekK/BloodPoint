@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import Header from "../../../../Header/Header";
 import Footer from "../../../../Footer/Footer";
 import CTA from "../../../../CTA/CTA";
@@ -51,128 +51,75 @@ export default function HospitalRegister() {
     gender: "K",
   });
 
-  const handleChange = (e) => {
+  function handleChange(e) {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
-  };
+  }
 
+  // PROSTE WALIDACJE (ta sama logika co wcześniej)
+  const emailValid =
+    !form.email || /\S+@\S+\.\S+/.test(form.email);
 
-  const emailValid = useMemo(
-    () => !form.email || /\S+@\S+\.\S+/.test(form.email),
-    [form.email]
-  );
+  const peselValid =
+    !form.pesel || /^\d{11}$/.test(form.pesel);
 
-  const peselValid = useMemo(
-    () => !form.pesel || /^\d{11}$/.test(form.pesel),
-    [form.pesel]
-  );
+  const phoneValid =
+    !form.phone || /^\d{9}$/.test(form.phone.replace(/\s+/g, ""));
 
-  const phoneValid = useMemo(
-    () => !form.phone || /^\d{9}$/.test(form.phone.replace(/\s+/g, "")),
-    [form.phone]
-  );
+  const contactPhoneValid =
+    !form.contactPhone ||
+    /^\d{9}$/.test(form.contactPhone.replace(/\s+/g, ""));
 
-  const contactPhoneValid = useMemo(
-    () =>
-      !form.contactPhone ||
-      /^\d{9}$/.test(form.contactPhone.replace(/\s+/g, "")),
-    [form.contactPhone]
-  );
+  const zipValid =
+    !form.zipCode || /^\d{2}-\d{3}$/.test(form.zipCode);
 
-  const zipValid = useMemo(
-    () => !form.zipCode || /^\d{2}-\d{3}$/.test(form.zipCode),
-    [form.zipCode]
-  );
+  const firstNameValid =
+    !form.firstName || form.firstName.trim().length > 0;
 
-  const firstNameValid = useMemo(
-    () => !form.firstName || form.firstName.trim().length > 0,
-    [form.firstName]
-  );
+  const lastNameValid =
+    !form.lastName || form.lastName.trim().length > 0;
 
-  const lastNameValid = useMemo(
-    () => !form.lastName || form.lastName.trim().length > 0,
-    [form.lastName]
-  );
+  const cityValid =
+    !form.city || form.city.trim().length > 0;
 
-  const cityValid = useMemo(
-    () => !form.city || form.city.trim().length > 0,
-    [form.city]
-  );
+  const streetValid =
+    !form.street || form.street.trim().length > 0;
 
-  const streetValid = useMemo(
-    () => !form.street || form.street.trim().length > 0,
-    [form.street]
-  );
+  const genderValid =
+    !form.gender || form.gender === "K" || form.gender === "M";
 
-  const genderValid = useMemo(
-    () => !form.gender || form.gender === "K" || form.gender === "M",
-    [form.gender]
-  );
+  const birthDateValid =
+    !form.birthDate || form.birthDate.trim().length > 0;
 
-  const birthDateValid = useMemo(
-    () => !form.birthDate || form.birthDate.trim().length > 0,
-    [form.birthDate]
-  );
+  const canSubmit =
+    form.province &&
+    form.city.trim() &&
+    form.zipCode.trim() &&
+    form.street.trim() &&
+    form.phone.trim() &&
+    form.firstName.trim() &&
+    form.lastName.trim() &&
+    form.email.trim() &&
+    form.contactPhone.trim() &&
+    form.pesel.trim() &&
+    form.birthDate &&
+    form.gender &&
+    emailValid &&
+    peselValid &&
+    phoneValid &&
+    contactPhoneValid &&
+    zipValid &&
+    genderValid &&
+    birthDateValid &&
+    firstNameValid &&
+    lastNameValid &&
+    cityValid &&
+    streetValid;
 
-  const canSubmit = useMemo(() => {
-    const {
-      province,
-      city,
-      zipCode,
-      street,
-      phone,
-      firstName,
-      lastName,
-      email,
-      contactPhone,
-      pesel,
-      birthDate,
-      gender,
-    } = form;
-
-    return (
-      province &&
-      city.trim() &&
-      zipCode.trim() &&
-      street.trim() &&
-      phone.trim() &&
-      firstName.trim() &&
-      lastName.trim() &&
-      email.trim() &&
-      contactPhone.trim() &&
-      pesel.trim() &&
-      birthDate &&
-      gender &&
-      emailValid &&
-      peselValid &&
-      phoneValid &&
-      contactPhoneValid &&
-      zipValid &&
-      genderValid &&
-      birthDateValid &&
-      firstNameValid &&
-      lastNameValid &&
-      cityValid &&
-      streetValid
-    );
-  }, [
-    form,
-    emailValid,
-    peselValid,
-    phoneValid,
-    contactPhoneValid,
-    zipValid,
-    genderValid,
-    birthDateValid,
-    firstNameValid,
-    lastNameValid,
-    cityValid,
-    streetValid,
-  ]);
-
-  const handleSubmit = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
     if (submitting || !canSubmit) return;
+
     setSubmitting(true);
 
     try {
@@ -247,7 +194,7 @@ export default function HospitalRegister() {
     } finally {
       setSubmitting(false);
     }
-  };
+  }
 
   return (
     <>
@@ -257,8 +204,10 @@ export default function HospitalRegister() {
           <div className="auth-page-center">
             <article className="bp-card auth-card">
               <div className="auth-card-cap" aria-hidden="true" />
-              <h2 className="auth-card-title">Zarejestruj Placówkę Szpitalną</h2>
-              <p              >
+              <h2 className="auth-card-title">
+                Zarejestruj Placówkę Szpitalną
+              </h2>
+              <p>
                 Uzupełnij dane placówki oraz dane użytkownika, który będzie się
                 logował.
               </p>
@@ -371,7 +320,9 @@ export default function HospitalRegister() {
                   )}
                 </div>
 
-                <h3 className="auth-section-title">Dane użytkownika szpitala</h3>
+                <h3 className="auth-section-title">
+                  Dane użytkownika szpitala
+                </h3>
 
                 <div className="form-field">
                   <label className="label" htmlFor="firstName">
@@ -511,7 +462,9 @@ export default function HospitalRegister() {
 
                 <div className="form-actions">
                   <CTA
-                    label={submitting ? "Zapisywanie..." : "Zarejestruj placówkę"}
+                    label={
+                      submitting ? "Zapisywanie..." : "Zarejestruj placówkę"
+                    }
                     type="submit"
                     disabled={submitting || !canSubmit}
                   />

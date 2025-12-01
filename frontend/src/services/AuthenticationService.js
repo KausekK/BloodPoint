@@ -50,7 +50,7 @@ async function login(authenticationRequest) {
     api.defaults.headers.common.Authorization = `Bearer ${data.token}`;
 
     const decoded = jwtDecode(data.token);
-    const { uid, pid, hid, roles, exp } = decoded || {};
+    const { uid, pid, hid, roles, exp, mcp } = decoded || {};
 
     if (exp && exp * 1000 <= Date.now()) {
       logout();
@@ -77,6 +77,12 @@ async function getMyId() {
   });
   return data.id;
 }
+
+async function changePassword(request) {
+  const { data } = await api.post("/change-password", request);
+  return data;
+}
+
 
 function logout() {
   clearToken();
@@ -127,6 +133,8 @@ const authService = {
   getHospitalId,
   hasRole,
   mustChangePassword,
+
+  changePassword,
 };
 
 export default authService;

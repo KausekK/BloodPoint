@@ -19,7 +19,7 @@ import LoginPage from './components/LoginForms/LoginPage.jsx';
 import AdminDashboardPanelPage from './components/MenagePanels/Admin/AdminDashboardPanelPage.jsx';
 import AdminHospitalActionsDashboard from './components/MenagePanels/Admin/Actions/HospitalActions/AdminHospitalActionsDashboard.jsx';
 import HospitalRegister from './components/MenagePanels/Admin/Actions/HospitalActions/Hospitalregister.jsx';
-
+import HospitalList from './components/MenagePanels/Admin/Actions/HospitalActions/HospitalList.jsx';
 
 
 function App() {
@@ -64,7 +64,7 @@ function App() {
                 <Route path="/admin/dashboard" element={<AdminDashboardPanelPage />} />
                 <Route path="/admin/panel/szpital" element={<AdminHospitalActionsDashboard />} />
                 <Route path="/admin/panel/szpital/rejestracja" element={<HospitalRegister/>} />
-                
+                <Route path="/admin/panel/szpital/lista-placowek" element={<HospitalList/>} />
             </Routes>
         </Router>
     );
