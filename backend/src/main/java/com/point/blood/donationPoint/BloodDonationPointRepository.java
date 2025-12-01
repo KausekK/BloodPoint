@@ -38,4 +38,7 @@ public interface BloodDonationPointRepository extends JpaRepository<BloodDonatio
         WHERE bp.id = :id
     """)
     Optional<BloodDonationPointProfileDTO> findProfileById(@Param("id") Long id);
+
+    @Query(value = "SELECT DONATION_POINT_NUMBER_SEQ.NEXTVAL FROM dual", nativeQuery = true)
+    Long getNextDonationPointNumber();
 }

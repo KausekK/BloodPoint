@@ -55,10 +55,5 @@ public class BloodDonationPoint {
     @Column(name = "phone", nullable = false, length = 15)
     private String phone;
 
-    // TODO O co chodzi????
-//    @ManyToOne(fetch = LAZY, optional = false)
-//    @JoinColumn(name = "donation", nullable = false)
-//    @JsonIgnore
-//    private Donation donation;
 
 }

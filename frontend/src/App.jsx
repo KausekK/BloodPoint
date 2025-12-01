@@ -20,6 +20,8 @@ import AdminDashboardPanelPage from './components/MenagePanels/Admin/AdminDashbo
 import AdminHospitalActionsDashboard from './components/MenagePanels/Admin/Actions/HospitalActions/AdminHospitalActionsDashboard.jsx';
 import HospitalRegister from './components/MenagePanels/Admin/Actions/HospitalActions/Hospitalregister.jsx';
 import HospitalList from './components/MenagePanels/Admin/Actions/HospitalActions/HospitalList.jsx';
+import AdminBloodPointActionsDashboard from './components/MenagePanels/Admin/Actions/BloodPointActions/AdminBloodPointActionsDashboard.jsx'
+import BloodPointRegister from './components/MenagePanels/Admin/Actions/BloodPointActions/BloodPointRegister.jsx';
 
 
 function App() {
@@ -65,6 +67,9 @@ function App() {
                 <Route path="/admin/panel/szpital" element={<AdminHospitalActionsDashboard />} />
                 <Route path="/admin/panel/szpital/rejestracja" element={<HospitalRegister/>} />
                 <Route path="/admin/panel/szpital/lista-placowek" element={<HospitalList/>} />
+
+                <Route path="/admin/panel/punkt-krwiodawstwa" element={<AdminBloodPointActionsDashboard/>} />
+                <Route path="/admin/panel/punkt-krwiodawstwa/rejestracja" element={<BloodPointRegister/>} />
             </Routes>
         </Router>
     );

@@ -6,9 +6,7 @@ import "../../SharedCSS/MenagePanels.css";
 export default function AdminDashboardPanelPage() {
   const actions = [
     { label: "Zarządzaj Placówkami Szpitalnymi", to: "/admin/panel/szpital" },
-    { label: "Zarządzaj Punktami Krwiodawstwa", to: "/admin/panel/punkty-krwiodstwa" },
-    { label: "Zarządzaj Dawcami", to: "/admin/panel/dawcy" },
-    // { label: "Przeglądaj statystyki", to: "/statystyki" },
+    { label: "Zarządzaj Punktami Krwiodawstwa", to: "/admin/panel/punkt-krwiodawstwa" },
   ];
 
   return (

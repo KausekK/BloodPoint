@@ -12,25 +12,7 @@ import { registerHospital } from "../../../../../services/AdminHospitalService";
 
 import "../../../../SharedCSS/LoginForms.css";
 import "../../../../SharedCSS/MenagePanels.css";
-
-const PROVINCES = [
-  "dolnośląskie",
-  "kujawsko-pomorskie",
-  "lubelskie",
-  "lubuskie",
-  "łódzkie",
-  "małopolskie",
-  "mazowieckie",
-  "opolskie",
-  "podkarpackie",
-  "podlaskie",
-  "pomorskie",
-  "śląskie",
-  "świętokrzyskie",
-  "warmińsko-mazurskie",
-  "wielkopolskie",
-  "zachodniopomorskie",
-];
+import { PROVINCES } from "../../../../../constants/provinces";
 
 export default function HospitalRegister() {
   const [submitting, setSubmitting] = useState(false);
@@ -56,7 +38,6 @@ export default function HospitalRegister() {
     setForm((f) => ({ ...f, [name]: value }));
   }
 
-  // PROSTE WALIDACJE (ta sama logika co wcześniej)
   const emailValid =
     !form.email || /\S+@\S+\.\S+/.test(form.email);
 
