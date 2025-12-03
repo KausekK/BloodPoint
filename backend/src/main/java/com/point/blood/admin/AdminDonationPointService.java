@@ -9,6 +9,7 @@ import com.point.blood.role.Role;
 import com.point.blood.role.RoleEnum;
 import com.point.blood.role.RoleRepository;
 import com.point.blood.shared.EditResult;
+import com.point.blood.shared.EmailService;
 import com.point.blood.shared.MessageDTO;
 import com.point.blood.shared.PasswordGenerator;
 import com.point.blood.users.Users;
@@ -32,6 +33,7 @@ public class AdminDonationPointService {
     private final RoleRepository roleRepository;
     private final StaffRepository staffRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     public EditResult<Void> registerDonationPointWithManager(DonationPointRegisterRequestDTO request) {
 
@@ -93,6 +95,19 @@ public class AdminDonationPointService {
                 + ", donationPointNumber: " + savedPoint.getDonationPointNumber());
         System.out.println("Temporary password: " + rawTempPassword);
         System.out.println("===============================================");
+
+
+        try {
+            emailService.sendTempPasswordEmail(
+                    request.getEmail(),
+                    request.getFirstName(),
+                    rawTempPassword,
+                    "Twoje konto managera Punktu Krwiodawstwa",
+                    "managera punktu krwiodawstwa"
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return EditResult.<Void>builder()
                 .messages(List.of(MessageDTO.createSuccessMessage("Punkt krwiodawstwa został zarejestrowany. Tymczasowe hasło zostało wygenerowane (zobacz log serwera).")))

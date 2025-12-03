@@ -84,6 +84,7 @@ public class AdminHospitalService {
         System.out.println("Hospital phone: " + savedHospital.getPhone());
         System.out.println("Temporary password: " + rawTempPassword);
         System.out.println("=== END MOCK EMAIL ===");
+
         HospitalProfileDTO dto = HospitalProfileDTO.builder()
                 .id(savedHospital.getId())
                 .hospitalNumber(savedHospital.getHospitalNumber())
@@ -93,6 +94,19 @@ public class AdminHospitalService {
                 .street(savedHospital.getStreet())
                 .phone(savedHospital.getPhone())
                 .build();
+
+
+        try {
+            emailService.sendTempPasswordEmail(
+                    request.getEmail(),
+                    request.getFirstName(),
+                    rawTempPassword,
+                    "Twoje konto Placówki Szpitalnej",
+                    "szpital"
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return EditResult.<HospitalProfileDTO>builder()
                 .resultDTO(dto)
