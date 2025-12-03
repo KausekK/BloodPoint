@@ -14,7 +14,7 @@ import "../../../../SharedCSS/LoginForms.css";
 import "../../../../SharedCSS/MenagePanels.css";
 import { PROVINCES } from "../../../../../constants/provinces";
 import { useNavigate } from "react-router-dom"; 
-
+import BackButton from "../../../../BackButton/BackButton";
 
 export default function BloodPointRegister() {
   const [submitting, setSubmitting] = useState(false);
@@ -216,6 +216,7 @@ export default function BloodPointRegister() {
     <>
       <Header />
       <main className="bp-section">
+        <BackButton to="/admin/panel/punkt-krwiodawstwa" label="Powrót do panelu Punktu Krwiodawstwa" />
         <div className="bp-container">
           <div className="auth-page-center">
             <article className="bp-card auth-card">

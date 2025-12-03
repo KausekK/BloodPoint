@@ -4,6 +4,7 @@ import Footer from "../../../../Footer/Footer";
 import "../../../../SharedCSS/MenagePanels.css";
 import { getHospitalsList } from "../../../../../services/HospitalService";
 import { showError } from "../../../../shared/services/MessageService";
+import BackButton from "../../../../BackButton/BackButton";
 
 export default function HospitalList() {
   const [hospitals, setHospitals] = useState([]);
@@ -69,6 +70,7 @@ export default function HospitalList() {
     <>
       <Header />
       <main className="bp-section">
+      <BackButton to="/admin/panel/szpital" label="Powrót do panelu szpitala" />
         <div className="bp-container">
           <article className="bp-card">
             <div className="dashboard-head">

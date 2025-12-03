@@ -8,6 +8,8 @@ export default function GeneralDashboardPanel({
   actions,
   center,
   className,
+  backTo = null,
+  backLabel = "Powrót",
 }) {
   const isCentered = center !== false;
   const list = Array.isArray(actions) ? actions : [];
@@ -62,7 +64,7 @@ export default function GeneralDashboardPanel({
 
   return (
     <>
-      <BackButton to="/" label="Powrót do strony głównej" />
+      <BackButton to={backTo} label={backLabel} />
       <section className={sectionClass} aria-label="Panel">
         <header className="panel-head">
           {title && <h1 className="panel-title">{title}</h1>}

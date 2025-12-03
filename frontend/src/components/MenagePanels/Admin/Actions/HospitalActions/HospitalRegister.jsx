@@ -14,6 +14,7 @@ import "../../../../SharedCSS/LoginForms.css";
 import "../../../../SharedCSS/MenagePanels.css";
 import { PROVINCES } from "../../../../../constants/provinces";
 import { useNavigate } from "react-router-dom"; 
+import BackButton from "../../../../BackButton/BackButton";
 
 export default function HospitalRegister() {
   const [submitting, setSubmitting] = useState(false);
@@ -191,6 +192,7 @@ export default function HospitalRegister() {
     <>
       <Header />
       <main className="bp-section">
+        <BackButton to="/admin/panel/szpital" label="Powrót do panelu szpitala" />
         <div className="bp-container">
           <div className="auth-page-center">
             <article className="bp-card auth-card">
