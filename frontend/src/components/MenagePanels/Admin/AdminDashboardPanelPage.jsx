@@ -19,6 +19,7 @@ export default function AdminDashboardPanelPage() {
             subtitle="Wybierz, co chcesz zrobić."
             actions={actions}
             center
+            backTo="/"
           />
         </div>
       </main>

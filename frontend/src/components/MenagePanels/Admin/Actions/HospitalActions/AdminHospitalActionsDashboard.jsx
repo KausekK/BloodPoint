@@ -19,6 +19,7 @@ export default function AdminHospitalActionsDashboard() {
             subtitle="Wybierz, co chcesz zrobić."
             actions={actions}
             center
+            backTo="/admin/dashboard"
           />
         </div>
       </main>
