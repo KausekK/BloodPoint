@@ -12,7 +12,7 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
 
-    @Value("${spring.mail.from:BloodPointService@o2.pl}")
+    @Value("${spring.mail.from:piotr.szczesny@nobexis.cc}")
     private String from;
 
     public void sendTempPasswordEmail(
