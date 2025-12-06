@@ -88,15 +88,6 @@ public class AdminDonationPointService {
 
         staffRepository.save(staff);
 
-        System.out.println("=== MOCK: Donation point manager account created ===");
-        System.out.println("Email: " + request.getEmail());
-        System.out.println("User ID: " + savedUser.getId());
-        System.out.println("DonationPoint ID: " + savedPoint.getId()
-                + ", donationPointNumber: " + savedPoint.getDonationPointNumber());
-        System.out.println("Temporary password: " + rawTempPassword);
-        System.out.println("===============================================");
-
-
         try {
             emailService.sendTempPasswordEmail(
                     request.getEmail(),
@@ -110,7 +101,7 @@ public class AdminDonationPointService {
         }
 
         return EditResult.<Void>builder()
-                .messages(List.of(MessageDTO.createSuccessMessage("Punkt krwiodawstwa został zarejestrowany. Tymczasowe hasło zostało wygenerowane (zobacz log serwera).")))
+                .messages(List.of(MessageDTO.createSuccessMessage("Punkt krwiodawstwa został zarejestrowany. Tymczasowe hasło zostało wygenerowane.")))
                 .resultDTO(null)
                 .build();
     }

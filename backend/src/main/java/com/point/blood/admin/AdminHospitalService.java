@@ -74,16 +74,6 @@ public class AdminHospitalService {
 
         Hospital savedHospital = hospitalRepository.save(hospital);
 
-        System.out.println("=== MOCK EMAIL: Hospital account created ===");
-        System.out.println("To: " + request.getEmail());
-        System.out.println("Hospital ID: " + savedHospital.getId()
-                + ", hospitalNumber: " + savedHospital.getHospitalNumber());
-        System.out.println("Location: " + savedHospital.getCity()
-                + " (" + savedHospital.getProvince() + ")");
-        System.out.println("Street: " + savedHospital.getStreet());
-        System.out.println("Hospital phone: " + savedHospital.getPhone());
-        System.out.println("Temporary password: " + rawTempPassword);
-        System.out.println("=== END MOCK EMAIL ===");
 
         HospitalProfileDTO dto = HospitalProfileDTO.builder()
                 .id(savedHospital.getId())
@@ -110,7 +100,7 @@ public class AdminHospitalService {
 
         return EditResult.<HospitalProfileDTO>builder()
                 .resultDTO(dto)
-                .messages(List.of(MessageDTO.createSuccessMessage("Placówka została zarejestrowana. Tymczasowe hasło zostało wygenerowane (zobacz log serwera).")))
+                .messages(List.of(MessageDTO.createSuccessMessage("Placówka została zarejestrowana. Tymczasowe hasło zostało wygenerowane.")))
                 .build();
     }
 }

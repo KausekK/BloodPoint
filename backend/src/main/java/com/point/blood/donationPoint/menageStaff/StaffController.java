@@ -20,6 +20,12 @@ public class StaffController {
         return ResponseEntity.ok(staffRepository.findAllByBloodDonationPoint_Id(pointId));
     }
 
+    @PostMapping("/{pointId}")
+    public ResponseEntity<EditResult<StaffDTO>> addEmployee(@PathVariable Long pointId, @RequestBody @Valid StaffCreateDTO request
+    ) {
+        return ResponseEntity.ok(staffService.createEmployee(pointId, request));
+    }
+
 
     @DeleteMapping("/{staffId}")
     public ResponseEntity<EditResult<Void>> removeEmployee(@PathVariable Long staffId) {
@@ -30,5 +36,7 @@ public class StaffController {
     public ResponseEntity<EditResult<StaffDTO>> updateStaff(@PathVariable Long staffId, @RequestBody @Valid StaffUpdateDTO request) {
         return ResponseEntity.ok(staffService.editEmployee(staffId, request));
     }
+
+
 
 }

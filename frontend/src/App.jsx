@@ -22,6 +22,7 @@ import HospitalRegister from './components/MenagePanels/Admin/Actions/HospitalAc
 import HospitalList from './components/MenagePanels/Admin/Actions/HospitalActions/HospitalList.jsx';
 import AdminBloodPointActionsDashboard from './components/MenagePanels/Admin/Actions/BloodPointActions/AdminBloodPointActionsDashboard.jsx'
 import BloodPointRegister from './components/MenagePanels/Admin/Actions/BloodPointActions/BloodPointRegister.jsx';
+import BloodPointList from './components/MenagePanels/Admin/Actions/BloodPointActions/BloodPointList.jsx';
 
 
 function App() {
@@ -70,6 +71,7 @@ function App() {
 
                 <Route path="/admin/panel/punkt-krwiodawstwa" element={<AdminBloodPointActionsDashboard/>} />
                 <Route path="/admin/panel/punkt-krwiodawstwa/rejestracja" element={<BloodPointRegister/>} />
+                <Route path="/admin/panel/punkt-krwiodawstwa/lista-placowek" element={<BloodPointList/>} />
             </Routes>
         </Router>
     );
