@@ -179,10 +179,6 @@ export default function Header() {
     handleLogout();
   }
 
-  function handleMobileLoginClick() {
-    closeMenu();
-  }
-
   return (
     <header className="site-header">
       <div className="header-inner">
@@ -312,7 +308,6 @@ export default function Header() {
               <CTA
                 to={actionsConfig.guest.to}
                 label={actionsConfig.guest.label}
-                onClick={handleMobileLoginClick}
               />
             )}
           </div>

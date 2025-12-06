@@ -50,7 +50,7 @@ async function login(authenticationRequest) {
     api.defaults.headers.common.Authorization = `Bearer ${data.token}`;
 
     const decoded = jwtDecode(data.token);
-    const { uid, pid, hid, roles, exp } = decoded || {};
+    const { uid, pid, hid, roles, exp, mcp } = decoded || {};
 
     if (exp && exp * 1000 <= Date.now()) {
       logout();
@@ -63,6 +63,7 @@ async function login(authenticationRequest) {
       hospitalId: hid ?? null,
       roles: Array.isArray(roles) ? roles : [],
       token: data.token,
+      mustChangePassword: data.mustChangePassword ?? mcp ?? false,
       exp: exp ?? null,
     });
   }
@@ -76,6 +77,12 @@ async function getMyId() {
   });
   return data.id;
 }
+
+async function changePassword(request) {
+  const { data } = await api.post("/change-password", request);
+  return data;
+}
+
 
 function logout() {
   clearToken();
@@ -107,6 +114,9 @@ function hasRole(roleName) {
   const roles = getUser()?.roles || [];
   return roles.includes(roleName);
 }
+function mustChangePassword() {
+  return !!getUser()?.mustChangePassword;
+}
 
 const authService = {
   register,
@@ -122,6 +132,9 @@ const authService = {
   getPointId,
   getHospitalId,
   hasRole,
+  mustChangePassword,
+
+  changePassword,
 };
 
 export default authService;

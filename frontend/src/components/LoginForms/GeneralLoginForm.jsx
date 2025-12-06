@@ -4,6 +4,7 @@ import authService from "../../services/AuthenticationService";
 import { showMessage, showError } from "../shared/services/MessageService";
 import { MessageType } from "../shared/const/MessageType.model";
 import "../SharedCSS/LoginForms.css";
+import ChangePasswordModal from "../Auth/ChangePasswordModal";
 
 export default function GeneralLoginForm({
   title = "Zaloguj się",
@@ -16,6 +17,8 @@ export default function GeneralLoginForm({
 }) {
   const [vals, setVals] = useState({ [idName]: "", password: "" });
   const [submitting, setSubmitting] = useState(false);
+  const [showPwdModal, setShowPwdModal] = useState(false);
+  const [postLoginRole, setPostLoginRole] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -53,11 +56,20 @@ export default function GeneralLoginForm({
 
       if (res?.token) {
         showMessage("Zalogowano pomyślnie.", MessageType.SUCCESS);
+      
         const role = primaryRole();
-        window.location.assign(landingPath(role));
+        const user = authService.getUser();
+      
+        if (user?.mustChangePassword) {
+          setPostLoginRole(role);
+          setShowPwdModal(true);
+        } else {
+          window.location.assign(landingPath(role));
+        }
       } else {
         showError("Logowanie nie powiodło się.");
       }
+      
     } catch (err) {
       const status = err?.response?.status;
 
@@ -77,6 +89,7 @@ export default function GeneralLoginForm({
   };
 
   return (
+    <>
     <article className="bp-card auth-card">
       <div className="auth-card-cap" aria-hidden="true" />
       {title ? <h2 className="auth-card-title">{title}</h2> : null}
@@ -124,5 +137,14 @@ export default function GeneralLoginForm({
         </div>
       </form>
     </article>
+    <ChangePasswordModal
+      open={showPwdModal}
+      onSuccess={() => {
+        setShowPwdModal(false);
+        const role = postLoginRole || primaryRole();
+        window.location.assign(landingPath(role));
+      }}
+    />
+    </>
   );
 }

@@ -49,6 +49,10 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
     Optional<Users> findByEmail(String email);
 
 
-    @Query("SELECT h.id FROM Users u LEFT JOIN u.hospital h WHERE u.id = :id")
+    @Query("""
+        SELECT h.id
+        FROM Hospital h
+        WHERE h.user.id = :id
+        """)
     Long findHospitalIdById(@Param("id") Long id);
 }

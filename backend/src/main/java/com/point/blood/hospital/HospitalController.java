@@ -23,4 +23,8 @@ public class HospitalController {
     public ResponseEntity<HospitalProfileDTO> getProfile(@PathVariable Long hospitalId) {
         return ResponseEntity.ok(hospitalService.getHospitalInfo(hospitalId));
     }
+    @GetMapping("/admin/list")
+    public ResponseEntity<List<HospitalProfileDTO>> getAllHospitals() {
+        return ResponseEntity.ok(hospitalService.getAllHospitals());
+    }
 }

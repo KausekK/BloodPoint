@@ -10,5 +10,11 @@ export function deleteEmployee(userId) {
 }
 
 export function updateEmployee(userId, payload) {
-    return api.patch(`/blood_point/staff/${userId}`, payload).then((r) => r.data); // EditResult<StaffDTO>
+    return api.patch(`/blood_point/staff/${userId}`, payload).then((r) => r.data);
 }
+
+export function createEmployee(pointId, payload) {
+    return api
+      .post(`/blood_point/staff/${pointId}`, payload)
+      .then((r) => r.data);
+  }

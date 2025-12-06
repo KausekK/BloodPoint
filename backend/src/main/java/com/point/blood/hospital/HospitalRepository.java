@@ -29,4 +29,24 @@ public interface HospitalRepository extends JpaRepository<Hospital, Long> {
         WHERE h.id = :hospitalId
     """)
     Optional<HospitalProfileDTO> findProfileById(@Param("hospitalId") Long hospitalId);
+
+
+    @Query(value = "SELECT HOSPITAL_NUMBER_SEQ.NEXTVAL FROM dual", nativeQuery = true)
+    Long getNextHospitalNumber();
+
+    @Query("""
+        SELECT new com.point.blood.hospital.HospitalProfileDTO(
+            h.id,
+            h.hospitalNumber,
+            h.province,
+            h.city,
+            h.zipCode,
+            h.street,
+            h.phone
+        )
+        FROM Hospital h
+        ORDER BY h.hospitalNumber
+    """)
+    List<HospitalProfileDTO> findAllProfiles();
+
 }

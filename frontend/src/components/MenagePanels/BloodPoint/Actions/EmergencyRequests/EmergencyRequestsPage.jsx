@@ -105,7 +105,6 @@ export default function EmergencyRequestsPage() {
                 <table className="bp-table">
                   <thead>
                     <tr>
-                      <th>ID</th>
                       <th>Szpital</th>
                       <th>Grupa krwi</th>
                       <th>Ilość</th>
@@ -116,7 +115,6 @@ export default function EmergencyRequestsPage() {
                     {requests.map(function (r) {
                       return (
                         <tr key={r.id}>
-                          <td>{r.id}</td>
                           <td>
                             {r.hospitalNumber} — {r.hospitalCity}
                           </td>

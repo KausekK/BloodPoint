@@ -23,4 +23,7 @@ public class HospitalService {
         return hospitalRepository.getHospitalsProvince();
     }
 
+    public List<HospitalProfileDTO> getAllHospitals() {
+        return hospitalRepository.findAllProfiles();
+    }
 }

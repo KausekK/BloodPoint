@@ -16,7 +16,13 @@ import ReportEmergencyPage from './components/MenagePanels/Hospital/Actions/Repo
 import EmergencyRequestsPage from './components/MenagePanels/BloodPoint/Actions/EmergencyRequests/EmergencyRequestsPage.jsx';
 import ReportHistoryPage from './components/MenagePanels/Hospital/Actions/ReportHistoryPage.jsx';
 import LoginPage from './components/LoginForms/LoginPage.jsx';
-
+import AdminDashboardPanelPage from './components/MenagePanels/Admin/AdminDashboardPanelPage.jsx';
+import AdminHospitalActionsDashboard from './components/MenagePanels/Admin/Actions/HospitalActions/AdminHospitalActionsDashboard.jsx';
+import HospitalRegister from './components/MenagePanels/Admin/Actions/HospitalActions/Hospitalregister.jsx';
+import HospitalList from './components/MenagePanels/Admin/Actions/HospitalActions/HospitalList.jsx';
+import AdminBloodPointActionsDashboard from './components/MenagePanels/Admin/Actions/BloodPointActions/AdminBloodPointActionsDashboard.jsx'
+import BloodPointRegister from './components/MenagePanels/Admin/Actions/BloodPointActions/BloodPointRegister.jsx';
+import BloodPointList from './components/MenagePanels/Admin/Actions/BloodPointActions/BloodPointList.jsx';
 
 
 function App() {
@@ -57,6 +63,15 @@ function App() {
                 <Route path="/szpital/zgloszenie-zapotrzebowania" element={<ReportEmergencyPage/>}/>
                 <Route path="/zgloszenia" element={<EmergencyRequestsPage/>}/>
                 <Route path="/szpital/historia-zgloszen" element={<ReportHistoryPage/>}/>
+
+                <Route path="/admin/dashboard" element={<AdminDashboardPanelPage />} />
+                <Route path="/admin/panel/szpital" element={<AdminHospitalActionsDashboard />} />
+                <Route path="/admin/panel/szpital/rejestracja" element={<HospitalRegister/>} />
+                <Route path="/admin/panel/szpital/lista-placowek" element={<HospitalList/>} />
+
+                <Route path="/admin/panel/punkt-krwiodawstwa" element={<AdminBloodPointActionsDashboard/>} />
+                <Route path="/admin/panel/punkt-krwiodawstwa/rejestracja" element={<BloodPointRegister/>} />
+                <Route path="/admin/panel/punkt-krwiodawstwa/lista-placowek" element={<BloodPointList/>} />
             </Routes>
         </Router>
     );

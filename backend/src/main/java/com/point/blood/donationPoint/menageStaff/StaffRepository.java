@@ -32,4 +32,7 @@ public interface StaffRepository extends JpaRepository<Staff, Long> {
         WHERE bd.id = :pointId
         """)
     List<StaffDTO> findAllByBloodDonationPoint_Id(@Param("pointId") Long id);
+
+
 }
+

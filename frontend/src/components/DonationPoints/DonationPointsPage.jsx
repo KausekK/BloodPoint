@@ -12,7 +12,7 @@ export default function DonationPointsPage() {
   const [points, setPoints] = useState([]);
   const [cities, setCities] = useState([]);
   const [filterCity, setFilterCity] = useState("");
-  const [mapCity, setMapCity] = useState("");
+  const [selectedPointId, setSelectedPointId] = useState(null);
   const [page, setPage] = useState(1);
 
   let labels = {};
@@ -51,11 +51,11 @@ export default function DonationPointsPage() {
         setCities([]);
       });
 
-    getPoints()
+      getPoints()
       .then(function (list) {
         setPoints(list);
         if (list.length > 0) {
-          setMapCity(list[0].city);
+          setSelectedPointId(list[0].id);
         }
       })
       .catch(function (error) {
@@ -78,7 +78,9 @@ export default function DonationPointsPage() {
         .then(function (list) {
           setPoints(list);
           if (list.length > 0) {
-            setMapCity(list[0].city);
+            setSelectedPointId(list[0].id);
+          } else {
+            setSelectedPointId(null);
           }
         })
         .catch(function (error) {
@@ -116,13 +118,13 @@ export default function DonationPointsPage() {
     setFilterCity("");
   }
 
-  function handleCardClick(city) {
-    setMapCity(city);
+  function handleCardClick(point) {
+    setSelectedPointId(point.id);
   }
-
-  function handleShowOnMapClick(event, city) {
+  
+  function handleShowOnMapClick(event, point) {
     event.stopPropagation();
-    setMapCity(city);
+    setSelectedPointId(point.id);
   }
 
   function handleOpenMapsClick(event) {
@@ -178,7 +180,7 @@ export default function DonationPointsPage() {
           <div className="points-layout">
             <section className="points-grid" aria-label="Punkty krwiodawstwa">
               {itemsOnPage.map(function (point) {
-                const isSelected = mapCity === point.city;
+                const isSelected = selectedPointId === point.id;
                 const mapsUrl =
                   "https://www.google.com/maps/search/?api=1&query=" +
                   encodeURIComponent(point.city + " " + point.street);
@@ -190,7 +192,7 @@ export default function DonationPointsPage() {
                       "bp-card point" + (isSelected ? " is-selected" : "")
                     }
                     onClick={function () {
-                      handleCardClick(point.city);
+                      handleCardClick(point);
                     }}
                     tabIndex={0}
                   >
@@ -223,7 +225,7 @@ export default function DonationPointsPage() {
                         type="button"
                         className="bp-btn"
                         onClick={function (event) {
-                          handleShowOnMapClick(event, point.city);
+                          handleShowOnMapClick(event, point);
                         }}
                       >
                         {buttons.showOnMap || "Pokaż na mapie"}
@@ -250,11 +252,15 @@ export default function DonationPointsPage() {
             </section>
 
             <aside className="points-map">
-              {mapCity ? (
-                <Map key={mapCity} city={mapCity} />
+              {points.length > 0 ? (
+                <Map
+                  key={selectedPointId || "no-point"}
+                  points={points}
+                  selectedPointId={selectedPointId}
+                />
               ) : (
                 <div className="map-placeholder">
-                  {content.mapPlaceholder}
+                  {content.mapPlaceholder || "Brak punktów do wyświetlenia na mapie."}
                 </div>
               )}
             </aside>

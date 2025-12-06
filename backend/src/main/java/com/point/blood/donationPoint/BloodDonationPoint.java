@@ -1,12 +1,8 @@
 package com.point.blood.donationPoint;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.point.blood.donation.Donation;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +10,6 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
-import static jakarta.persistence.FetchType.LAZY;
 
 @Data
 @Entity
@@ -25,7 +20,15 @@ import static jakarta.persistence.FetchType.LAZY;
 public class BloodDonationPoint {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(
+            name = "blood_point_seq_gen",
+            sequenceName = "BLOOD_DONATION_POINT_SEQ",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "blood_point_seq_gen"
+    )
     private Long id;
 
     @Column(name = "donation_point_number", nullable = false)
@@ -55,10 +58,5 @@ public class BloodDonationPoint {
     @Column(name = "phone", nullable = false, length = 15)
     private String phone;
 
-    // TODO O co chodzi????
-    @ManyToOne(fetch = LAZY, optional = false)
-    @JoinColumn(name = "donation", nullable = false)
-    @JsonIgnore
-    private Donation donation;
 
 }

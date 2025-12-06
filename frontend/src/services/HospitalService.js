@@ -6,3 +6,9 @@ export function getHospitalsProvinces() {
     .get("/hospital/provinces")
     .then((r) => r.data);
 }
+
+export function getHospitalsList() {
+  return api
+    .get("/hospital/admin/list")
+    .then((r) => r.data);
+}

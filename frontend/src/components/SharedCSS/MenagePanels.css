@@ -134,6 +134,12 @@
   overflow-x: auto;
   margin-top: 10px;
 }
+.auth-page-center {
+  min-height: calc(100svh - 220px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 .bp-table {
   width: 100%;
@@ -191,6 +197,75 @@
   width: 180px;
 }
 
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9990;
+}
+
+.modal-center {
+  max-width: 420px;
+  width: 100%;
+  padding: 1rem;
+}
+
+.bp-card .form-actions button {
+  min-width: 100px;
+}
+
+strong {
+  color: #222;
+}
+
+
+.bp-subcard {
+  margin-top: 1.5rem;
+}
+
+.staff-form-wrapper {
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e3e3e3;
+}
+
+.staff-form {
+  display: block;
+}
+
+.staff-form.staff-form--narrow {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.staff-form .form-field {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.staff-form-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.staff-form-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.staff-form-note {
+  text-align: center;
+  margin-top: 0.75rem;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
 
 @media (max-width: 700px) {
   .bp-form {
@@ -222,10 +297,3 @@
   }
 }
 
-.bp-card .form-actions button {
-  min-width: 100px;
-}
-
-strong {
-  color: #222;
-}
