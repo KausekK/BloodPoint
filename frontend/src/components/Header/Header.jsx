@@ -4,6 +4,9 @@ import CTA from "../CTA/CTA";
 import "./header.css";
 import headerContent from "../../content/Header/Header.json";
 import authService from "../../services/AuthenticationService";
+import { showMessage } from "../shared/services/MessageService";
+import { MessageType } from "../shared/const/MessageType.model";
+
 
 function getRolesFromToken() {
   const getTokenFn = authService.getToken;
@@ -163,6 +166,7 @@ export default function Header() {
     authService.logout();
     setIsAuth(false);
     setRoles([]);
+    showMessage("Wylogowano pomyślnie", MessageType.SUCCESS);
     navigate("/login");
   }
 

@@ -15,6 +15,7 @@ import './Documents.css';
 import { showMessage, showError } from "../../shared/services/MessageService";
 import { getScheduledAppointmentForUser } from '../../../services/ProfileService';
 import authService from '../../../services/AuthenticationService';
+import { MessageType } from '../../shared/const/MessageType.model';
 
 export default function Documents() {
   const userId = authService.getUserId();
@@ -134,7 +135,7 @@ export default function Documents() {
   
     try {
       await submitResponses(questionnaireId, appointmentId, payload);
-      showMessage('Odpowiedzi zapisane pomyślnie', 'success');
+      showMessage('Odpowiedzi zapisane pomyślnie', MessageType.SUCCESS);
       setSubmitted(true);
     } catch (err) {
       console.error(err);

@@ -90,8 +90,8 @@ public class Users implements UserDetails {
                 .collect(Collectors.toSet());
     }
     @Builder.Default
-    @Column(name = "must_change_password", nullable = false)
-    private boolean mustChangePassword = false;
+    @Column(name = "changed_password", nullable = false)
+    private boolean changed_password = false;
 
     @Override
     @JsonIgnore

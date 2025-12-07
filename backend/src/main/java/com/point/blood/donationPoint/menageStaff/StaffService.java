@@ -100,7 +100,7 @@ public class StaffService {
                 .dateOfBirth(req.getBirthDate())
                 .password(passwordEncoder.encode(rawTempPassword))
                 .roles(Set.of(pointRole))
-                .mustChangePassword(true)
+                .changed_password(true)
                 .build();
 
         Users savedUser = usersRepository.save(user);

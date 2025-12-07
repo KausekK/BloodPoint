@@ -37,7 +37,7 @@ function App() {
                 } />
                 <Route path="/" element={<Home />} />
                 <Route path="/profil/*" element={ 
-                    <ProtectedRoute allowedRoles={["DAWCA", "SZPITAL", "PUNKT_KRWIODAWSTWA"]}>
+                    <ProtectedRoute allowedRoles={["DAWCA", "SZPITAL", "PUNKT_KRWIODAWSTWA", "MANAGER_PUNKTU_KRWIODAWSTWA"]}>
                         <Profile />
                     </ProtectedRoute>
                 } />
@@ -46,7 +46,7 @@ function App() {
                 <Route path="/krwiodawca" element={<DonorInfoPage />} />
                 <Route path="/dla-dawcy" element={<DonorTipsPage />} />
                 <Route path="/panel/pracowniczy" element={
-                    <ProtectedRoute allowedRoles={["PUNKT_KRWIODAWSTWA"]}>
+                    <ProtectedRoute allowedRoles={["MANAGER_PUNKTU_KRWIODAWSTWA"]}>
                         <PointStaffPage />
                     </ProtectedRoute>
                 } />
@@ -56,7 +56,7 @@ function App() {
                 <Route path="/punkt-krwiodawstwa/zapasy" element={<BloodStockManagePage />} />
                 <Route path="/szpital/dashboard" element={<HospitalDashboardPanelPage />} />
                 <Route path="/statystyki" element={
-                    <ProtectedRoute allowedRoles={["PUNKT_KRWIODAWSTWA"]}>
+                    <ProtectedRoute allowedRoles={["PUNKT_KRWIODAWSTWA", "MANAGER_PUNKTU_KRWIODAWSTWA"]}>
                         <Statistics/>
                     </ProtectedRoute>
                     }/>
