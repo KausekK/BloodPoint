@@ -64,14 +64,42 @@ function App() {
                 <Route path="/zgloszenia" element={<EmergencyRequestsPage/>}/>
                 <Route path="/szpital/historia-zgloszen" element={<ReportHistoryPage/>}/>
 
-                <Route path="/admin/dashboard" element={<AdminDashboardPanelPage />} />
-                <Route path="/admin/panel/szpital" element={<AdminHospitalActionsDashboard />} />
-                <Route path="/admin/panel/szpital/rejestracja" element={<HospitalRegister/>} />
-                <Route path="/admin/panel/szpital/lista-placowek" element={<HospitalList/>} />
+                <Route path="/admin/dashboard" element={
+                    <ProtectedRoute allowedRoles={["ADMIN"]}>
+                        <AdminDashboardPanelPage />
+                    </ProtectedRoute>
+                } />
+                <Route path="/admin/panel/szpital" element={
+                    <ProtectedRoute allowedRoles={["ADMIN"]}>
+                        <AdminHospitalActionsDashboard />
+                    </ProtectedRoute>
+                } />
+                <Route path="/admin/panel/szpital/rejestracja" element={
+                    <ProtectedRoute allowedRoles={["ADMIN"]}>
+                        <HospitalRegister />
+                    </ProtectedRoute>
+                } />
+                <Route path="/admin/panel/szpital/lista-placowek" element={
+                    <ProtectedRoute allowedRoles={["ADMIN"]}>
+                        <HospitalList />
+                    </ProtectedRoute>
+                } />
 
-                <Route path="/admin/panel/punkt-krwiodawstwa" element={<AdminBloodPointActionsDashboard/>} />
-                <Route path="/admin/panel/punkt-krwiodawstwa/rejestracja" element={<BloodPointRegister/>} />
-                <Route path="/admin/panel/punkt-krwiodawstwa/lista-placowek" element={<BloodPointList/>} />
+                <Route path="/admin/panel/punkt-krwiodawstwa" element={
+                    <ProtectedRoute allowedRoles={["ADMIN"]}>
+                        <AdminBloodPointActionsDashboard />
+                    </ProtectedRoute>
+                } />
+                <Route path="/admin/panel/punkt-krwiodawstwa/rejestracja" element={
+                    <ProtectedRoute allowedRoles={["ADMIN"]}>
+                        <BloodPointRegister />
+                    </ProtectedRoute>
+                } />
+                <Route path="/admin/panel/punkt-krwiodawstwa/lista-placowek" element={
+                    <ProtectedRoute allowedRoles={["ADMIN"]}>
+                        <BloodPointList />
+                    </ProtectedRoute>
+                } />
             </Routes>
         </Router>
     );

@@ -29,12 +29,8 @@
     ],
     "admin": [
       {
-        "label": "Panel",
-        "to": "/admin"
-      },
-      {
-        "label": "Zarządzaj wizytami",
-        "to": "/admin/wizyty"
+        "label": "Panel administracyjny",
+        "to": "/admin/dashboard"
       }
     ],
     "bloodPoint": [

@@ -219,7 +219,7 @@ export default function Header() {
         </button>
 
         <nav className="main-nav" aria-label="Główna nawigacja">
-          {isAuth && (
+          {isAuth && currentRole !== "admin" && (
             <NavLink to="/profil" className="nav-link">
               Profil
             </NavLink>
@@ -282,7 +282,7 @@ export default function Header() {
             className="menu-list"
             aria-label="Menu mobilne"
           >
-            {isAuth && (
+            {isAuth && currentRole !== "admin" && (
               <NavLink to="/profil" className="menu-link" onClick={closeMenu}>
                 Profil
               </NavLink>

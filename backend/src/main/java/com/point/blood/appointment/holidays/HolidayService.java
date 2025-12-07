@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class HolidayService {
-//TODO dopisac do dokumentacji ze korzystamy z zewnetrznego API
     private final WebClient webClient;
     private final Set<LocalDate> holidays = ConcurrentHashMap.newKeySet();
 
