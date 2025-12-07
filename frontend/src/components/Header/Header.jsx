@@ -4,6 +4,9 @@ import CTA from "../CTA/CTA";
 import "./header.css";
 import headerContent from "../../content/Header/Header.json";
 import authService from "../../services/AuthenticationService";
+import { showMessage } from "../shared/services/MessageService";
+import { MessageType } from "../shared/const/MessageType.model";
+
 
 function getRolesFromToken() {
   const getTokenFn = authService.getToken;
@@ -163,6 +166,7 @@ export default function Header() {
     authService.logout();
     setIsAuth(false);
     setRoles([]);
+    showMessage("Wylogowano pomyślnie", MessageType.SUCCESS);
     navigate("/login");
   }
 
@@ -215,7 +219,7 @@ export default function Header() {
         </button>
 
         <nav className="main-nav" aria-label="Główna nawigacja">
-          {isAuth && (
+          {isAuth && currentRole !== "admin" && (
             <NavLink to="/profil" className="nav-link">
               Profil
             </NavLink>
@@ -278,7 +282,7 @@ export default function Header() {
             className="menu-list"
             aria-label="Menu mobilne"
           >
-            {isAuth && (
+            {isAuth && currentRole !== "admin" && (
               <NavLink to="/profil" className="menu-link" onClick={closeMenu}>
                 Profil
               </NavLink>

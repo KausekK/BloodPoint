@@ -17,8 +17,6 @@ export default function BloodPointDashboardPanelPage() {
       : []),
   ];
 
-  console.log(authService.getUser()
-  )
   return (
     <>
       <Header />

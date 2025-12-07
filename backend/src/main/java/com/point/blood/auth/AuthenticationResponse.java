@@ -15,6 +15,6 @@ public class AuthenticationResponse {
     private Long pointId;
     private Long hospitalId;
     private java.util.Set<String> roles;
-    private Boolean mustChangePassword;
+    private Boolean changedPassword;
 
 }

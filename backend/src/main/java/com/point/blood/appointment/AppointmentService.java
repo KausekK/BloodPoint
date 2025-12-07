@@ -94,8 +94,6 @@ public class AppointmentService {
                 bloodDonationPointId, today, tomorrow);
     }
 
-
-
     private EditResult<AppointmentDTO> buildError(String msg) {
         return EditResult.<AppointmentDTO>builder()
                 .messages(List.of(MessageDTO.createErrorMessage(msg)))

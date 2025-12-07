@@ -21,6 +21,7 @@ public class BloodStockDTO {
         this.totalAvailable = totalAvailable;
         this.totalReserved  = totalReserved;
         this.totalFree = (totalAvailable == null || totalReserved == null)
-                ? null : totalAvailable.subtract(totalReserved);
+                ? null
+                : totalAvailable.subtract(totalReserved);
     }
 }

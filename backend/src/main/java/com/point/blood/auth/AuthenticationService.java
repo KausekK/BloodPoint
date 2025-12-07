@@ -112,10 +112,8 @@ public class AuthenticationService {
         claims.put("roles", roleNames);
         claims.put("uid", user.getId());
 
-        boolean mustChangePassword = user.isMustChangePassword();
+        boolean changePassword = user.isChanged_password();
 
-
-//        boolean isStaff = roleNames.contains(RoleEnum.PUNKT_KRWIODAWSTWA.name());
         boolean isStaff = roleNames.contains(RoleEnum.PUNKT_KRWIODAWSTWA.name()) || roleNames.contains(RoleEnum.MANAGER_PUNKTU_KRWIODAWSTWA.name());
 
         if (isStaff) {
@@ -142,7 +140,7 @@ public class AuthenticationService {
                 .pointId((Long) claims.get("pid"))
                 .hospitalId((Long) claims.get("hid"))
                 .roles(roleNames)
-                .mustChangePassword(mustChangePassword)
+                .changedPassword(changePassword)
                 .build();
     }
 
@@ -197,7 +195,7 @@ public class AuthenticationService {
         }
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
-        user.setMustChangePassword(false);
+        user.setChanged_password(false);
         userRepository.save(user);
 
         return EditResult.<Void>builder()
