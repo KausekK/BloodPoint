@@ -173,30 +173,43 @@ export default function BloodStockManagePage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {rows.map(function (r) {
-                      const key =
-                        r.bloodTypeId !== null && r.bloodTypeId !== undefined
-                          ? r.bloodTypeId
-                          : r.bloodGroup;
+                  {rows.map(function (r) {
+                    const key =
+                      r.bloodTypeId !== null && r.bloodTypeId !== undefined
+                        ? r.bloodTypeId
+                        : r.bloodGroup;
 
-                      const label =
-                        r.bloodGroupLabel !== null &&
-                        r.bloodGroupLabel !== undefined
-                          ? r.bloodGroupLabel
-                          : r.bloodGroup;
+                    const label =
+                      r.bloodGroupLabel !== null &&
+                      r.bloodGroupLabel !== undefined
+                        ? r.bloodGroupLabel
+                        : r.bloodGroup;
 
-                      return (
-                        <tr key={key}>
-                          <td className="col-group">{label}</td>
-                          <td>{formatAmount(r.totalAvailable, 2)} l</td>
-                          <td>{formatAmount(r.totalReserved, 2)} l</td>
-                          <td className="col-free">
-                            {formatAmount(r.totalFree, 2)} l
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
+                    return (
+                      <tr key={key}>
+                        <td
+                          className="col-group"
+                          data-label="Grupa krwi"
+                        >
+                          {label}
+                        </td>
+                        <td data-label="Dostępne (l)">
+                          {formatAmount(r.totalAvailable, 2)} l
+                        </td>
+                        <td data-label="Zarezerwowane (l)">
+                          {formatAmount(r.totalReserved, 2)} l
+                        </td>
+                        <td
+                          className="col-free"
+                          data-label="Wolne (l)"
+                        >
+                          {formatAmount(r.totalFree, 2)} l
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+
                   <tfoot>
                     <tr>
                       <th>Razem</th>
