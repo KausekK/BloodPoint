@@ -52,11 +52,8 @@ export default function Statistics() {
     <>
       <Header />
       <main className="bp-section">
-        <BackButton
-          to="/punkt-krwiodawstwa/dashboard"
-          label="Powrót do panelu punktu krwiodawstwa"
-        />
         <div className="bp-container">
+        <BackButton to="/punkt-krwiodawstwa/dashboard" label="Powrót do panelu punktu krwiodawstwa"/>
           <header className="dashboard-head">
             <h1 className="dashboard-title">Statystyki donacji</h1>
             <p className="dashboard-lead">

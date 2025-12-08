@@ -4,20 +4,22 @@
 
 .panel-dashboard.is-centered {
     min-height: calc(100svh - 220px);
-    display: grid;
-    place-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; 
 }
 
 .panel-head {
     text-align: center;
-    margin: 0 0 18px;
+    margin: 0 0 60px;
 }
 
 .panel-title {
     margin: 0 0 6px;
     font-family: var(--font-heading);
     font-weight: 800;
-    letter-spacing: .3px;
+    letter-spacing: 0.3px;
     line-height: 1.15;
     font-size: clamp(1.8rem, 3vw, 2.6rem);
     color: var(--color-primary);
@@ -32,7 +34,7 @@
     display: grid;
     gap: 34px;
     width: min(640px, 92%);
-    margin: 14px auto 0;
+    margin: 0 auto 0;
 }
 
 .panel-cta {

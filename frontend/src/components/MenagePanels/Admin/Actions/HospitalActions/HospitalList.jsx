@@ -70,8 +70,8 @@ export default function HospitalList() {
     <>
       <Header />
       <main className="bp-section">
-      <BackButton to="/admin/panel/szpital" label="Powrót do panelu szpitala" />
         <div className="bp-container">
+        <BackButton to="/admin/panel/szpital" label="Powrót do panelu szpitala" />
           <article className="bp-card">
             <div className="dashboard-head">
               <h2 className="dashboard-title">Lista Placówek Szpitalnych</h2>

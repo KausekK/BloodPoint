@@ -137,11 +137,8 @@ export default function BloodStockManagePage() {
     <>
       <Header />
       <main className="bp-section">
-        <BackButton
-          to="/punkt-krwiodawstwa/dashboard"
-          label="Powrót do panelu punktu krwiodawstwa"
-        />
         <div className="bp-container">
+        <BackButton to="/punkt-krwiodawstwa/dashboard" label="Powrót do panelu punktu krwiodawstwa"/>
           <header className="dashboard-head">
             <h1 className="dashboard-title">Zarządzaj zapasami krwi</h1>
             <div className="dashboard-actions">

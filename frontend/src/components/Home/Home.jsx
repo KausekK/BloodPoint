@@ -20,9 +20,6 @@ export default function Home() {
         <div className="hero-section">
           <p>{hero.subtitle}</p>
           <p>{hero.note}</p>
-          <div className="hero-cta-wrapper">
-            <CTA label={hero.cta && hero.cta.label} to={hero.cta && hero.cta.to} />
-          </div>
         </div>
       </div>
 

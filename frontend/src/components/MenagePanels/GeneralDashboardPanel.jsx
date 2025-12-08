@@ -14,8 +14,7 @@ export default function GeneralDashboardPanel({
   const isCentered = center !== false;
   const list = Array.isArray(actions) ? actions : [];
   const extraClass = className ? " " + className : "";
-  const sectionClass =
-    "panel-dashboard" + (isCentered ? " is-centered" : "") + extraClass;
+  const sectionClass = "panel-dashboard" + (isCentered ? " is-centered" : "") + extraClass;
 
   function renderAction(action, index) {
     const isGhost = action.variant === "ghost";

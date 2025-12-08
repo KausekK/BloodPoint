@@ -36,9 +36,12 @@ export default function GeneralLoginForm({
       case "DAWCA":
         return "/profil";
       case "PUNKT_KRWIODAWSTWA":
+      case "MANAGER_PUNKTU_KRWIODAWSTWA":
         return "/punkt-krwiodawstwa/dashboard";
       case "SZPITAL":
         return "/szpital/dashboard";
+      case "ADMIN":
+        return "/admin/dashboard";
       default:
         return "/";
     }
