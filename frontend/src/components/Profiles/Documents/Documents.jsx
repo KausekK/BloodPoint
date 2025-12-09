@@ -154,7 +154,7 @@ export default function Documents() {
 
   if (loading) return <div className="loading">Ładowanie dokumentów...</div>;
   if (error) return <div className="error">Błąd: {error}</div>;
-  if (!appointmentId) return <div className="no-data">Brak formularzu do wypełnienia</div>;
+  if (!appointmentId) return <div className="no-data">Brak formularza do wypełnienia</div>;
 
   if (submitted) {
     return (

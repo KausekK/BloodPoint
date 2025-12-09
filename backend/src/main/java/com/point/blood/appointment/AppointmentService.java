@@ -74,7 +74,8 @@ public class AppointmentService {
         slot.setAvailableSlot(true);
         donationTimeSlotRepository.saveAndFlush(slot);
 
-        appointmentRepository.delete(appt);
+        appt.setStatus(AppointmentStatusEnum.ODWOLANA);
+        appointmentRepository.save(appt);
 
         return EditResult.<AppointmentDTO>builder()
                 .messages(List.of(MessageDTO.createSuccessMessage("Wizyta została odwołana")))
