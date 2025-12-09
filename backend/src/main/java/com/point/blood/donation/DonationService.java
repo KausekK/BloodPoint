@@ -3,6 +3,7 @@ package com.point.blood.donation;
 import com.point.blood.appointment.Appointment;
 import com.point.blood.appointment.AppointmentRepository;
 import com.point.blood.bloodType.BloodType;
+import com.point.blood.donationStatus.DonationStatusEnum;
 import com.point.blood.donor.Donor;
 import com.point.blood.questionnaire.response.QuestionnaireResponse;
 import com.point.blood.questionnaire.response.QuestionnaireResponseRepository;
@@ -74,9 +75,26 @@ public class DonationService {
         if (dto.getDonationStatus() == null) {
             return buildError("Brak statusu donacji.");
         }
-        if (dto.getAmountOfBlood() == null || dto.getAmountOfBlood().signum() <= 0) {
-            return buildError("Ilość oddanej krwi musi być dodatnia.");
+        var status = dto.getDonationStatus();
+
+        if (status == DonationStatusEnum.ZREALIZOWANA) {
+            if (dto.getAmountOfBlood() == null || dto.getAmountOfBlood().signum() <= 0) {
+                return buildError("Ilość oddanej krwi musi być dodatnia dla zrealizowanej donacji.");
+            }
+        } else if (status == DonationStatusEnum.PRZERWANA) {
+            if (dto.getAmountOfBlood() == null) {
+                dto.setAmountOfBlood(java.math.BigDecimal.ZERO);
+            } else if (dto.getAmountOfBlood().signum() < 0) {
+                return buildError("Ilość oddanej krwi nie może być ujemna.");
+            }
+        } else {
+            if (dto.getAmountOfBlood() == null) {
+                dto.setAmountOfBlood(java.math.BigDecimal.ZERO);
+            } else if (dto.getAmountOfBlood().signum() < 0) {
+                return buildError("Ilość oddanej krwi nie może być ujemna.");
+            }
         }
+
         var questionnaireResponseOpt =
                 questionnaireResponseRepository.findByAppointmentId(appointmentId);
 

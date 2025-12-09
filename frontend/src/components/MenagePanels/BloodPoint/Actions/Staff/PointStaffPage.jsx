@@ -15,6 +15,7 @@ import { MessageType } from "../../../../shared/const/MessageType.model";
 
 export default function PointStaffPage() {
   const pointId = Number(authService.getPointId());
+  const currentUserId = Number(authService.getUserId());
 
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -168,11 +169,8 @@ export default function PointStaffPage() {
     <>
       <Header />
       <main className="bp-section">
-        <BackButton
-          to="/punkt-krwiodawstwa/dashboard"
-          label="Powrót do panelu punktu krwiodawstwa"
-        />
         <div className="bp-container">
+        <BackButton to="/punkt-krwiodawstwa/dashboard" label="Powrót do panelu punktu krwiodawstwa"/>
           <header className="dashboard-head">
             <h1 className="dashboard-title">{content.hero.heading}</h1>
 
@@ -315,14 +313,17 @@ export default function PointStaffPage() {
                                 >
                                   {content.actions.edit}
                                 </button>
-                                <button
-                                  className="bp-btn bp-btn--ghost"
-                                  onClick={function () {
-                                    onRemove(r.userId);
-                                  }}
-                                >
-                                  {content.actions.delete}
-                                </button>
+
+                                {Number(r.userId) !== currentUserId && (
+                                  <button
+                                    className="bp-btn bp-btn--ghost"
+                                    onClick={function () {
+                                      onRemove(r.userId);
+                                    }}
+                                  >
+                                    {content.actions.delete}
+                                  </button>
+                                )}
                               </div>
                             )}
                           </td>

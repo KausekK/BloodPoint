@@ -2,12 +2,7 @@
   "hero": {
     "title": "Witaj w portalu krwiodawstwa",
     "subtitle": "Dziękujemy, że jesteś z nami. Twoja pomoc może uratować czyjeś jutro.",
-    "note": "Skorzystaj z menu nawigacyjnego, aby uzyskać dostęp do różnych funkcji aplikacji.",
-    "cta": {
-      "label": "Umów sie oddać krew",
-      "to": "/login",
-      "ariaLabel": "Przejdź do strony rezerwacji"
-    }
+    "note": "Skorzystaj z menu nawigacyjnego, aby uzyskać dostęp do różnych funkcji aplikacji."
   },
   "bloodStock": {
     "title": "Stan zapasów krwi"

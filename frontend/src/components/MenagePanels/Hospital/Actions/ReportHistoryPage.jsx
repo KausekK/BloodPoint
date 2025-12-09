@@ -57,8 +57,8 @@ export default function ReportHistoryPage() {
     <>
       <Header />
       <main className="bp-section">
-      <BackButton to="/szpital/dashboard" label="Powrót do panelu szpitala" />
         <div className="bp-container">
+        <BackButton to="/szpital/dashboard" label="Powrót do panelu szpitala" />
           <header className="dashboard-head">
             <h1 className="dashboard-title">Historia zgłoszeń zapotrzebowania</h1>
             <p className="dashboard-lead">

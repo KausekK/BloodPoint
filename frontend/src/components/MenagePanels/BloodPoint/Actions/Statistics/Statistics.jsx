@@ -52,11 +52,12 @@ export default function Statistics() {
     <>
       <Header />
       <main className="bp-section">
-        <BackButton
-          to="/punkt-krwiodawstwa/dashboard"
-          label="Powrót do panelu punktu krwiodawstwa"
-        />
         <div className="bp-container">
+          <BackButton
+            to="/punkt-krwiodawstwa/dashboard"
+            label="Powrót do panelu punktu krwiodawstwa"
+          />
+
           <header className="dashboard-head">
             <h1 className="dashboard-title">Statystyki donacji</h1>
             <p className="dashboard-lead">
@@ -71,6 +72,7 @@ export default function Statistics() {
                 <input
                   id="from"
                   type="date"
+                  className="input" 
                   value={from}
                   onChange={handleFromChange}
                 />
@@ -81,6 +83,7 @@ export default function Statistics() {
                 <input
                   id="to"
                   type="date"
+                  className="input"
                   value={to}
                   onChange={handleToChange}
                 />
@@ -111,11 +114,15 @@ export default function Statistics() {
                       {stats.map(function (s, i) {
                         return (
                           <tr key={i}>
-                            <td>{s.bloodGroup}</td>
-                            <td>{s.rhFactor}</td>
-                            <td>{s.gender}</td>
-                            <td>{s.ageBucket}</td>
-                            <td>{s.donationsCnt}</td>
+                            <td data-label="Grupa krwi">{s.bloodGroup}</td>
+                            <td data-label="Rh">{s.rhFactor}</td>
+                            <td data-label="Płeć">{s.gender}</td>
+                            <td data-label="Przedział wiekowy">
+                              {s.ageBucket}
+                            </td>
+                            <td data-label="Liczba donacji">
+                              {s.donationsCnt}
+                            </td>
                           </tr>
                         );
                       })}
@@ -123,8 +130,9 @@ export default function Statistics() {
                   </table>
                 </div>
 
-                <div className="bp-card" style={{ marginTop: "2rem" }}>
-                  <ResponsiveContainer width="100%" height={400}>
+                {/* osobna karta z klasą do responsywnej wysokości */}
+                <div className="bp-card stats-chart-card">
+                  <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={stats}>
                       <XAxis dataKey="ageBucket" />
                       <YAxis />

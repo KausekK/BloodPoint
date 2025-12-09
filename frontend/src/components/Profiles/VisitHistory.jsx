@@ -12,6 +12,12 @@ import { MessageType } from "../shared/const/MessageType.model";
 import { showMessage, showError } from "../shared/services/MessageService";
 import authService from "../../services/AuthenticationService";
 
+const DONATION_STATUS_LABELS = {
+  ZREALIZOWANA: "Zrealizowana",
+  PRZERWANA: "Przerwana",
+};
+
+
 const startOfDay = (d) => {
   const x = new Date(d);
   x.setHours(0, 0, 0, 0);
@@ -154,7 +160,7 @@ export default function VisitHistory() {
         />
       )}
 
-      <h2 className="card-title">Historia wizyt</h2>
+      <h2 className="card-title">Historia donacji</h2>
 
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <Box
@@ -229,7 +235,7 @@ export default function VisitHistory() {
       </LocalizationProvider>
 
       {visits.length === 0 ? (
-        <div className="no-data">Brak historii wizyt</div>
+        <div className="no-data">Brak historii donacji</div>
       ) : (
         <table className="visit-table">
           <thead>
@@ -239,6 +245,7 @@ export default function VisitHistory() {
               <th>Ilość krwi</th>
               <th>Miasto</th>
               <th>Ulica</th>
+              <th>Status</th> 
             </tr>
           </thead>
           <tbody>
@@ -249,6 +256,7 @@ export default function VisitHistory() {
                 <td>{v.amountOfBlood} ml</td>
                 <td>{v.city}</td>
                 <td>{v.street}</td>
+                <td>{DONATION_STATUS_LABELS[v.donationStatus] || v.donationStatus}</td>
               </tr>
             ))}
           </tbody>

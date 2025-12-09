@@ -192,10 +192,10 @@ export default function HospitalRegister() {
     <>
       <Header />
       <main className="bp-section">
-        <BackButton to="/admin/panel/szpital" label="Powrót do panelu szpitala" />
         <div className="bp-container">
+        <BackButton to="/admin/panel/szpital" label="Powrót do panelu szpitala" />
           <div className="auth-page-center">
-            <article className="bp-card auth-card">
+            <article className="bp-card auth-card auth-card--wide">
               <div className="auth-card-cap" aria-hidden="true" />
               <h2 className="auth-card-title">
                 Zarejestruj Placówkę Szpitalną

@@ -14,6 +14,11 @@ export default function TodayAppointments() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const STATUS_LABELS = {
+    ZREALIZOWANA: "Zrealizowana",
+    PRZERWANA: "Przerwana",
+  };
+  
 
   const donationPointId = authService.getPointId();
 
@@ -135,7 +140,9 @@ export default function TodayAppointments() {
                 </td>
                 <td>
                   {isDone ? (
-                    <span className="done-label">Zakończona</span>
+                    <span className="done-label">
+                      {STATUS_LABELS[a.appointmentStatus] ?? "Zakończona"}
+                    </span>
                   ) : (
                     <IconButton
                       color="error"

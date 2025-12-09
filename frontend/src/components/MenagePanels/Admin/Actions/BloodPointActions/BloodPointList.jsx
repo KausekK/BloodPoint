@@ -293,11 +293,8 @@ export default function BloodPointList() {
     <>
       <Header />
       <main className="bp-section">
-        <BackButton
-          to="/admin/panel/punkt-krwiodawstwa"
-          label="Powrót do panelu Punktu Krwiodawstwa"
-        />
         <div className="bp-container">
+        <BackButton to="/admin/panel/punkt-krwiodawstwa" label="Powrót do panelu Punktu Krwiodawstwa"/>
           <article className="bp-card">
             <div className="dashboard-head">
               <h2 className="dashboard-title">

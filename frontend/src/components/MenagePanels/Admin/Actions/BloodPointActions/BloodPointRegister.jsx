@@ -216,10 +216,10 @@ export default function BloodPointRegister() {
     <>
       <Header />
       <main className="bp-section">
-        <BackButton to="/admin/panel/punkt-krwiodawstwa" label="Powrót do panelu Punktu Krwiodawstwa" />
         <div className="bp-container">
+        <BackButton to="/admin/panel/punkt-krwiodawstwa" label="Powrót do panelu Punktu Krwiodawstwa" />
           <div className="auth-page-center">
-            <article className="bp-card auth-card">
+            <article className="bp-card auth-card auth-card--wide">
               <div className="auth-card-cap" aria-hidden="true" />
               <h2 className="auth-card-title">
                 Zarejestruj Punkt Krwiodawstwa

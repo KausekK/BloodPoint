@@ -1,5 +1,6 @@
 package com.point.blood.donation;
 
+import com.point.blood.donationStatus.DonationStatusEnum;
 import com.point.blood.donationType.DonationTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,4 +20,5 @@ public class DonationDTO {
     private DonationTypeEnum donationType;
     private String city;
     private String street;
+    private DonationStatusEnum donationStatus;
 }

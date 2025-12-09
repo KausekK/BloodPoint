@@ -29,56 +29,96 @@ function App() {
     return (
         <Router>
             <Routes>
-                
-                <Route path="/rezerwacja" element={
-                    <ProtectedRoute allowedRoles={["DAWCA"]}>
-                        <MakeAppointment />
-                    </ProtectedRoute>
-                } />
+
                 <Route path="/" element={<Home />} />
+
+                <Route path="/punkty-krwiodawstwa" element={<DonationPointsPage />} />
+
+                <Route path="/krwiodawca" element={<DonorInfoPage />} />
+
+                <Route path="/dla-dawcy" element={<DonorTipsPage />} />
+
+                <Route path="/login" element={<LoginPage />} />
+
                 <Route path="/profil/*" element={ 
                     <ProtectedRoute allowedRoles={["DAWCA", "SZPITAL", "PUNKT_KRWIODAWSTWA", "MANAGER_PUNKTU_KRWIODAWSTWA"]}>
                         <Profile />
                     </ProtectedRoute>
                 } />
 
-                <Route path="/punkty-krwiodawstwa" element={<DonationPointsPage />} />
-                <Route path="/krwiodawca" element={<DonorInfoPage />} />
-                <Route path="/dla-dawcy" element={<DonorTipsPage />} />
+                <Route path="/rezerwacja" element={
+                    <ProtectedRoute allowedRoles={["DAWCA"]}>
+                        <MakeAppointment />
+                    </ProtectedRoute>
+                } />
+
                 <Route path="/panel/pracowniczy" element={
                     <ProtectedRoute allowedRoles={["MANAGER_PUNKTU_KRWIODAWSTWA"]}>
                         <PointStaffPage />
                     </ProtectedRoute>
                 } />
 
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/punkt-krwiodawstwa/dashboard" element={<BloodPointDashboardPanelPage />} />
-                <Route path="/punkt-krwiodawstwa/zapasy" element={<BloodStockManagePage />} />
-                <Route path="/szpital/dashboard" element={<HospitalDashboardPanelPage />} />
+
+                <Route path="/punkt-krwiodawstwa/dashboard" element={
+                    <ProtectedRoute allowedRoles={['PUNKT_KRWIODAWSTWA', 'MANAGER_PUNKTU_KRWIODAWSTWA']}>
+                        <BloodPointDashboardPanelPage />
+                    </ProtectedRoute>
+                }/>
+
+                <Route path="/punkt-krwiodawstwa/zapasy" element={
+                    <ProtectedRoute allowedRoles={['PUNKT_KRWIODAWSTWA', 'MANAGER_PUNKTU_KRWIODAWSTWA']}>
+                        <BloodStockManagePage />
+                    </ProtectedRoute>
+                }/>
+
+                <Route path="/szpital/dashboard" element={
+                    <ProtectedRoute allowedRoles={['SZPITAL']}>
+                        <HospitalDashboardPanelPage />
+                    </ProtectedRoute>
+                }/>
+
                 <Route path="/statystyki" element={
                     <ProtectedRoute allowedRoles={["PUNKT_KRWIODAWSTWA", "MANAGER_PUNKTU_KRWIODAWSTWA"]}>
                         <Statistics/>
                     </ProtectedRoute>
-                    }/>
-                <Route path="/szpital/zgloszenie-zapotrzebowania" element={<ReportEmergencyPage/>}/>
-                <Route path="/zgloszenia" element={<EmergencyRequestsPage/>}/>
-                <Route path="/szpital/historia-zgloszen" element={<ReportHistoryPage/>}/>
+                }/>
+                 <Route path="/szpital/zgloszenie-zapotrzebowania" element={
+                    <ProtectedRoute allowedRoles={['SZPITAL']}>
+                        <ReportEmergencyPage />
+                    </ProtectedRoute>
+                }/>
+
+                <Route path="/zgloszenia" element={
+                    <ProtectedRoute
+                        allowedRoles={['PUNKT_KRWIODAWSTWA', 'MANAGER_PUNKTU_KRWIODAWSTWA']}>
+                        <EmergencyRequestsPage />
+                    </ProtectedRoute>
+                }/>
+
+                <Route path="/szpital/historia-zgloszen" element={
+                    <ProtectedRoute allowedRoles={['SZPITAL']}>
+                        <ReportHistoryPage />
+                    </ProtectedRoute>
+                }/>
 
                 <Route path="/admin/dashboard" element={
                     <ProtectedRoute allowedRoles={["ADMIN"]}>
                         <AdminDashboardPanelPage />
                     </ProtectedRoute>
                 } />
+                
                 <Route path="/admin/panel/szpital" element={
                     <ProtectedRoute allowedRoles={["ADMIN"]}>
                         <AdminHospitalActionsDashboard />
                     </ProtectedRoute>
                 } />
+
                 <Route path="/admin/panel/szpital/rejestracja" element={
                     <ProtectedRoute allowedRoles={["ADMIN"]}>
                         <HospitalRegister />
                     </ProtectedRoute>
                 } />
+
                 <Route path="/admin/panel/szpital/lista-placowek" element={
                     <ProtectedRoute allowedRoles={["ADMIN"]}>
                         <HospitalList />
@@ -90,16 +130,19 @@ function App() {
                         <AdminBloodPointActionsDashboard />
                     </ProtectedRoute>
                 } />
+
                 <Route path="/admin/panel/punkt-krwiodawstwa/rejestracja" element={
                     <ProtectedRoute allowedRoles={["ADMIN"]}>
                         <BloodPointRegister />
                     </ProtectedRoute>
                 } />
+
                 <Route path="/admin/panel/punkt-krwiodawstwa/lista-placowek" element={
                     <ProtectedRoute allowedRoles={["ADMIN"]}>
                         <BloodPointList />
                     </ProtectedRoute>
                 } />
+
             </Routes>
         </Router>
     );
