@@ -141,7 +141,7 @@ export default function TodayAppointments() {
                 <td>
                   {isDone ? (
                     <span className="done-label">
-                      {STATUS_LABELS[a.appointmentStatus] ?? "ZAKOŃCZONA"}
+                      {STATUS_LABELS[a.appointmentStatus] ?? "Zakończona"}
                     </span>
                   ) : (
                     <IconButton
