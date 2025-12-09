@@ -33,7 +33,7 @@ public class Donor {
         private BloodType bloodType;
 
 
-        @Column(name = "last_donation_date", nullable = false)
+        @Column(name = "last_donation_date", nullable = true)
         private LocalDate lastDonationDate;
 
         @OneToMany(mappedBy = "donor", cascade = CascadeType.ALL, orphanRemoval = true)

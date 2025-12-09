@@ -31,7 +31,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     FROM Appointment a
     JOIN a.users u
     JOIN a.donationTimeSlot d
-    JOIN u.donor do
+    LEFT JOIN u.donor do
     WHERE u.id = :userId
         AND(
             (a.status = 'UMOWIONA' AND d.startTime >= :now)

@@ -140,7 +140,9 @@ public class DonationService {
                 donor.setUserId(user.getId());
                 donor.setUsers(user);
                 donor.setBloodType(bloodType);
-                donor.setLastDonationDate(donationDate.toLocalDate());
+                if (status == DonationStatusEnum.ZREALIZOWANA) {
+                    donor.setLastDonationDate(donationDate.toLocalDate());
+                }
 
                 em.persist(donor);
                 user.setDonor(donor);
@@ -148,7 +150,10 @@ public class DonationService {
                 bloodTypeToUse = bloodType;
             } else {
                 bloodTypeToUse = donor.getBloodType();
-                donor.setLastDonationDate(donationDate.toLocalDate());
+
+                if (status == DonationStatusEnum.ZREALIZOWANA) {
+                    donor.setLastDonationDate(donationDate.toLocalDate());
+                }
             }
 
             QuestionnaireResponse qrEntity = questionnaireResponseOpt.get();
@@ -167,7 +172,7 @@ public class DonationService {
 
             Donation saved = donationRepository.saveAndFlush(entity);
 
-            qrEntity.setDonation(saved);
+//            qrEntity.setDonation(saved);
 
             if (dto.getDonationStatus() != null) {
                 switch (dto.getDonationStatus()) {
