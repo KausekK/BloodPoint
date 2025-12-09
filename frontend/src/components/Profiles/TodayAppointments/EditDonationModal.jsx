@@ -53,6 +53,7 @@ export default function EditDonationModal({
   const [questionnaireError, setQuestionnaireError] = useState('');
   const [showQuestionnaire, setShowQuestionnaire] = useState(false);
 
+
   const appointmentId = donation.appointmentId;
 
   useEffect(() => {
@@ -139,31 +140,48 @@ export default function EditDonationModal({
   }, [open, appointmentId]);
 
   const parsedAmount = (() => {
+    const isInterrupted = status === 'PRZERWANA';
+  
+    if (!amount && isInterrupted) {
+      return 0;
+    }
+
     if (!amount && amount !== 0) return NaN;
     const normalized = String(amount).replace(',', '.');
     return parseFloat(normalized);
   })();
-
-  const canSave =
-    status &&
-    !bloodTypesError &&
-    !statusesError &&
-    Number.isFinite(parsedAmount) &&
-    parsedAmount > 0 &&
-    (!donation.existingDonor ? !!bloodTypeId : true);
+  
+  const isFirstDonation = !donation.existingDonor;
+  const isInterrupted = status === 'PRZERWANA';
+  
+const canSave =
+  status &&
+  !bloodTypesError &&
+  !statusesError &&
+  (
+    isInterrupted ||
+    (Number.isFinite(parsedAmount) && parsedAmount > 0)
+  ) &&
+  (
+    isFirstDonation ? !!bloodTypeId : true
+  );
 
   const handleSave = () => {
+    const isInterrupted = status === 'PRZERWANA';
+  
     const payload = {
       donationStatus: status,
-      amountOfBlood: parsedAmount,
+      amountOfBlood: isInterrupted ? 0 : parsedAmount,
     };
-
+  
     if (!donation.existingDonor) {
       payload.bloodTypeId = Number(bloodTypeId);
     }
-
+  
     onSave(payload);
   };
+  
+  
 
   const statusDisabled = loadingStatuses || !!statusesError;
   const bloodGroupDisabled =
