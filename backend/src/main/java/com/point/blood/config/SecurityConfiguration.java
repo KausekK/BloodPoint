@@ -50,6 +50,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/admin/**").authenticated()
                         .requestMatchers("/api/hospital/admin/list/**").permitAll()
                         .requestMatchers("/api/admin/donation-point/**").permitAll()
+                        .requestMatchers("/api/point/history/**").permitAll()
 
                         .requestMatchers("/api/donations/**").authenticated()
                         .requestMatchers("/*/appointments/*/responses").authenticated()

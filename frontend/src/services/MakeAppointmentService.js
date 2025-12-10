@@ -23,3 +23,7 @@ export function getAllTodayAppointmentsForBloodPoint(id) {
       throw error;
     });
 }
+
+export function getAllAppointmentsHistoryForBloodPoint(pointId) {
+  return api.get(`/appointment/point/history/${pointId}`).then((r) => r.data);
+}

@@ -65,4 +65,11 @@ public class AppointmentController {
         return ResponseEntity.ok(appointmentService.getAllAppointmentsForBloodPoint(id));
     }
 
+    @GetMapping("/point/history/{id}")
+    public ResponseEntity<List<AllAppointmentsDetailsDTO>> getAllAppointmentsHistoryForBloodPoint(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(appointmentService.getAllAppointmentsHistoryForBloodPoint(id));
+    }
+
 }

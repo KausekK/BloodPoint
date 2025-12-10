@@ -73,6 +73,24 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             @Param("tomorrow") LocalDateTime tomorrow
     );
 
+    @Query("""
+        SELECT DISTINCT new com.point.blood.appointment.AllAppointmentsDetailsDTO(
+            a.id, u.id, b.id, u.firstName, u.lastName, u.pesel, u.email, u.phone, u.gender, u.dateOfBirth,
+            d.lastDonationDate, CONCAT(bt.bloodGroup, bt.rhFactor), dts.startTime, a.status
+        )
+        FROM Appointment a
+        LEFT JOIN a.users u
+        LEFT JOIN u.donor d
+        LEFT JOIN d.bloodType bt
+        LEFT JOIN a.donationTimeSlot dts
+        LEFT JOIN dts.bloodDonationPoint b
+        WHERE b.id = :bloodDonationPointId
+        ORDER BY dts.startTime DESC
+        """)
+    List<AllAppointmentsDetailsDTO> findAllAppointmentsHistoryForBloodPoint(
+            @Param("bloodDonationPointId") Long bloodDonationPointId
+    );
+
 
 }
 
