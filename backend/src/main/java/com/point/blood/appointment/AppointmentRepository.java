@@ -65,7 +65,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
                 LEFT JOIN a.donationTimeSlot dts
                 LEFT JOIN dts.bloodDonationPoint b
                 WHERE b.id = :bloodDonationPointId
-                  AND dts.startTime >= :today AND dts.startTime < :tomorrow
+                  AND dts.startTime >= :today AND dts.startTime < :tomorrow AND a.status <> 'ODWOLANA'                                                          
             """)
     List<AllAppointmentsDetailsDTO> findAllTodayAppointmentsForBloodPoint(
             @Param("bloodDonationPointId") Long bloodDonationPointId,

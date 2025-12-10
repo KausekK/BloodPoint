@@ -107,7 +107,6 @@ export default function EditDonationModal({
         }));
         setStatusOptions(opts);
       } catch (e) {
-        console.error('Nie udało się pobrać statusów wizyt:', e);
         setStatusOptions([]);
         setStatusesError('Nie udało się pobrać listy statusów.');
       } finally {
@@ -132,9 +131,8 @@ export default function EditDonationModal({
         const data = await getQuestionnaireResponses(appointmentId);
         setQuestionnaire(data);
       } catch (e) {
-        console.error('Błąd pobierania odpowiedzi z kwestionariusza:', e);
         setQuestionnaire(null);
-        setQuestionnaireError('Nie udało się pobrać odpowiedzi z kwestionariusza.');
+        setQuestionnaireError('Nie udało się pobrać odpowiedzi z kwestionariusza. Uytkownik go jeszcze nie uzupełnił.');
       }
     })();
   }, [open, appointmentId]);
