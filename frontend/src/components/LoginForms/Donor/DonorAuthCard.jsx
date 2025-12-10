@@ -10,6 +10,12 @@ import {
 import { ROLES } from "../../shared/const/Roles";
 import { MessageType } from "../../shared/const/MessageType.model";
 
+import {
+  EARLIEST_BIRTH_DATE,
+  getTodayDate,
+} from "../../shared/const/dateLimits";
+import { isPeselMatchingBirthDate } from "../../shared/utils/pesel";
+
 export default function DonorAuthCard() {
   const [mode, setMode] = useState("register");
   const [submitting, setSubmitting] = useState(false);
@@ -26,6 +32,8 @@ export default function DonorAuthCard() {
   });
 
   const [pwd, setPwd] = useState({ pass1: "", pass2: "" });
+
+  const today = getTodayDate();
 
   const emailValid = useMemo(
     () => !reg.email || /\S+@\S+\.\S+/.test(reg.email),
@@ -57,9 +65,15 @@ export default function DonorAuthCard() {
     [reg.gender]
   );
 
-  const birthDateValid = useMemo(
-    () => !reg.birthDate || reg.birthDate.trim().length > 0,
-    [reg.birthDate]
+  const birthDateValid = useMemo(() => {
+    if (!reg.birthDate) return true;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(reg.birthDate)) return false;
+    return reg.birthDate >= EARLIEST_BIRTH_DATE && reg.birthDate <= today;
+  }, [reg.birthDate, today]);
+
+  const peselMatchesBirthDate = useMemo(
+    () => isPeselMatchingBirthDate(reg.pesel, reg.birthDate),
+    [reg.pesel, reg.birthDate]
   );
 
   const canGoNext = useMemo(() => {
@@ -87,9 +101,18 @@ export default function DonorAuthCard() {
       peselValid &&
       phoneValid &&
       genderValid &&
-      birthDateValid
+      birthDateValid &&
+      peselMatchesBirthDate
     );
-  }, [reg, emailValid, peselValid, phoneValid, genderValid, birthDateValid]);
+  }, [
+    reg,
+    emailValid,
+    peselValid,
+    phoneValid,
+    genderValid,
+    birthDateValid,
+    peselMatchesBirthDate,
+  ]);
 
   const passwordsOk = useMemo(
     () => pwd.pass1.length >= 6 && pwd.pass1 === pwd.pass2,
@@ -120,7 +143,7 @@ export default function DonorAuthCard() {
       const data = await authService.register({
         firstName: reg.firstName.trim(),
         lastName: reg.lastName.trim(),
-        email: reg.email.trim(),
+        email: reg.email.trim().toLowerCase(), // <= NIE case-sensitive
         pesel: reg.pesel.trim(),
         phone: reg.phone.trim(),
         gender: reg.gender,
@@ -235,6 +258,14 @@ export default function DonorAuthCard() {
                   PESEL musi składać się z 11 cyfr.
                 </div>
               )}
+              {!peselMatchesBirthDate &&
+                reg.pesel &&
+                reg.birthDate &&
+                peselValid && (
+                  <div className="field-error">
+                    PESEL nie jest zgodny z podaną datą urodzenia.
+                  </div>
+                )}
             </div>
 
             <div className="form-field">
@@ -249,7 +280,7 @@ export default function DonorAuthCard() {
               />
               {!phoneValid && reg.phone && (
                 <div className="field-error">
-                  Numer telefonu musi mieć mieć 9 cyfr.
+                  Numer telefonu musi mieć 9 cyfr.
                 </div>
               )}
             </div>
@@ -303,12 +334,16 @@ export default function DonorAuthCard() {
                 type="date"
                 value={reg.birthDate}
                 onChange={handleRegChange}
-                max={new Date().toISOString().split("T")[0]}
+                min={EARLIEST_BIRTH_DATE}
+                max={today}
                 aria-describedby="birthDateHelp"
                 required
               />
               {!birthDateValid && reg.birthDate && (
-                <div className="field-error">Podaj datę urodzenia.</div>
+                <div className="field-error">
+                  Podaj poprawną datę urodzenia (nie wcześniej niż 1910 r. i nie
+                  w przyszłości).
+                </div>
               )}
             </div>
 
@@ -341,8 +376,8 @@ export default function DonorAuthCard() {
 
           {!canGoNext && (
             <div className="auth-note">
-              Uzupełnij wymagane pola, wybierz płeć, podaj datę urodzenia i
-              popraw dane kontaktowe.
+              Uzupełnij wymagane pola, wybierz płeć, podaj poprawną datę
+              urodzenia i dane kontaktowe.
             </div>
           )}
         </article>
