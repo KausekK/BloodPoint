@@ -57,30 +57,47 @@ class AuthenticationServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new AuthenticationService(roleRepository, userRepository, passwordEncoder, jwtService, authenticationManager, staffRepository);
+        service = new AuthenticationService(
+                roleRepository,
+                userRepository,
+                passwordEncoder,
+                jwtService,
+                authenticationManager,
+                staffRepository
+        );
     }
 
     @Test
     void register_missingEmail_returnsError() {
-        RegisterRequest req = RegisterRequest.builder().email(null).password("pwd").build();
+        RegisterRequest req = RegisterRequest.builder()
+                .email(null)
+                .password("pwd")
+                .build();
 
         EditResult<AuthenticationResponse> res = service.register(req);
 
         assertThat(res).isNotNull();
         assertThat(res.hasErrors()).isTrue();
-        assertThat(res.getMessages().getFirst().getMsg()).contains("Podaj email");
+        assertThat(res.getMessages().getFirst().getMsg())
+                .contains("Podaj email");
     }
 
     @Test
     void register_emailExists_returnsError() {
-        RegisterRequest req = RegisterRequest.builder().email("a@b.com").password("pwd").build();
-        when(userRepository.findByEmail("a@b.com")).thenReturn(Optional.of(Users.builder().id(1L).build()));
+        RegisterRequest req = RegisterRequest.builder()
+                .email("a@b.com")
+                .password("pwd")
+                .build();
+
+        when(userRepository.findByEmailIgnoreCase("a@b.com"))
+                .thenReturn(Optional.of(Users.builder().id(1L).build()));
 
         EditResult<AuthenticationResponse> res = service.register(req);
 
         assertThat(res).isNotNull();
         assertThat(res.hasErrors()).isTrue();
-        assertThat(res.getMessages().getFirst().getMsg()).contains("Email ma już założone konto");
+        assertThat(res.getMessages().getFirst().getMsg())
+                .contains("Email ma już założone konto");
     }
 
     @Test
@@ -91,18 +108,33 @@ class AuthenticationServiceTest {
                 .firstName("Jan")
                 .lastName("K")
                 .gender(Gender.M)
-                .birthDate(LocalDate.of(1990,1,1))
+                .pesel("90010112345")
+                .birthDate(LocalDate.of(1990, 1, 1))
+                .phone("123456789")
                 .build();
 
-        when(userRepository.findByEmail("new@user.com")).thenReturn(Optional.empty());
-        Role role = Role.builder().id(1L).name(RoleEnum.DAWCA).build();
-        when(roleRepository.findByName(RoleEnum.DAWCA)).thenReturn(role);
-        when(passwordEncoder.encode("pass123")).thenReturn("encodedPass");
+        when(userRepository.findByEmailIgnoreCase("new@user.com"))
+                .thenReturn(Optional.empty());
 
-        Users saved = Users.builder().id(55L).email("new@user.com").build();
-        when(userRepository.save(any())).thenReturn(saved);
+        Role role = Role.builder()
+                .id(1L)
+                .name(RoleEnum.DAWCA)
+                .build();
+        when(roleRepository.findByName(RoleEnum.DAWCA))
+                .thenReturn(role);
 
-        when(jwtService.generateToken(saved)).thenReturn("jwt-token");
+        when(passwordEncoder.encode("pass123"))
+                .thenReturn("encodedPass");
+
+        Users saved = Users.builder()
+                .id(55L)
+                .email("new@user.com")
+                .build();
+        when(userRepository.save(any()))
+                .thenReturn(saved);
+
+        when(jwtService.generateToken(saved))
+                .thenReturn("jwt-token");
 
         EditResult<AuthenticationResponse> res = service.register(req);
 
@@ -115,37 +147,70 @@ class AuthenticationServiceTest {
         Users captured = usersCaptor.getValue();
         assertThat(captured.getEmail()).isEqualTo("new@user.com");
         assertThat(captured.getPassword()).isEqualTo("encodedPass");
+        assertThat(captured.getPesel()).isEqualTo("90010112345");
+        assertThat(captured.getDateOfBirth()).isEqualTo(LocalDate.of(1990, 1, 1));
     }
 
     @Test
     void authenticate_nullCredentials_throws() {
-        AuthenticationRequest req = AuthenticationRequest.builder().email(null).password(null).build();
-        assertThrows(IllegalArgumentException.class, () -> service.authenticate(req));
+        AuthenticationRequest req = AuthenticationRequest.builder()
+                .email(null)
+                .password(null)
+                .build();
+
+        assertThrows(IllegalArgumentException.class,
+                () -> service.authenticate(req));
     }
 
     @Test
     void authenticate_userNotFound_throws() {
-        AuthenticationRequest req = AuthenticationRequest.builder().email("x@x.com").password("p").build();
-        org.springframework.security.core.Authentication mockAuth1 = mock(org.springframework.security.core.Authentication.class);
-        doReturn(mockAuth1).when(authenticationManager).authenticate(any());
-        when(userRepository.findByEmail("x@x.com")).thenReturn(Optional.empty());
+        AuthenticationRequest req = AuthenticationRequest.builder()
+                .email("x@x.com")
+                .password("p")
+                .build();
 
-        assertThrows(UsernameNotFoundException.class, () -> service.authenticate(req));
+        org.springframework.security.core.Authentication mockAuth =
+                mock(org.springframework.security.core.Authentication.class);
+        doReturn(mockAuth).when(authenticationManager).authenticate(any());
+
+        when(userRepository.findByEmailIgnoreCase("x@x.com"))
+                .thenReturn(Optional.empty());
+
+        assertThrows(UsernameNotFoundException.class,
+                () -> service.authenticate(req));
     }
 
     @Test
     void authenticate_staffWithoutPoint_throws() {
-        AuthenticationRequest req = AuthenticationRequest.builder().email("s@p.com").password("p").build();
-        org.springframework.security.core.Authentication mockAuth2 = mock(org.springframework.security.core.Authentication.class);
-        doReturn(mockAuth2).when(authenticationManager).authenticate(any());
+        AuthenticationRequest req = AuthenticationRequest.builder()
+                .email("s@p.com")
+                .password("p")
+                .build();
 
-        Role r = Role.builder().id(2L).name(RoleEnum.PUNKT_KRWIODAWSTWA).build();
-        Users user = Users.builder().id(10L).email("s@p.com").roles(Set.of(r)).build();
-        when(userRepository.findByEmail("s@p.com")).thenReturn(Optional.of(user));
+        org.springframework.security.core.Authentication mockAuth =
+                mock(org.springframework.security.core.Authentication.class);
+        doReturn(mockAuth).when(authenticationManager).authenticate(any());
 
-        when(staffRepository.findPointIdByUserId(user.getId())).thenReturn(null);
+        Role r = Role.builder()
+                .id(2L)
+                .name(RoleEnum.PUNKT_KRWIODAWSTWA)
+                .build();
 
-        assertThrows(IllegalStateException.class, () -> service.authenticate(req));
+        Users user = Users.builder()
+                .id(10L)
+                .email("s@p.com")
+                .roles(Set.of(r))
+                .build();
+
+        when(userRepository.findByEmailIgnoreCase("s@p.com"))
+                .thenReturn(Optional.of(user));
+
+        // brak przypisanego punktu -> powinno rzucić IllegalStateException
+        when(staffRepository.findPointIdByUserId(user.getId()))
+                .thenReturn(null);
+
+        assertThrows(IllegalStateException.class,
+                () -> service.authenticate(req));
     }
 
     @Test
@@ -155,20 +220,30 @@ class AuthenticationServiceTest {
         req.setNewPassword("newpwd");
         req.setConfirmNewPassword("newpwd");
 
-        Users user = Users.builder().id(20L).email("u@u.com").password("encodedOld").changed_password(true).build();
-        when(userRepository.findByEmail("u@u.com")).thenReturn(Optional.of(user));
+        Users user = Users.builder()
+                .id(20L)
+                .email("u@u.com")
+                .password("encodedOld")
+                .changed_password(true)
+                .build();
 
-        when(passwordEncoder.matches("old", "encodedOld")).thenReturn(true);
-        when(passwordEncoder.matches("newpwd", "encodedOld")).thenReturn(false);
-        when(passwordEncoder.encode("newpwd")).thenReturn("encodedNew");
+        when(userRepository.findByEmailIgnoreCase("u@u.com"))
+                .thenReturn(Optional.of(user));
+
+        when(passwordEncoder.matches("old", "encodedOld"))
+                .thenReturn(true);
+        when(passwordEncoder.matches("newpwd", "encodedOld"))
+                .thenReturn(false);
+        when(passwordEncoder.encode("newpwd"))
+                .thenReturn("encodedNew");
 
         EditResult<Void> res = service.changePassword(req, "u@u.com");
 
         assertThat(res).isNotNull();
         assertThat(res.hasErrors()).isFalse();
+
         verify(userRepository).save(user);
         assertThat(user.getPassword()).isEqualTo("encodedNew");
         assertThat(user.isChanged_password()).isFalse();
     }
-
 }
