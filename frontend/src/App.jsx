@@ -52,7 +52,7 @@ function App() {
                     </ProtectedRoute>
                 } />
 
-                <Route path="/panel/pracowniczy" element={
+                <Route path="/panel/pracownicy" element={
                     <ProtectedRoute allowedRoles={["MANAGER_PUNKTU_KRWIODAWSTWA"]}>
                         <PointStaffPage />
                     </ProtectedRoute>

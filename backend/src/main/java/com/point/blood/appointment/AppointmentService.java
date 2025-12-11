@@ -101,4 +101,9 @@ public class AppointmentService {
                 .build();
     }
 
+    public List<AllAppointmentsDetailsDTO> getAllAppointmentsHistoryForBloodPoint(Long bloodDonationPointId) {
+        return appointmentRepository.findAllAppointmentsHistoryForBloodPoint(bloodDonationPointId);
+    }
+
+
 }

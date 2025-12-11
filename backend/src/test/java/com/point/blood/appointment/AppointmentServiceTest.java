@@ -119,14 +119,20 @@ class AppointmentServiceTest {
     }
 
     @Test
-    void deleteAppointment_restoresSlotAndDeletesAppointment() {
-        DonationTimeSlot slot = DonationTimeSlot.builder().id(5L).availableSlot(false).build();
-        Appointment appt = Appointment.builder().id(7L).donationTimeSlot(slot).build();
+    void deleteAppointment_restoresSlotAndCancelsAppointment() {
+        DonationTimeSlot slot = DonationTimeSlot.builder()
+                .id(5L)
+                .availableSlot(false)
+                .build();
+
+        Appointment appt = Appointment.builder()
+                .id(7L)
+                .donationTimeSlot(slot)
+                .build();
 
         when(appointmentRepository.findById(7L)).thenReturn(Optional.of(appt));
-
-        doNothing().when(appointmentRepository).delete(appt);
         when(donationTimeSlotRepository.saveAndFlush(slot)).thenReturn(slot);
+        when(appointmentRepository.save(appt)).thenReturn(appt);
 
         EditResult<AppointmentDTO> result = service.deleteAppointment(7L);
 
@@ -134,9 +140,13 @@ class AppointmentServiceTest {
         assertThat(result.getMessages()).isNotEmpty();
         assertThat(result.getMessages().getFirst().getMsg()).contains("Wizyta została odwołana");
 
-        verify(appointmentRepository).delete(appt);
+        verify(appointmentRepository).findById(7L);
         verify(donationTimeSlotRepository).saveAndFlush(slot);
+        verify(appointmentRepository).save(appt);
+
+        verify(appointmentRepository, never()).delete(any());
     }
+
 
     @Test
     void getScheduledAppointmentForUser_delegatesToRepository() {

@@ -48,8 +48,10 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/request/*/accept").authenticated()
                         .requestMatchers("/api/questionnaires/**").authenticated()
                         .requestMatchers("/api/admin/**").authenticated()
-                        .requestMatchers("/api/hospital/admin/list/**").permitAll()
-                        .requestMatchers("/api/admin/donation-point/**").permitAll()
+                        .requestMatchers("/api/hospital/admin/list/**").authenticated()
+                        .requestMatchers("/api/admin/donation-point/**").authenticated()
+                        .requestMatchers("/api/point/history/**").authenticated()
+                        .requestMatchers("/api/point/all/**").authenticated()
 
                         .requestMatchers("/api/donations/**").authenticated()
                         .requestMatchers("/*/appointments/*/responses").authenticated()

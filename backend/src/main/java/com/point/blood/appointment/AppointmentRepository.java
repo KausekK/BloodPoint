@@ -31,7 +31,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     FROM Appointment a
     JOIN a.users u
     JOIN a.donationTimeSlot d
-    JOIN u.donor do
+    LEFT JOIN u.donor do
     WHERE u.id = :userId
         AND(
             (a.status = 'UMOWIONA' AND d.startTime >= :now)
@@ -65,12 +65,30 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
                 LEFT JOIN a.donationTimeSlot dts
                 LEFT JOIN dts.bloodDonationPoint b
                 WHERE b.id = :bloodDonationPointId
-                  AND dts.startTime >= :today AND dts.startTime < :tomorrow
+                  AND dts.startTime >= :today AND dts.startTime < :tomorrow AND a.status <> 'ODWOLANA'                                                          
             """)
     List<AllAppointmentsDetailsDTO> findAllTodayAppointmentsForBloodPoint(
             @Param("bloodDonationPointId") Long bloodDonationPointId,
             @Param("today") LocalDateTime today,
             @Param("tomorrow") LocalDateTime tomorrow
+    );
+
+    @Query("""
+        SELECT DISTINCT new com.point.blood.appointment.AllAppointmentsDetailsDTO(
+            a.id, u.id, b.id, u.firstName, u.lastName, u.pesel, u.email, u.phone, u.gender, u.dateOfBirth,
+            d.lastDonationDate, CONCAT(bt.bloodGroup, bt.rhFactor), dts.startTime, a.status
+        )
+        FROM Appointment a
+        LEFT JOIN a.users u
+        LEFT JOIN u.donor d
+        LEFT JOIN d.bloodType bt
+        LEFT JOIN a.donationTimeSlot dts
+        LEFT JOIN dts.bloodDonationPoint b
+        WHERE b.id = :bloodDonationPointId
+        ORDER BY dts.startTime DESC
+        """)
+    List<AllAppointmentsDetailsDTO> findAllAppointmentsHistoryForBloodPoint(
+            @Param("bloodDonationPointId") Long bloodDonationPointId
     );
 
 

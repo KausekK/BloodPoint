@@ -30,10 +30,6 @@ public class QuestionnaireResponse {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "qr_seq")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "donation_id")
-    private Donation donation;
-
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "questionnaire_id", nullable = false, updatable = false)
     private Questionnaire questionnaire;

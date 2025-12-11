@@ -12,12 +12,6 @@ public class QuestionnaireResponseController {
 
     private final QuestionnaireResponseService questionnaireResponseService;
 
-//    @PostMapping("/{questionnaireId}/responses")
-//    public ResponseEntity<Void> submit(@RequestBody QuestionnaireResponseDTO dto) {
-//        service.saveResponses(dto);
-//        return ResponseEntity.ok().build();
-//    }
-
     @PostMapping("/{questionnaireId}/appointments/{appointmentId}/responses")
     public ResponseEntity<Void> submit(
             @PathVariable Long questionnaireId,

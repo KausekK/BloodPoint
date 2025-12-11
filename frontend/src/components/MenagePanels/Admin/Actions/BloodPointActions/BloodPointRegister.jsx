@@ -13,12 +13,18 @@ import { registerDonationPoint } from "../../../../../services/AdminDonationPoin
 import "../../../../SharedCSS/LoginForms.css";
 import "../../../../SharedCSS/MenagePanels.css";
 import { PROVINCES } from "../../../../../constants/provinces";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import BackButton from "../../../../BackButton/BackButton";
+
+import {
+  EARLIEST_BIRTH_DATE,
+  getTodayDate,
+} from "../../../../shared/const/dateLimits";
+import { isPeselMatchingBirthDate } from "../../../../shared/utils/pesel";
 
 export default function BloodPointRegister() {
   const [submitting, setSubmitting] = useState(false);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     province: "",
@@ -37,16 +43,16 @@ export default function BloodPointRegister() {
     gender: "K",
   });
 
+  const today = getTodayDate();
+
   function handleChange(e) {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
   }
 
-  const emailValid =
-    !form.email || /\S+@\S+\.\S+/.test(form.email);
+  const emailValid = !form.email || /\S+@\S+\.\S+/.test(form.email);
 
-  const peselValid =
-    !form.pesel || /^\d{11}$/.test(form.pesel);
+  const peselValid = !form.pesel || /^\d{11}$/.test(form.pesel);
 
   const phoneValid =
     !form.phone || /^\d{9}$/.test(form.phone.replace(/\s+/g, ""));
@@ -55,26 +61,25 @@ export default function BloodPointRegister() {
     !form.contactPhone ||
     /^\d{9}$/.test(form.contactPhone.replace(/\s+/g, ""));
 
-  const zipValid =
-    !form.zipCode || /^\d{2}-\d{3}$/.test(form.zipCode);
+  const zipValid = !form.zipCode || /^\d{2}-\d{3}$/.test(form.zipCode);
 
-  const firstNameValid =
-    !form.firstName || form.firstName.trim().length > 0;
+  const firstNameValid = !form.firstName || form.firstName.trim().length > 0;
 
-  const lastNameValid =
-    !form.lastName || form.lastName.trim().length > 0;
+  const lastNameValid = !form.lastName || form.lastName.trim().length > 0;
 
-  const cityValid =
-    !form.city || form.city.trim().length > 0;
+  const cityValid = !form.city || form.city.trim().length > 0;
 
-  const streetValid =
-    !form.street || form.street.trim().length > 0;
+  const streetValid = !form.street || form.street.trim().length > 0;
 
   const genderValid =
     !form.gender || form.gender === "K" || form.gender === "M";
 
   const birthDateValid =
-    !form.birthDate || form.birthDate.trim().length > 0;
+    !form.birthDate
+      ? true
+      : /^\d{4}-\d{2}-\d{2}$/.test(form.birthDate) &&
+        form.birthDate >= EARLIEST_BIRTH_DATE &&
+        form.birthDate <= today;
 
   function isValidLat(val) {
     if (!val) return false;
@@ -90,6 +95,11 @@ export default function BloodPointRegister() {
 
   const latValid = isValidLat(form.latitude);
   const lngValid = isValidLng(form.longitude);
+
+  const peselMatchesBirthDate = isPeselMatchingBirthDate(
+    form.pesel,
+    form.birthDate
+  );
 
   const canSubmit =
     form.province &&
@@ -111,6 +121,7 @@ export default function BloodPointRegister() {
     zipValid &&
     genderValid &&
     birthDateValid &&
+    peselMatchesBirthDate &&
     firstNameValid &&
     lastNameValid &&
     cityValid &&
@@ -137,7 +148,7 @@ export default function BloodPointRegister() {
 
         firstName: form.firstName.trim(),
         lastName: form.lastName.trim(),
-        email: form.email.trim(),
+        email: form.email.trim().toLowerCase(),
         contactPhone: form.contactPhone.replace(/\s+/g, "").trim(),
         pesel: form.pesel.trim(),
         birthDate: form.birthDate || null,
@@ -204,7 +215,9 @@ export default function BloodPointRegister() {
           backendData?.message ||
           backendData?.error ||
           err?.message ||
-          `Nie udało się zarejestrować punktu krwiodawstwa (status ${status || "?"}).`;
+          `Nie udało się zarejestrować punktu krwiodawstwa (status ${
+            status || "?"
+          }).`;
         showError(msg);
       }
     } finally {
@@ -217,7 +230,10 @@ export default function BloodPointRegister() {
       <Header />
       <main className="bp-section">
         <div className="bp-container">
-        <BackButton to="/admin/panel/punkt-krwiodawstwa" label="Powrót do panelu Punktu Krwiodawstwa" />
+          <BackButton
+            to="/admin/panel/punkt-krwiodawstwa"
+            label="Powrót do panelu Punktu Krwiodawstwa"
+          />
           <div className="auth-page-center">
             <article className="bp-card auth-card auth-card--wide">
               <div className="auth-card-cap" aria-hidden="true" />
@@ -379,9 +395,7 @@ export default function BloodPointRegister() {
                   )}
                 </div>
 
-                <h3 className="auth-section-title">
-                  Dane managera punktu
-                </h3>
+                <h3 className="auth-section-title">Dane managera punktu</h3>
 
                 <div className="form-field">
                   <label className="label" htmlFor="firstName">
@@ -478,6 +492,14 @@ export default function BloodPointRegister() {
                       PESEL musi składać się z 11 cyfr.
                     </div>
                   )}
+                  {!peselMatchesBirthDate &&
+                    form.pesel &&
+                    form.birthDate &&
+                    peselValid && (
+                      <div className="field-error">
+                        PESEL nie jest zgodny z datą urodzenia.
+                      </div>
+                    )}
                 </div>
 
                 <div className="form-field">
@@ -491,11 +513,15 @@ export default function BloodPointRegister() {
                     type="date"
                     value={form.birthDate}
                     onChange={handleChange}
-                    max={new Date().toISOString().split("T")[0]}
+                    min={EARLIEST_BIRTH_DATE}
+                    max={today}
                     required
                   />
                   {!birthDateValid && form.birthDate && (
-                    <div className="field-error">Podaj datę urodzenia.</div>
+                    <div className="field-error">
+                      Podaj poprawną datę urodzenia (min. 1910 r., nie w
+                      przyszłości).
+                    </div>
                   )}
                 </div>
 

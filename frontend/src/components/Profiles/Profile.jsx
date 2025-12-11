@@ -11,6 +11,8 @@ import HospitalProfileInfo from "./HospitalProfileInfo";
 import TodayAppointments from "./TodayAppointments/TodayAppointments";
 import VisitHistory from "./VisitHistory";
 import Documents from "./Documents/Documents";
+import PointAppointmentsHistory from "./PointAppointmentsHistory";
+
 
 import { Person, CalendarToday, Edit, Dashboard } from "@mui/icons-material";
 import authService from "../../services/AuthenticationService";
@@ -47,13 +49,20 @@ export default function Profile() {
             </>
           )}
 
-          {isPoint && (
+        {isPoint && (
+          <>
             <NavItem
               to="/profil/zarzadzanie-wizytami"
               icon={<Dashboard />}
               label="Obsługa wizyt"
             />
-          )}
+            <NavItem
+              to="/profil/historia-wizyt"
+              icon={<CalendarToday />}
+              label="Historia wizyt"
+            />
+          </>
+        )}
 
           <div className="spacer" />
         </aside>
@@ -70,7 +79,10 @@ export default function Profile() {
               </>
             )}
             {isPoint && (
-              <Route path="zarzadzanie-wizytami" element={<TodayAppointments />} />
+              <>
+                <Route path="zarzadzanie-wizytami" element={<TodayAppointments />} />
+                <Route path="historia-wizyt" element={<PointAppointmentsHistory />} />
+              </>
             )}
 
             <Route path="*" element={<Navigate to="/profil" replace />} />
