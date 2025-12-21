@@ -56,7 +56,7 @@ export default function ChangePasswordModal({ open, onSuccess }) {
 
       const user = authService.getUser();
       if (user) {
-        const updated = { ...user, mustChangePassword: false };
+        const updated = { ...user, changedPassword: false };
         localStorage.setItem("currentUser", JSON.stringify(updated));
       }
 
