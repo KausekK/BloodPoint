@@ -23,7 +23,7 @@ import HospitalList from './components/MenagePanels/Admin/Actions/HospitalAction
 import AdminBloodPointActionsDashboard from './components/MenagePanels/Admin/Actions/BloodPointActions/AdminBloodPointActionsDashboard.jsx'
 import BloodPointRegister from './components/MenagePanels/Admin/Actions/BloodPointActions/BloodPointRegister.jsx';
 import BloodPointList from './components/MenagePanels/Admin/Actions/BloodPointActions/BloodPointList.jsx';
-import ChangePasswordPage from './components/ChangePassword/ChangePasswordPage.jsx';
+import ChangePasswordPage from './components/Auth/ChangePasswordPage.jsx';
 
 
 function App() {
