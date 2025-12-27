@@ -29,8 +29,6 @@ export default function BloodPointList() {
   const [points, setPoints] = useState([]);
   const [loadingPoints, setLoadingPoints] = useState(true);
   const [errorPoints, setErrorPoints] = useState("");
-
-  // 🔹 TYLKO miasto i ulica – BEZ search
   const [filters, setFilters] = useState({
     city: "",
     street: "",
@@ -636,7 +634,6 @@ export default function BloodPointList() {
                                           <option value="Lekarz">Lekarz</option>
                                           <option value="Pielegniarka">Pielęgniarka</option>
                                           <option value="Recepcjonistka">Recepcjonistka</option>
-                                          {/* brak Menadzer */}
                                         </select>
                                         {!positionValid && newStaff.position && (
                                           <div className="field-error">

@@ -254,7 +254,6 @@ export default function BloodPointRegister() {
                   )}
                 </div>
 
-                {/* Longitude */}
                 <div className="form-field">
                   <label className="label">Longitude</label>
                   <input name="longitude" className="input" value={form.longitude} onChange={handleChange} />
