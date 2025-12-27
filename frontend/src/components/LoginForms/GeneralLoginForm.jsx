@@ -4,6 +4,7 @@ import authService from "../../services/AuthenticationService";
 import { showMessage, showError } from "../shared/services/MessageService";
 import { MessageType } from "../shared/const/MessageType.model";
 import "../SharedCSS/LoginForms.css";
+import { useNavigate } from "react-router-dom";
 
 export default function GeneralLoginForm({
   title = "Zaloguj się",
@@ -16,6 +17,7 @@ export default function GeneralLoginForm({
 }) {
   const [vals, setVals] = useState({ [idName]: "", password: "" });
   const [submitting, setSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,13 +57,22 @@ export default function GeneralLoginForm({
       });
 
       if (res?.token) {
-        showMessage("Zalogowano pomyślnie.", MessageType.SUCCESS);
-      
-        const role = primaryRole();
+          showMessage("Zalogowano pomyślnie.", MessageType.SUCCESS);
 
-      } else {
-        showError("Logowanie nie powiodło się.");
-      }
+          const user = authService.getUser();
+          if (!user) {
+            showError("Błąd logowania – brak danych użytkownika.");
+            return;
+          }
+
+          if (user.changedPassword) {
+            navigate("/change-password", { replace: true });
+            return;
+          }
+
+          const role = primaryRole();
+          navigate(landingPath(role), { replace: true });
+        }
 
       
     } catch (err) {
