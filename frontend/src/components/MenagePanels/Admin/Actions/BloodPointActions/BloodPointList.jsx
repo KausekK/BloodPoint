@@ -29,8 +29,6 @@ export default function BloodPointList() {
   const [points, setPoints] = useState([]);
   const [loadingPoints, setLoadingPoints] = useState(true);
   const [errorPoints, setErrorPoints] = useState("");
-
-  // 🔹 TYLKO miasto i ulica – BEZ search
   const [filters, setFilters] = useState({
     city: "",
     street: "",
@@ -94,7 +92,6 @@ export default function BloodPointList() {
 
   const streetFilter = filters.street.trim().toLowerCase();
 
-  // 🔹 Logika filtrowania – bez `searchFilter` i `matchSearch`
   const filteredPoints = points.filter((p) => {
     const matchCity = !filters.city || p.city === filters.city;
 
@@ -158,7 +155,6 @@ export default function BloodPointList() {
     }
   }
 
-  // -------------------- NEW STAFF FORM --------------------
   function handleNewStaffChange(e) {
     const { name, value } = e.target;
     setNewStaff((s) => ({ ...s, [name]: value }));
@@ -638,7 +634,6 @@ export default function BloodPointList() {
                                           <option value="Lekarz">Lekarz</option>
                                           <option value="Pielegniarka">Pielęgniarka</option>
                                           <option value="Recepcjonistka">Recepcjonistka</option>
-                                          {/* brak Menadzer */}
                                         </select>
                                         {!positionValid && newStaff.position && (
                                           <div className="field-error">

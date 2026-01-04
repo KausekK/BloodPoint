@@ -18,17 +18,26 @@ import ReportHistoryPage from './components/MenagePanels/Hospital/Actions/Report
 import LoginPage from './components/LoginForms/LoginPage.jsx';
 import AdminDashboardPanelPage from './components/MenagePanels/Admin/AdminDashboardPanelPage.jsx';
 import AdminHospitalActionsDashboard from './components/MenagePanels/Admin/Actions/HospitalActions/AdminHospitalActionsDashboard.jsx';
-import HospitalRegister from './components/MenagePanels/Admin/Actions/HospitalActions/Hospitalregister.jsx';
+import HospitalRegister from './components/MenagePanels/Admin/Actions/HospitalActions/HospitalRegister.jsx';
 import HospitalList from './components/MenagePanels/Admin/Actions/HospitalActions/HospitalList.jsx';
 import AdminBloodPointActionsDashboard from './components/MenagePanels/Admin/Actions/BloodPointActions/AdminBloodPointActionsDashboard.jsx'
 import BloodPointRegister from './components/MenagePanels/Admin/Actions/BloodPointActions/BloodPointRegister.jsx';
 import BloodPointList from './components/MenagePanels/Admin/Actions/BloodPointActions/BloodPointList.jsx';
+import ChangePasswordPage from './components/Auth/ChangePasswordPage.jsx';
 
 
 function App() {
     return (
         <Router>
             <Routes>
+                <Route
+                    path="/change-password"
+                    element={
+                        <ProtectedRoute>
+                        <ChangePasswordPage />
+                        </ProtectedRoute>
+                    }
+                    />
 
                 <Route path="/" element={<Home />} />
 

@@ -24,6 +24,7 @@ import { isPeselMatchingBirthDate } from "../../../../shared/utils/pesel";
 
 export default function BloodPointRegister() {
   const [submitting, setSubmitting] = useState(false);
+  const [submitAttempted, setSubmitAttempted] = useState(false);
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -51,26 +52,17 @@ export default function BloodPointRegister() {
   }
 
   const emailValid = !form.email || /\S+@\S+\.\S+/.test(form.email);
-
   const peselValid = !form.pesel || /^\d{11}$/.test(form.pesel);
-
   const phoneValid =
     !form.phone || /^\d{9}$/.test(form.phone.replace(/\s+/g, ""));
-
   const contactPhoneValid =
     !form.contactPhone ||
     /^\d{9}$/.test(form.contactPhone.replace(/\s+/g, ""));
-
   const zipValid = !form.zipCode || /^\d{2}-\d{3}$/.test(form.zipCode);
-
   const firstNameValid = !form.firstName || form.firstName.trim().length > 0;
-
   const lastNameValid = !form.lastName || form.lastName.trim().length > 0;
-
   const cityValid = !form.city || form.city.trim().length > 0;
-
   const streetValid = !form.street || form.street.trim().length > 0;
-
   const genderValid =
     !form.gender || form.gender === "K" || form.gender === "M";
 
@@ -107,6 +99,8 @@ export default function BloodPointRegister() {
     form.zipCode.trim() &&
     form.street.trim() &&
     form.phone.trim() &&
+    form.latitude &&
+    form.longitude &&
     form.firstName.trim() &&
     form.lastName.trim() &&
     form.email.trim() &&
@@ -131,8 +125,13 @@ export default function BloodPointRegister() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (submitting || !canSubmit) return;
 
+    if (!canSubmit) {
+      setSubmitAttempted(true);
+      return;
+    }
+
+    if (submitting) return;
     setSubmitting(true);
 
     try {
@@ -142,10 +141,8 @@ export default function BloodPointRegister() {
         zipCode: form.zipCode.trim(),
         street: form.street.trim(),
         phone: form.phone.replace(/\s+/g, "").trim(),
-
         latitude: Number(String(form.latitude).replace(",", ".")),
         longitude: Number(String(form.longitude).replace(",", ".")),
-
         firstName: form.firstName.trim(),
         lastName: form.lastName.trim(),
         email: form.email.trim().toLowerCase(),
@@ -164,62 +161,18 @@ export default function BloodPointRegister() {
             type: MessageType[m.type] || MessageType.INFO,
           }))
         );
-      } else if (res?.resultDTO) {
+      } else {
         showMessage(
-          "Punkt krwiodawstwa został zarejestrowany. Tymczasowe hasło zostało wygenerowane (zobacz log serwera).",
+          "Punkt krwiodawstwa został zarejestrowany.",
           MessageType.SUCCESS
         );
-      } else {
-        showError("Nie udało się zarejestrować punktu krwiodawstwa.");
       }
-
-      setForm({
-        province: "",
-        city: "",
-        zipCode: "",
-        street: "",
-        phone: "",
-        latitude: "",
-        longitude: "",
-        firstName: "",
-        lastName: "",
-        email: "",
-        contactPhone: "",
-        pesel: "",
-        birthDate: "",
-        gender: "K",
-      });
-
-      showMessage(
-        "Za 3 sekundy nastąpi przejście do panelu administratora.",
-        MessageType.INFO
-      );
 
       setTimeout(() => {
         navigate("/admin/panel/punkt-krwiodawstwa");
       }, 3000);
     } catch (err) {
-      const backendData = err?.response?.data;
-      const backendMessages = backendData?.messages;
-
-      if (Array.isArray(backendMessages) && backendMessages.length > 0) {
-        showMessages(
-          backendMessages.map((m) => ({
-            msg: m.msg,
-            type: MessageType[m.type] || MessageType.INFO,
-          }))
-        );
-      } else {
-        const status = err?.response?.status;
-        const msg =
-          backendData?.message ||
-          backendData?.error ||
-          err?.message ||
-          `Nie udało się zarejestrować punktu krwiodawstwa (status ${
-            status || "?"
-          }).`;
-        showError(msg);
-      }
+      showError("Nie udało się zarejestrować punktu krwiodawstwa.");
     } finally {
       setSubmitting(false);
     }
@@ -240,327 +193,140 @@ export default function BloodPointRegister() {
               <h2 className="auth-card-title">
                 Zarejestruj Punkt Krwiodawstwa
               </h2>
-              <p>
-                Uzupełnij dane punktu oraz dane managera, który będzie się
-                logował.
-              </p>
 
               <form className="auth-form" onSubmit={handleSubmit} noValidate>
-                <h3 className="auth-section-title">Dane punktu</h3>
 
                 <div className="form-field">
-                  <label className="label" htmlFor="province">
-                    Województwo
-                  </label>
-                  <div className="select-wrap">
-                    <select
-                      id="province"
-                      name="province"
-                      className="select"
-                      value={form.province}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="" disabled>
-                        Wybierz województwo
-                      </option>
-                      {PROVINCES.map((p) => (
-                        <option key={p} value={p}>
-                          {p}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <label className="label">Województwo</label>
+                  <select
+                    name="province"
+                    className="select"
+                    value={form.province}
+                    onChange={handleChange}
+                  >
+                    <option value="">Wybierz województwo</option>
+                    {PROVINCES.map((p) => (
+                      <option key={p} value={p}>{p}</option>
+                    ))}
+                  </select>
+                  {!form.province && submitAttempted && (
+                    <div className="field-error">Wybierz województwo.</div>
+                  )}
                 </div>
 
                 <div className="form-field">
-                  <label className="label" htmlFor="city">
-                    Miasto
-                  </label>
-                  <input
-                    id="city"
-                    name="city"
-                    className="input"
-                    type="text"
-                    placeholder="Miasto"
-                    value={form.city}
-                    onChange={handleChange}
-                    required
-                  />
-                  {!cityValid && form.city && (
+                  <label className="label">Miasto</label>
+                  <input name="city" className="input" value={form.city} onChange={handleChange} />
+                  {!cityValid && (form.city || submitAttempted) && (
                     <div className="field-error">Podaj poprawne miasto.</div>
                   )}
                 </div>
 
                 <div className="form-field">
-                  <label className="label" htmlFor="zipCode">
-                    Kod pocztowy
-                  </label>
-                  <input
-                    id="zipCode"
-                    name="zipCode"
-                    className="input"
-                    type="text"
-                    placeholder="00-000"
-                    value={form.zipCode}
-                    onChange={handleChange}
-                    required
-                  />
-                  {!zipValid && form.zipCode && (
-                    <div className="field-error">
-                      Kod pocztowy w formacie 00-000.
-                    </div>
+                  <label className="label">Kod pocztowy</label>
+                  <input name="zipCode" className="input" value={form.zipCode} onChange={handleChange} />
+                  {!zipValid && (form.zipCode || submitAttempted) && (
+                    <div className="field-error">Kod pocztowy w formacie 00-000.</div>
                   )}
                 </div>
 
                 <div className="form-field">
-                  <label className="label" htmlFor="street">
-                    Ulica i numer
-                  </label>
-                  <input
-                    id="street"
-                    name="street"
-                    className="input"
-                    type="text"
-                    placeholder="np. Szpitalna 1"
-                    value={form.street}
-                    onChange={handleChange}
-                    required
-                  />
-                  {!streetValid && form.street && (
+                  <label className="label">Ulica</label>
+                  <input name="street" className="input" value={form.street} onChange={handleChange} />
+                  {!streetValid && (form.street || submitAttempted) && (
                     <div className="field-error">Podaj poprawną ulicę.</div>
                   )}
                 </div>
 
                 <div className="form-field">
-                  <label className="label" htmlFor="phone">
-                    Telefon punktu
-                  </label>
-                  <input
-                    id="phone"
-                    name="phone"
-                    className="input"
-                    type="tel"
-                    placeholder="np. 222222222"
-                    value={form.phone}
-                    onChange={handleChange}
-                    required
-                  />
-                  {!phoneValid && form.phone && (
-                    <div className="field-error">
-                      Numer telefonu musi mieć 9 cyfr.
-                    </div>
+                  <label className="label">Telefon</label>
+                  <input name="phone" className="input" value={form.phone} onChange={handleChange} />
+                  {!phoneValid && (form.phone || submitAttempted) && (
+                    <div className="field-error">Telefon musi mieć 9 cyfr.</div>
                   )}
                 </div>
 
                 <div className="form-field">
-                  <label className="label" htmlFor="latitude">
-                    Szerokość geograficzna (latitude)
-                  </label>
-                  <input
-                    id="latitude"
-                    name="latitude"
-                    className="input"
-                    type="text"
-                    placeholder="np. 52.2297"
-                    value={form.latitude}
-                    onChange={handleChange}
-                    required
-                  />
-                  {!latValid && form.latitude && (
-                    <div className="field-error">
-                      Podaj poprawną szerokość geograficzną (-90 do 90).
-                    </div>
+                  <label className="label">Latitude</label>
+                  <input name="latitude" className="input" value={form.latitude} onChange={handleChange} />
+                  {!latValid && (form.latitude || submitAttempted) && (
+                    <div className="field-error">Latitude -90 do 90.</div>
                   )}
                 </div>
 
                 <div className="form-field">
-                  <label className="label" htmlFor="longitude">
-                    Długość geograficzna (longitude)
-                  </label>
-                  <input
-                    id="longitude"
-                    name="longitude"
-                    className="input"
-                    type="text"
-                    placeholder="np. 21.0122"
-                    value={form.longitude}
-                    onChange={handleChange}
-                    required
-                  />
-                  {!lngValid && form.longitude && (
-                    <div className="field-error">
-                      Podaj poprawną długość geograficzną (-180 do 180).
-                    </div>
-                  )}
-                </div>
-
-                <h3 className="auth-section-title">Dane managera punktu</h3>
-
-                <div className="form-field">
-                  <label className="label" htmlFor="firstName">
-                    Imię
-                  </label>
-                  <input
-                    id="firstName"
-                    name="firstName"
-                    className="input"
-                    type="text"
-                    value={form.firstName}
-                    onChange={handleChange}
-                    required
-                  />
-                  {!firstNameValid && form.firstName && (
-                    <div className="field-error">Podaj poprawne imię.</div>
+                  <label className="label">Longitude</label>
+                  <input name="longitude" className="input" value={form.longitude} onChange={handleChange} />
+                  {!lngValid && (form.longitude || submitAttempted) && (
+                    <div className="field-error">Longitude -180 do 180.</div>
                   )}
                 </div>
 
                 <div className="form-field">
-                  <label className="label" htmlFor="lastName">
-                    Nazwisko
-                  </label>
-                  <input
-                    id="lastName"
-                    name="lastName"
-                    className="input"
-                    type="text"
-                    value={form.lastName}
-                    onChange={handleChange}
-                    required
-                  />
-                  {!lastNameValid && form.lastName && (
-                    <div className="field-error">Podaj poprawne nazwisko.</div>
+                  <label className="label">Imię</label>
+                  <input name="firstName" className="input" value={form.firstName} onChange={handleChange} />
+                  {!firstNameValid && (form.firstName || submitAttempted) && (
+                    <div className="field-error">Podaj imię.</div>
                   )}
                 </div>
 
                 <div className="form-field">
-                  <label className="label" htmlFor="email">
-                    E-mail (login)
-                  </label>
-                  <input
-                    id="email"
-                    name="email"
-                    className="input"
-                    type="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    required
-                  />
-                  {!emailValid && form.email && (
-                    <div className="field-error">
-                      Podaj poprawny adres e-mail.
-                    </div>
+                  <label className="label">Nazwisko</label>
+                  <input name="lastName" className="input" value={form.lastName} onChange={handleChange} />
+                  {!lastNameValid && (form.lastName || submitAttempted) && (
+                    <div className="field-error">Podaj nazwisko.</div>
                   )}
                 </div>
 
                 <div className="form-field">
-                  <label className="label" htmlFor="contactPhone">
-                    Telefon managera
-                  </label>
-                  <input
-                    id="contactPhone"
-                    name="contactPhone"
-                    className="input"
-                    type="tel"
-                    value={form.contactPhone}
-                    onChange={handleChange}
-                    required
-                  />
-                  {!contactPhoneValid && form.contactPhone && (
-                    <div className="field-error">
-                      Numer telefonu musi mieć 9 cyfr.
-                    </div>
+                  <label className="label">E-mail</label>
+                  <input name="email" className="input" value={form.email} onChange={handleChange} />
+                  {!emailValid && (form.email || submitAttempted) && (
+                    <div className="field-error">Niepoprawny e-mail.</div>
                   )}
                 </div>
 
                 <div className="form-field">
-                  <label className="label" htmlFor="pesel">
-                    PESEL
-                  </label>
-                  <input
-                    id="pesel"
-                    name="pesel"
-                    className="input"
-                    type="text"
-                    maxLength={11}
-                    value={form.pesel}
-                    onChange={handleChange}
-                    required
-                  />
-                  {!peselValid && form.pesel && (
-                    <div className="field-error">
-                      PESEL musi składać się z 11 cyfr.
-                    </div>
-                  )}
-                  {!peselMatchesBirthDate &&
-                    form.pesel &&
-                    form.birthDate &&
-                    peselValid && (
-                      <div className="field-error">
-                        PESEL nie jest zgodny z datą urodzenia.
-                      </div>
-                    )}
-                </div>
-
-                <div className="form-field">
-                  <label className="label" htmlFor="birthDate">
-                    Data urodzenia
-                  </label>
-                  <input
-                    id="birthDate"
-                    name="birthDate"
-                    className="input"
-                    type="date"
-                    value={form.birthDate}
-                    onChange={handleChange}
-                    min={EARLIEST_BIRTH_DATE}
-                    max={today}
-                    required
-                  />
-                  {!birthDateValid && form.birthDate && (
-                    <div className="field-error">
-                      Podaj poprawną datę urodzenia (min. 1910 r., nie w
-                      przyszłości).
-                    </div>
+                  <label className="label">Telefon managera</label>
+                  <input name="contactPhone" className="input" value={form.contactPhone} onChange={handleChange} />
+                  {!contactPhoneValid && (form.contactPhone || submitAttempted) && (
+                    <div className="field-error">Telefon musi mieć 9 cyfr.</div>
                   )}
                 </div>
 
                 <div className="form-field">
-                  <label className="label" htmlFor="gender">
-                    Płeć
-                  </label>
-                  <select
-                    id="gender"
-                    name="gender"
-                    className="input"
-                    value={form.gender}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="K">Kobieta</option>
-                    <option value="M">Mężczyzna</option>
-                  </select>
-                  {!genderValid && form.gender && (
-                    <div className="field-error">Wybierz poprawną płeć.</div>
+                  <label className="label">PESEL</label>
+                  <input name="pesel" className="input" value={form.pesel} onChange={handleChange} />
+                  {!peselValid && (form.pesel || submitAttempted) && (
+                    <div className="field-error">PESEL = 11 cyfr.</div>
+                  )}
+                  {!peselMatchesBirthDate && (form.birthDate || submitAttempted) && peselValid && (
+                    <div className="field-error">PESEL niezgodny z datą.</div>
+                  )}
+                </div>
+
+                <div className="form-field">
+                  <label className="label">Data urodzenia</label>
+                  <input type="date" name="birthDate" className="input" value={form.birthDate} onChange={handleChange} />
+                  {!birthDateValid && (form.birthDate || submitAttempted) && (
+                    <div className="field-error">Niepoprawna data.</div>
                   )}
                 </div>
 
                 <div className="form-actions">
                   <CTA
-                    label={
-                      submitting ? "Zapisywanie..." : "Zarejestruj punkt"
-                    }
+                    label={submitting ? "Zapisywanie..." : "Zarejestruj punkt"}
                     type="submit"
-                    disabled={submitting || !canSubmit}
+                    disabled={submitting}
                   />
                 </div>
 
-                {!canSubmit && (
+                {!canSubmit && submitAttempted && (
                   <div className="auth-note">
-                    Uzupełnij poprawnie wszystkie wymagane pola, w tym
-                    współrzędne, dane kontaktowe, PESEL oraz kod pocztowy.
+                    Formularz zawiera błędy — popraw zaznaczone pola.
                   </div>
                 )}
+
               </form>
             </article>
           </div>

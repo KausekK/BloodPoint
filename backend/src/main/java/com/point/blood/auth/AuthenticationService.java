@@ -99,14 +99,14 @@ public class AuthenticationService {
                     .build();
         }
 
-        if (!isPeselMatchingBirthDate(pesel, birthDate)) {
-            return EditResult.<AuthenticationResponse>builder()
-                    .messages(java.util.List.of(
-                            MessageDTO.createErrorMessage("PESEL nie jest zgodny z datą urodzenia")
-                    ))
-                    .resultDTO(null)
-                    .build();
-        }
+//        if (!isPeselMatchingBirthDate(pesel, birthDate)) {
+//            return EditResult.<AuthenticationResponse>builder()
+//                    .messages(java.util.List.of(
+//                            MessageDTO.createErrorMessage("PESEL nie jest zgodny z datą urodzenia")
+//                    ))
+//                    .resultDTO(null)
+//                    .build();
+//        }
 
         Set<Role> roles = resolveRoles(request);
 
@@ -166,7 +166,7 @@ public class AuthenticationService {
         claims.put("uid", user.getId());
 
         boolean changePassword = user.isChanged_password();
-
+        claims.put("mcp", changePassword);
         boolean isStaff = roleNames.contains(RoleEnum.PUNKT_KRWIODAWSTWA.name())
                 || roleNames.contains(RoleEnum.MANAGER_PUNKTU_KRWIODAWSTWA.name());
 
@@ -188,6 +188,12 @@ public class AuthenticationService {
         }
 
         String jwtToken = jwtService.generateToken(claims, user);
+        System.out.println("=== AUTHENTICATION DEBUG ===");
+        System.out.println("User email: " + user.getEmail());
+        System.out.println("changed_password (DB): " + user.isChanged_password());
+        System.out.println("Roles: " + roleNames);
+        System.out.println("============================");
+
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .userId(user.getId())

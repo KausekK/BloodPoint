@@ -1,21 +1,28 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import authService from "../../services/AuthenticationService";
 
 export default function ProtectedRoute({ allowedRoles = [], children }) {
+  const location = useLocation();
   const isAuth = authService.isAuthenticated();
 
   if (!isAuth) {
     return <Navigate to="/login" replace />;
   }
 
-  if (!allowedRoles || allowedRoles.length === 0) {
+  if (
+    authService.mustChangePassword() &&
+    location.pathname !== "/change-password"
+  ) {
+    return <Navigate to="/change-password" replace />;
+  }
+
+  if (!allowedRoles.length) {
     return children;
   }
 
-  const user = authService.getUser();
-  const userRoles = (user?.roles) || [];
+  const roles = authService.getUser()?.roles || [];
+  const ok = allowedRoles.some((r) => roles.includes(r));
 
-  const ok = allowedRoles.some((r) => userRoles.includes(r));
   if (!ok) {
     return <Navigate to="/" replace />;
   }

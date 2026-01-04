@@ -130,7 +130,7 @@ export default function Statistics() {
                   </table>
                 </div>
 
-                {/* osobna karta z klasą do responsywnej wysokości */}
+
                 <div className="bp-card stats-chart-card">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={stats}>

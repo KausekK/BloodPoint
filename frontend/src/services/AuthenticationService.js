@@ -44,6 +44,7 @@ async function register(registerRequest) {
 }
 
 async function login(authenticationRequest) {
+  clearUser();
   const { data } = await api.post("/authenticate", authenticationRequest);
   if (data?.token) {
     setToken(data.token);
@@ -63,9 +64,10 @@ async function login(authenticationRequest) {
       hospitalId: hid ?? null,
       roles: Array.isArray(roles) ? roles : [],
       token: data.token,
-      mustChangePassword: data.mustChangePassword ?? mcp ?? false,
+      changedPassword: Boolean(mcp),
       exp: exp ?? null,
     });
+    
   }
   return data;
 }
@@ -115,7 +117,7 @@ function hasRole(roleName) {
   return roles.includes(roleName);
 }
 function mustChangePassword() {
-  return !!getUser()?.mustChangePassword;
+  return !!getUser()?.changedPassword;
 }
 
 const authService = {

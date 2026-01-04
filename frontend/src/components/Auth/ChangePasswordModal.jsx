@@ -7,8 +7,10 @@ import {
 import { MessageType } from "../shared/const/MessageType.model";
 import authService from "../../services/AuthenticationService";
 import "../SharedCSS/LoginForms.css";
+import { useNavigate } from "react-router-dom";
 
 export default function ChangePasswordModal({ open, onSuccess }) {
+  const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     currentPassword: "",
@@ -56,8 +58,21 @@ export default function ChangePasswordModal({ open, onSuccess }) {
 
       const user = authService.getUser();
       if (user) {
-        const updated = { ...user, mustChangePassword: false };
+        const updated = { ...user, changedPassword: false };
         localStorage.setItem("currentUser", JSON.stringify(updated));
+      }
+
+      if (user?.roles?.includes("ADMIN")) {
+        navigate("/admin/dashboard");
+      } else if (user?.roles?.includes("SZPITAL")) {
+        navigate("/szpital/dashboard");
+      } else if (
+        user?.roles?.includes("PUNKT_KRWIODAWSTWA") ||
+        user?.roles?.includes("MANAGER_PUNKTU_KRWIODAWSTWA")
+      ) {
+        navigate("/punkt-krwiodawstwa/dashboard");
+      } else {
+        navigate("/");
       }
 
       if (typeof onSuccess === "function") {
