@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 
 export default function GeneralLoginForm({
   title = "Zaloguj się",
-  lead = "Po zalogowaniu automatycznie przeniesiemy Cię do właściwego panelu.",
   idName = "email",
   idType = "email",
   idPlaceholder = "E-mail",
@@ -100,14 +99,7 @@ export default function GeneralLoginForm({
     <article className="bp-card auth-card">
       <div className="auth-card-cap" aria-hidden="true" />
       {title ? <h2 className="auth-card-title">{title}</h2> : null}
-      {lead ? (
-        <p
-          className="login-lead"
-          style={{ textAlign: "center", marginTop: -6 }}
-        >
-          {lead}
-        </p>
-      ) : null}
+
 
       <form className="auth-form" onSubmit={handleSubmit} noValidate>
         <div className="form-field">
