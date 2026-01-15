@@ -32,7 +32,7 @@ export default function GeneralLoginForm({
   const landingPath = (role) => {
     switch (role) {
       case "DAWCA":
-        return "/profil";
+        return "/";
       case "PUNKT_KRWIODAWSTWA":
       case "MANAGER_PUNKTU_KRWIODAWSTWA":
         return "/punkt-krwiodawstwa/dashboard";

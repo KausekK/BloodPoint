@@ -15,7 +15,7 @@ export default function HospitalDashboardPanelPage() {
       <main className="bp-section">
         <div className="bp-container">
           <DashboardPanel
-            title="Witaj w profilu szpitala"
+            title="Witaj w panelu szpitala"
             subtitle="Wybierz, co chcesz zrobić."
             actions={actions}
             center

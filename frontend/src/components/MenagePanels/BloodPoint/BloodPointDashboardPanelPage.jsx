@@ -23,7 +23,7 @@ export default function BloodPointDashboardPanelPage() {
       <main className="bp-section">
         <div className="bp-container">
           <DashboardPanel
-            title="Witaj w profilu punktu krwiodawstwa"
+            title="Witaj w panelu punktu krwiodawstwa"
             subtitle="Wybierz, co chcesz zrobić."
             actions={actions}
             center
