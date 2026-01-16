@@ -48,6 +48,13 @@ public class AdminService {
                     .resultDTO(null)
                     .build();
         }
+        if (usersRepository.findByPesel(request.getPesel()).isPresent()) {
+            return EditResult.<Void>builder()
+                    .messages(List.of(MessageDTO.createErrorMessage("Podany pesel jest już przypisany do innego użytkownika.")))
+                    .resultDTO(null)
+                    .build();
+        }
+
 
         Role pointRole = roleRepository.findByName(RoleEnum.PUNKT_KRWIODAWSTWA);
         Role managerRole = roleRepository.findByName(RoleEnum.MANAGER_PUNKTU_KRWIODAWSTWA);
@@ -128,6 +135,12 @@ public class AdminService {
         if (usersRepository.findByEmail(request.getEmail()).isPresent()) {
             return EditResult.<HospitalProfileDTO>builder()
                     .messages(List.of(MessageDTO.createErrorMessage("Podany e-mail jest już używany przez innego użytkownika.")))
+                    .resultDTO(null)
+                    .build();
+        }
+        if (usersRepository.findByPesel(request.getPesel()).isPresent()) {
+            return EditResult.<HospitalProfileDTO>builder()
+                    .messages(List.of(MessageDTO.createErrorMessage("Podany pesel jest już przypisany do innego użytkownika.")))
                     .resultDTO(null)
                     .build();
         }

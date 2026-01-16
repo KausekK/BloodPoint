@@ -97,37 +97,35 @@ export default function DonorAuthCard() {
   }
 
   async function submitRegistration(e) {
-    e.preventDefault();
-    if (!passwordsOk || submitting) return;
+  e.preventDefault();
+  if (!passwordsOk || submitting) return;
 
-    setSubmitting(true);
-    try {
-      const data = await authService.register({
-        firstName: reg.firstName.trim(),
-        lastName: reg.lastName.trim(),
-        email: reg.email.trim().toLowerCase(),
-        pesel: reg.pesel.trim(),
-        phone: reg.phone.trim(),
-        gender: reg.gender,
-        birthDate: reg.birthDate,
-        role: DONOR_ROLE,
-        password: pwd.pass1,
-      });
+  setSubmitting(true);
+  try {
+    const data = await authService.register({
+      firstName: reg.firstName.trim(),
+      lastName: reg.lastName.trim(),
+      email: reg.email.trim().toLowerCase(),
+      pesel: reg.pesel.trim(),
+      phone: reg.phone.trim(),
+      gender: reg.gender,
+      birthDate: reg.birthDate,
+      role: DONOR_ROLE,
+      password: pwd.pass1,
+    });
 
-      if (Array.isArray(data?.messages) && data.messages.length > 0) {
-        showMessages(
-          data.messages.map((m) => ({
-            msg: m.msg,
-            type: MessageType[m.type] || MessageType.INFO,
-          }))
-        );
-      } else {
-        showMessage(
-          "Konto zostało utworzone. Możesz się teraz zalogować.",
-          MessageType.SUCCESS
-        );
-      }
+    const messages = Array.isArray(data?.messages) ? data.messages : [];
 
+    showMessages(
+      messages.map((m) => ({
+        msg: m.msg,
+        type: MessageType[m.type] || MessageType.INFO,
+      }))
+    );
+
+    const hasError = messages.some((m) => m.type === "ERROR");
+
+    if (!hasError) {
       setReg({
         firstName: "",
         lastName: "",
@@ -144,29 +142,30 @@ export default function DonorAuthCard() {
       setTimeout(() => {
         window.location.assign("/login");
       }, 1000);
-    } catch (err) {
-      const backendData = err?.response?.data;
-      const backendMessages = backendData?.messages;
+    }
+  } catch (err) {
+    const backendData = err?.response?.data;
+    const backendMessages = backendData?.messages;
 
-      if (Array.isArray(backendMessages) && backendMessages.length > 0) {
-        showMessages(
-          backendMessages.map((m) => ({
-            msg: m.msg,
-            type: MessageType[m.type] || MessageType.INFO,
-          }))
-        );
-      } else {
-        const msg =
-          backendData?.message ||
+    if (Array.isArray(backendMessages) && backendMessages.length > 0) {
+      showMessages(
+        backendMessages.map((m) => ({
+          msg: m.msg,
+          type: MessageType[m.type] || MessageType.INFO,
+        }))
+      );
+    } else {
+      showError(
+        backendData?.message ||
           backendData?.error ||
           err?.message ||
-          "Rejestracja nie powiodła się.";
-        showError(msg);
-      }
-    } finally {
-      setSubmitting(false);
+          "Rejestracja nie powiodła się."
+      );
     }
+  } finally {
+    setSubmitting(false);
   }
+}
 
   return (
     <div className="donor-auth">
