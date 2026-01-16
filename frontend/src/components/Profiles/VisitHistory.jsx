@@ -11,11 +11,7 @@ import {
 import { MessageType } from "../shared/const/MessageType.model";
 import { showMessage, showError } from "../shared/services/MessageService";
 import authService from "../../services/AuthenticationService";
-
-const DONATION_STATUS_LABELS = {
-  ZREALIZOWANA: "Zrealizowana",
-  PRZERWANA: "Przerwana",
-};
+import { DONATION_STATUS_LABELS } from "../../constants/statusLabels";
 
 
 const startOfDay = (d) => {

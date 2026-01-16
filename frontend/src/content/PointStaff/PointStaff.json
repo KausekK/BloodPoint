@@ -18,12 +18,6 @@
       "pesel": "PESEL",
       "actions": "Akcje"
     },
-    "positions": [
-      "Lekarz",
-      "Pielegniarka",
-      "Menadzer",
-      "Recepcjonistka"
-    ],
     "noData": "Brak wyników."
   },
   "actions": {

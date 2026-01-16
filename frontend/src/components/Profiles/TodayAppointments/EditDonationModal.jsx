@@ -19,11 +19,8 @@ import { Bloodtype, Close } from '@mui/icons-material';
 import { listBloodTypes } from '../../../services/BloodTypeService';
 import { listDonationStatuses } from '../../../services/DonationStatusService';
 import { getQuestionnaireResponses } from '../../../services/QuestionnaireService';
+import { DONATION_STATUS_LABELS } from "../../../constants/statusLabels";
 
-const DONATION_STATUS_LABELS = {
-  ZREALIZOWANA: 'Zrealizowana',
-  PRZERWANA: 'Przerwana',
-};
 
 export default function EditDonationModal({
   open,

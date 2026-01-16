@@ -19,6 +19,7 @@ import com.point.blood.users.Users;
 import com.point.blood.users.UsersRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -66,7 +67,19 @@ public class AdminService {
                 .changed_password(true)
                 .build();
 
-        Users savedUser = usersRepository.save(user);
+        Users savedUser;
+        try {
+            savedUser = usersRepository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            return EditResult.<Void>builder()
+                    .messages(List.of(
+                            MessageDTO.createErrorMessage(
+                                    "Podany e-mail lub PESEL jest już używany."
+                            )
+                    ))
+                    .resultDTO(null)
+                    .build();
+        }
 
         Long nextNumber = bloodDonationPointRepository.getNextDonationPointNumber();
 
@@ -137,7 +150,19 @@ public class AdminService {
                 .changed_password(true)
                 .build();
 
-        Users savedUser = usersRepository.save(user);
+        Users savedUser;
+        try {
+            savedUser = usersRepository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            return EditResult.<HospitalProfileDTO>builder()
+                    .messages(List.of(
+                            MessageDTO.createErrorMessage(
+                                    "Podany e-mail lub PESEL jest już używany."
+                            )
+                    ))
+                    .resultDTO(null)
+                    .build();
+        }
 
         Long nextHospitalNumber = hospitalRepository.getNextHospitalNumber();
 

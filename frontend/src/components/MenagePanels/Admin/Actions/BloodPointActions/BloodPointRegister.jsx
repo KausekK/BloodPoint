@@ -9,7 +9,6 @@ import {
 } from "../../../../shared/services/MessageService";
 import { MessageType } from "../../../../shared/const/MessageType.model";
 import { registerDonationPoint } from "../../../../../services/AdminDonationPointService";
-
 import "../../../../SharedCSS/LoginForms.css";
 import "../../../../SharedCSS/MenagePanels.css";
 import { PROVINCES } from "../../../../../constants/provinces";
@@ -20,7 +19,6 @@ import {
   EARLIEST_BIRTH_DATE,
   getTodayDate,
 } from "../../../../shared/const/dateLimits";
-import { isPeselMatchingBirthDate } from "../../../../shared/utils/pesel";
 
 export default function BloodPointRegister() {
   const [submitting, setSubmitting] = useState(false);
@@ -88,10 +86,6 @@ export default function BloodPointRegister() {
   const latValid = isValidLat(form.latitude);
   const lngValid = isValidLng(form.longitude);
 
-  const peselMatchesBirthDate = isPeselMatchingBirthDate(
-    form.pesel,
-    form.birthDate
-  );
 
   const canSubmit =
     form.province &&
@@ -115,7 +109,6 @@ export default function BloodPointRegister() {
     zipValid &&
     genderValid &&
     birthDateValid &&
-    peselMatchesBirthDate &&
     firstNameValid &&
     lastNameValid &&
     cityValid &&
@@ -136,46 +129,47 @@ export default function BloodPointRegister() {
 
     try {
       const payload = {
-        province: form.province,
-        city: form.city.trim(),
-        zipCode: form.zipCode.trim(),
-        street: form.street.trim(),
-        phone: form.phone.replace(/\s+/g, "").trim(),
-        latitude: Number(String(form.latitude).replace(",", ".")),
-        longitude: Number(String(form.longitude).replace(",", ".")),
-        firstName: form.firstName.trim(),
-        lastName: form.lastName.trim(),
-        email: form.email.trim().toLowerCase(),
-        contactPhone: form.contactPhone.replace(/\s+/g, "").trim(),
-        pesel: form.pesel.trim(),
-        birthDate: form.birthDate || null,
-        gender: form.gender,
-      };
+      province: form.province,
+      city: form.city.trim(),
+      zipCode: form.zipCode.trim(),
+      street: form.street.trim(),
+      phone: form.phone.replace(/\s+/g, "").trim(),
+      latitude: Number(String(form.latitude).replace(",", ".")),
+      longitude: Number(String(form.longitude).replace(",", ".")),
+      firstName: form.firstName.trim(),
+      lastName: form.lastName.trim(),
+      email: form.email.trim().toLowerCase(),
+      contactPhone: form.contactPhone.replace(/\s+/g, "").trim(),
+      pesel: form.pesel.trim(),
+      birthDate: form.birthDate || null,
+      gender: form.gender,
+    };
 
-      const res = await registerDonationPoint(payload);
+    const res = await registerDonationPoint(payload);
 
-      if (Array.isArray(res?.messages) && res.messages.length > 0) {
-        showMessages(
-          res.messages.map((m) => ({
-            msg: m.msg,
-            type: MessageType[m.type] || MessageType.INFO,
-          }))
-        );
-      } else {
-        showMessage(
-          "Punkt krwiodawstwa został zarejestrowany.",
-          MessageType.SUCCESS
-        );
-      }
+    const messages = Array.isArray(res?.messages) ? res.messages : [];
 
+    if (messages.length > 0) {
+      showMessages(
+        messages.map((m) => ({
+          msg: m.msg,
+          type: MessageType[m.type] || MessageType.INFO,
+        }))
+      );
+    }
+
+    const hasError = messages.some((m) => m.type === "ERROR");
+
+    if (!hasError) {
       setTimeout(() => {
         navigate("/admin/panel/punkt-krwiodawstwa");
       }, 3000);
-    } catch (err) {
-      showError("Nie udało się zarejestrować punktu krwiodawstwa.");
-    } finally {
-      setSubmitting(false);
     }
+  } catch (err) {
+    showError("Nie udało się zarejestrować punktu krwiodawstwa.");
+  } finally {
+    setSubmitting(false);
+  }
   }
 
   return (
@@ -300,9 +294,7 @@ export default function BloodPointRegister() {
                   {!peselValid && (form.pesel || submitAttempted) && (
                     <div className="field-error">PESEL = 11 cyfr.</div>
                   )}
-                  {!peselMatchesBirthDate && (form.birthDate || submitAttempted) && peselValid && (
-                    <div className="field-error">PESEL niezgodny z datą.</div>
-                  )}
+            
                 </div>
 
                 <div className="form-field">

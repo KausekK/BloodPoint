@@ -7,14 +7,14 @@ import {
   showError,
   showMessages,
 } from "../../shared/services/MessageService";
-import { ROLES } from "../../shared/const/Roles";
+const DONOR_ROLE = 'DAWCA';
+
 import { MessageType } from "../../shared/const/MessageType.model";
 
 import {
   EARLIEST_BIRTH_DATE,
   getTodayDate,
 } from "../../shared/const/dateLimits";
-import { isPeselMatchingBirthDate } from "../../shared/utils/pesel";
 
 export default function DonorAuthCard() {
   const [mode, setMode] = useState("register");
@@ -35,84 +35,46 @@ export default function DonorAuthCard() {
 
   const today = getTodayDate();
 
-  const emailValid = useMemo(
-    () => !reg.email || /\S+@\S+\.\S+/.test(reg.email),
-    [reg.email]
-  );
+  const emailValid = !reg.email || /\S+@\S+\.\S+/.test(reg.email);
 
-  const peselValid = useMemo(
-    () => !reg.pesel || /^\d{11}$/.test(reg.pesel),
-    [reg.pesel]
-  );
+  const peselValid = !reg.pesel || /^\d{11}$/.test(reg.pesel);
 
-  const phoneValid = useMemo(
-    () => !reg.phone || /^\d{9,}$/.test(reg.phone.replace(/\s+/g, "")),
-    [reg.phone]
-  );
+  const phoneValid =
+  !reg.phone || /^\d{9,}$/.test(reg.phone.replace(/\s+/g, ""));
 
-  const firstNameValid = useMemo(
-    () => !reg.firstName || reg.firstName.trim().length > 0,
-    [reg.firstName]
-  );
+  const firstNameValid =
+  !reg.firstName || reg.firstName.trim().length > 0;
 
-  const lastNameValid = useMemo(
-    () => !reg.lastName || reg.lastName.trim().length > 0,
-    [reg.lastName]
-  );
+  const lastNameValid =
+  !reg.lastName || reg.lastName.trim().length > 0;
 
-  const genderValid = useMemo(
-    () => !reg.gender || reg.gender === "K" || reg.gender === "M",
-    [reg.gender]
-  );
+  const genderValid =
+  !reg.gender || reg.gender === "K" || reg.gender === "M";
 
-  const birthDateValid = useMemo(() => {
-    if (!reg.birthDate) return true;
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(reg.birthDate)) return false;
-    return reg.birthDate >= EARLIEST_BIRTH_DATE && reg.birthDate <= today;
-  }, [reg.birthDate, today]);
+  const birthDateValid =
+  !reg.birthDate
+    ? true
+    : /^\d{4}-\d{2}-\d{2}$/.test(reg.birthDate) &&
+      reg.birthDate >= EARLIEST_BIRTH_DATE &&
+      reg.birthDate <= today;
 
-  const peselMatchesBirthDate = useMemo(
-    () => isPeselMatchingBirthDate(reg.pesel, reg.birthDate),
-    [reg.pesel, reg.birthDate]
-  );
 
-  const canGoNext = useMemo(() => {
-    const {
-      firstName,
-      lastName,
-      pesel,
-      phone,
-      email,
-      agree,
-      gender,
-      birthDate,
-    } = reg;
 
-    return (
-      firstName.trim() &&
-      lastName.trim() &&
-      pesel.trim() &&
-      phone.trim() &&
-      email.trim() &&
-      gender &&
-      birthDate &&
-      agree &&
-      emailValid &&
-      peselValid &&
-      phoneValid &&
-      genderValid &&
-      birthDateValid &&
-      peselMatchesBirthDate
-    );
-  }, [
-    reg,
-    emailValid,
-    peselValid,
-    phoneValid,
-    genderValid,
-    birthDateValid,
-    peselMatchesBirthDate,
-  ]);
+  const canGoNext =
+  reg.firstName.trim() &&
+  reg.lastName.trim() &&
+  reg.pesel.trim() &&
+  reg.phone.trim() &&
+  reg.email.trim() &&
+  reg.gender &&
+  reg.birthDate &&
+  reg.agree &&
+  emailValid &&
+  peselValid &&
+  phoneValid &&
+  genderValid &&
+  birthDateValid;
+
 
   const passwordsOk = useMemo(
     () => pwd.pass1.length >= 6 && pwd.pass1 === pwd.pass2,
@@ -143,12 +105,12 @@ export default function DonorAuthCard() {
       const data = await authService.register({
         firstName: reg.firstName.trim(),
         lastName: reg.lastName.trim(),
-        email: reg.email.trim().toLowerCase(), // <= NIE case-sensitive
+        email: reg.email.trim().toLowerCase(),
         pesel: reg.pesel.trim(),
         phone: reg.phone.trim(),
         gender: reg.gender,
         birthDate: reg.birthDate,
-        role: ROLES.DAWCA,
+        role: DONOR_ROLE,
         password: pwd.pass1,
       });
 
@@ -258,14 +220,6 @@ export default function DonorAuthCard() {
                   PESEL musi składać się z 11 cyfr.
                 </div>
               )}
-              {!peselMatchesBirthDate &&
-                reg.pesel &&
-                reg.birthDate &&
-                peselValid && (
-                  <div className="field-error">
-                    PESEL nie jest zgodny z podaną datą urodzenia.
-                  </div>
-                )}
             </div>
 
             <div className="form-field">

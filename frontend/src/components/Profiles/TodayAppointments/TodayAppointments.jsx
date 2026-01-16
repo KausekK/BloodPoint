@@ -8,16 +8,14 @@ import authService from "../../../services/AuthenticationService";
 import { showMessages, showError, showMessage } from "../../shared/services/MessageService";
 import { MessageType } from "../../shared/const/MessageType.model";
 import { createDonationFromAppointment } from "../../../services/DonationService";
+import { APPOINTMENT_STATUS_LABELS } from "../../../constants/statusLabels";
 
 
 export default function TodayAppointments() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const STATUS_LABELS = {
-    ZREALIZOWANA: "Zrealizowana",
-    PRZERWANA: "Przerwana",
-  };
+ 
   
 
   const donationPointId = authService.getPointId();
@@ -141,7 +139,7 @@ export default function TodayAppointments() {
                 <td>
                   {isDone ? (
                     <span className="done-label">
-                      {STATUS_LABELS[a.appointmentStatus] ?? "Zakończona"}
+                      {APPOINTMENT_STATUS_LABELS[a.appointmentStatus] ?? "Zakończona"}
                     </span>
                   ) : (
                     <IconButton
