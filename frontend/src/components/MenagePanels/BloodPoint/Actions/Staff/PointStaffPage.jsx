@@ -12,6 +12,7 @@ import BackButton from "../../../../BackButton/BackButton";
 import authService from "../../../../../services/AuthenticationService";
 import { showMessage, showError } from "../../../../shared/services/MessageService";
 import { MessageType } from "../../../../shared/const/MessageType.model";
+import { STAFF_POSITION_OPTIONS } from "../../../../../constants/staffPositions";
 
 export default function PointStaffPage() {
   const pointId = Number(authService.getPointId());
@@ -40,18 +41,14 @@ export default function PointStaffPage() {
       }
 
       const data = await getStaffByPoint(pointId);
-      const list = Array.isArray(data)
-        ? data
-        : data && data.resultDTO
-        ? data.resultDTO
-        : [];
+      let list = [];
 
-      if (!Array.isArray(list)) {
-        setError(content.messages.invalidResponse);
-        setRows([]);
-      } else {
-        setRows(list);
+      if (Array.isArray(data)) {
+        list = data;
+      } else if (Array.isArray(data?.resultDTO)) {
+        list = data.resultDTO;
       }
+      setRows(list);
     } catch (e) {
       let msg = content.messages.errorFetch;
       if (e && e.response && e.response.data && e.response.data.message) {
@@ -231,23 +228,17 @@ export default function PointStaffPage() {
                               <select
                                 className="select"
                                 value={form.position}
-                                onChange={function (e) {
-                                  setForm(function (f) {
-                                    return {
-                                      ...f,
-                                      position: e.target.value,
-                                    };
-                                  });
-                                }}
+                                onChange={(e) =>
+                                  setForm((f) => ({ ...f, position: e.target.value }))
+                                }
                               >
                                 <option value="">— wybierz —</option>
-                                {content.table.positions.map(function (p) {
-                                  return (
-                                    <option key={p} value={p}>
-                                      {p}
-                                    </option>
-                                  );
-                                })}
+
+                                {STAFF_POSITION_OPTIONS.map((opt) => (
+                                  <option key={opt.value} value={opt.value}>
+                                    {opt.label}
+                                  </option>
+                                ))}
                               </select>
                             ) : (
                               r.position || "—"

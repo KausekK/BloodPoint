@@ -15,13 +15,23 @@ import { getDonationStatistics } from "../../../../../services/StatisticsService
 import "../../../../SharedCSS/MenagePanels.css";
 import BackButton from "../../../../BackButton/BackButton";
 
+  function todayISO() {
+    return new Date().toISOString().slice(0, 10);
+  }
+
+function defaultFromISO() {
+  return "2025-01-01";
+}
+
+
 export default function Statistics() {
-  const [from, setFrom] = useState("2025-01-01");
-  const [to, setTo] = useState("2025-10-24");
+  const [from, setFrom] = useState(defaultFromISO);
+  const [to, setTo] = useState(todayISO);
   const [stats, setStats] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  
   async function fetchStats() {
     setLoading(true);
     setError(null);

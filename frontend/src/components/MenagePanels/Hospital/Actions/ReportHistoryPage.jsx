@@ -41,17 +41,15 @@ export default function ReportHistoryPage() {
     if (hospitalId) loadRequests();
   }, [hospitalId]);
 
-  const filtered = useMemo(() => {
-    if (!statusFilter) return requests;
-    return requests.filter(
+  const filtered = !statusFilter
+  ? requests
+  : requests.filter(
       (r) => r.status?.toLowerCase() === statusFilter.toLowerCase()
     );
-  }, [requests, statusFilter]);
 
-  const availableStatuses = useMemo(() => {
-    const all = Array.from(new Set(requests.map((r) => r.status).filter(Boolean)));
-    return all.sort();
-  }, [requests]);
+  const availableStatuses = Array.from(
+  new Set(requests.map((r) => r.status).filter(Boolean))
+  ).sort();
 
   return (
     <>

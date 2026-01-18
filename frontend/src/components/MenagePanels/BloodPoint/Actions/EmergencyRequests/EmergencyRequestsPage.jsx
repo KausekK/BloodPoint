@@ -9,7 +9,6 @@ import {
   showMessage,
   showError,
 } from "../../../../shared/services/MessageService";
-import { MessageType } from "../../../../shared/const/MessageType.model";
 import { formatAmount } from "../../../../shared/utils/number";
 import BackButton from "../../../../BackButton/BackButton";
 import authService from "../../../../../services/AuthenticationService";

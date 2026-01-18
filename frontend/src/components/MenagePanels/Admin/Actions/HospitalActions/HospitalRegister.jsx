@@ -20,7 +20,6 @@ import {
   EARLIEST_BIRTH_DATE,
   getTodayDate,
 } from "../../../../shared/const/dateLimits";
-import { isPeselMatchingBirthDate } from "../../../../shared/utils/pesel";
 
 export default function HospitalRegister() {
   const [submitting, setSubmitting] = useState(false);
@@ -68,10 +67,6 @@ export default function HospitalRegister() {
         form.birthDate >= EARLIEST_BIRTH_DATE &&
         form.birthDate <= today;
 
-  const peselMatchesBirthDate = isPeselMatchingBirthDate(
-    form.pesel,
-    form.birthDate
-  );
 
   const canSubmit =
     form.province &&
@@ -93,7 +88,6 @@ export default function HospitalRegister() {
     zipValid &&
     genderValid &&
     birthDateValid &&
-    peselMatchesBirthDate &&
     firstNameValid &&
     lastNameValid &&
     cityValid &&
@@ -111,38 +105,44 @@ export default function HospitalRegister() {
     setSubmitting(true);
 
     try {
-      const res = await registerHospital({
-        province: form.province,
-        city: form.city.trim(),
-        zipCode: form.zipCode.trim(),
-        street: form.street.trim(),
-        phone: form.phone.replace(/\s+/g, "").trim(),
-        firstName: form.firstName.trim(),
-        lastName: form.lastName.trim(),
-        email: form.email.trim().toLowerCase(),
-        contactPhone: form.contactPhone.replace(/\s+/g, "").trim(),
-        pesel: form.pesel.trim(),
-        birthDate: form.birthDate || null,
-        gender: form.gender,
-      });
+    const res = await registerHospital({
+    province: form.province,
+    city: form.city.trim(),
+    zipCode: form.zipCode.trim(),
+    street: form.street.trim(),
+    phone: form.phone.replace(/\s+/g, "").trim(),
+    firstName: form.firstName.trim(),
+    lastName: form.lastName.trim(),
+    email: form.email.trim().toLowerCase(),
+    contactPhone: form.contactPhone.replace(/\s+/g, "").trim(),
+    pesel: form.pesel.trim(),
+    birthDate: form.birthDate || null,
+    gender: form.gender,
+  });
 
-      if (Array.isArray(res?.messages) && res.messages.length > 0) {
-        showMessages(
-          res.messages.map((m) => ({
-            msg: m.msg,
-            type: MessageType[m.type] || MessageType.INFO,
-          }))
-        );
-      } else {
-        showMessage("Placówka została zarejestrowana.", MessageType.SUCCESS);
-      }
+  const messages = Array.isArray(res?.messages) ? res.messages : [];
 
-      setTimeout(() => navigate("/admin/panel/szpital"), 3000);
-    } catch (err) {
-      showError("Nie udało się zarejestrować placówki.");
-    } finally {
-      setSubmitting(false);
-    }
+  if (messages.length > 0) {
+    showMessages(
+      messages.map((m) => ({
+        msg: m.msg,
+        type: MessageType[m.type] || MessageType.INFO,
+      }))
+    );
+  }
+
+  const hasError = messages.some((m) => m.type === "ERROR");
+
+  if (!hasError) {
+    setTimeout(() => {
+      navigate("/admin/panel/szpital");
+    }, 3000);
+  }
+} catch (err) {
+  showError("Nie udało się zarejestrować placówki.");
+} finally {
+  setSubmitting(false);
+}
   }
 
   return (
@@ -252,9 +252,6 @@ export default function HospitalRegister() {
                   <input id="pesel" name="pesel" className="input" value={form.pesel} onChange={handleChange} required />
                   {!peselValid && (form.pesel || submitAttempted) && (
                     <div className="field-error">PESEL musi składać się z 11 cyfr.</div>
-                  )}
-                  {!peselMatchesBirthDate && (form.birthDate || submitAttempted) && peselValid && (
-                    <div className="field-error">PESEL nie jest zgodny z datą urodzenia.</div>
                   )}
                 </div>
 

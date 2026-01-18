@@ -19,6 +19,7 @@ import com.point.blood.users.Users;
 import com.point.blood.users.UsersRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +48,13 @@ public class AdminService {
                     .resultDTO(null)
                     .build();
         }
+        if (usersRepository.findByPesel(request.getPesel()).isPresent()) {
+            return EditResult.<Void>builder()
+                    .messages(List.of(MessageDTO.createErrorMessage("Podany pesel jest już przypisany do innego użytkownika.")))
+                    .resultDTO(null)
+                    .build();
+        }
+
 
         Role pointRole = roleRepository.findByName(RoleEnum.PUNKT_KRWIODAWSTWA);
         Role managerRole = roleRepository.findByName(RoleEnum.MANAGER_PUNKTU_KRWIODAWSTWA);
@@ -66,7 +74,19 @@ public class AdminService {
                 .changed_password(true)
                 .build();
 
-        Users savedUser = usersRepository.save(user);
+        Users savedUser;
+        try {
+            savedUser = usersRepository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            return EditResult.<Void>builder()
+                    .messages(List.of(
+                            MessageDTO.createErrorMessage(
+                                    "Podany e-mail lub PESEL jest już używany."
+                            )
+                    ))
+                    .resultDTO(null)
+                    .build();
+        }
 
         Long nextNumber = bloodDonationPointRepository.getNextDonationPointNumber();
 
@@ -118,6 +138,12 @@ public class AdminService {
                     .resultDTO(null)
                     .build();
         }
+        if (usersRepository.findByPesel(request.getPesel()).isPresent()) {
+            return EditResult.<HospitalProfileDTO>builder()
+                    .messages(List.of(MessageDTO.createErrorMessage("Podany pesel jest już przypisany do innego użytkownika.")))
+                    .resultDTO(null)
+                    .build();
+        }
 
 
         Role hospitalRole = roleRepository.findByName(RoleEnum.SZPITAL);
@@ -137,7 +163,19 @@ public class AdminService {
                 .changed_password(true)
                 .build();
 
-        Users savedUser = usersRepository.save(user);
+        Users savedUser;
+        try {
+            savedUser = usersRepository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            return EditResult.<HospitalProfileDTO>builder()
+                    .messages(List.of(
+                            MessageDTO.createErrorMessage(
+                                    "Podany e-mail lub PESEL jest już używany."
+                            )
+                    ))
+                    .resultDTO(null)
+                    .build();
+        }
 
         Long nextHospitalNumber = hospitalRepository.getNextHospitalNumber();
 

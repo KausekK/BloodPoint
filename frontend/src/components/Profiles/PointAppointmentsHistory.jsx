@@ -1,13 +1,7 @@
 import { useEffect, useState } from "react";
 import authService from "../../services/AuthenticationService";
 import { getAllAppointmentsHistoryForBloodPoint } from "../../services/MakeAppointmentService";
-
-const STATUS_LABELS = {
-  UMOWIONA: "Umówiona",
-  ODWOLANA: "Odwołana",
-  ZREALIZOWANA: "Zrealizowana",
-  PRZERWANA: "Przerwana",
-};
+import { APPOINTMENT_STATUS_LABELS } from "../../constants/statusLabels";
 
 const PAGE_SIZE = 20;
 
@@ -140,7 +134,7 @@ export default function PointAppointmentsHistory() {
             onChange={handleStatusChange}
           >
             <option value="">Wszystkie</option>
-            {Object.entries(STATUS_LABELS).map(([value, label]) => (
+            {Object.entries(APPOINTMENT_STATUS_LABELS).map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
               </option>
@@ -221,8 +215,7 @@ export default function PointAppointmentsHistory() {
                     <td>{a.email}</td>
                     <td>{a.bloodGroup ?? "-"}</td>
                     <td>
-                      {STATUS_LABELS[a.appointmentStatus] ??
-                        a.appointmentStatus}
+                      {APPOINTMENT_STATUS_LABELS[a.appointmentStatus] ?? a.appointmentStatus}
                     </td>
                   </tr>
                 );

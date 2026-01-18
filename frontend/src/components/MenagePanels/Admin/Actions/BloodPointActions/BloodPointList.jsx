@@ -13,6 +13,7 @@ import {
   showMessages,
 } from "../../../../shared/services/MessageService";
 import { MessageType } from "../../../../shared/const/MessageType.model";
+import { STAFF_POSITION_OPTIONS } from "../../../../../constants/staffPositions";
 
 const INITIAL_NEW_STAFF = {
   firstName: "",
@@ -631,9 +632,11 @@ export default function BloodPointList() {
                                           required
                                         >
                                           <option value="">— wybierz —</option>
-                                          <option value="Lekarz">Lekarz</option>
-                                          <option value="Pielegniarka">Pielęgniarka</option>
-                                          <option value="Recepcjonistka">Recepcjonistka</option>
+                                          {STAFF_POSITION_OPTIONS.map((opt) => (
+                                            <option key={opt.value} value={opt.value}>
+                                              {opt.label}
+                                            </option>
+                                          ))}
                                         </select>
                                         {!positionValid && newStaff.position && (
                                           <div className="field-error">
