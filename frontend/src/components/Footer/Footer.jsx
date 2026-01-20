@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-import footerContent from '../../content/Footer/footer.json';
+import footerContent from '../../content/Footer/Footer.json';
 
 export default function Footer() {
   const { brand, faqsTitle, faqs } = footerContent;
