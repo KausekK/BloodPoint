@@ -19,6 +19,7 @@ export default function BloodStockManagePage() {
   const [submitting, setSubmitting] = useState(false);
   const [err, setErr] = useState("");
   const [msg, setMsg] = useState("");
+  const [deliveryErr, setDeliveryErr] = useState("");
 
   const [delivery, setDelivery] = useState({
     bloodTypeId: "",
@@ -101,7 +102,7 @@ export default function BloodStockManagePage() {
 
     const validationMsg = validateDelivery(delivery);
     if (validationMsg) {
-      setErr(validationMsg);
+      setDeliveryErr(validationMsg);
       showError(validationMsg);
       return;
     }
@@ -262,6 +263,7 @@ export default function BloodStockManagePage() {
                   disabled={submitting}
                 />
               </div>
+              
 
               <div className="form-actions">
                 <button
@@ -272,6 +274,11 @@ export default function BloodStockManagePage() {
                   {submitting ? "Rejestrowanie…" : "Zarejestruj dostawę"}
                 </button>
               </div>
+              {deliveryErr && (
+              <div className="field-error">
+                {deliveryErr}
+              </div>
+            )}
             </form>
           </section>
         </div>

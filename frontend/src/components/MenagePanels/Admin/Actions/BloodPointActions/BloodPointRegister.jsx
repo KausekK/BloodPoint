@@ -2,29 +2,26 @@ import { useState } from "react";
 import Header from "../../../../Header/Header";
 import Footer from "../../../../Footer/Footer";
 import CTA from "../../../../CTA/CTA";
-import {
-  showMessage,
-  showError,
-  showMessages,
-} from "../../../../shared/services/MessageService";
-import { MessageType } from "../../../../shared/const/MessageType.model";
-import { registerDonationPoint } from "../../../../../services/AdminDonationPointService";
-import "../../../../SharedCSS/LoginForms.css";
-import "../../../../SharedCSS/MenagePanels.css";
-import { PROVINCES } from "../../../../../constants/provinces";
-import { useNavigate } from "react-router-dom";
 import BackButton from "../../../../BackButton/BackButton";
 
-import {
-  EARLIEST_BIRTH_DATE,
-  getTodayDate,
-} from "../../../../shared/const/dateLimits";
+import { 
+  showMessages, 
+  showError } from "../../../../shared/services/MessageService";
+import { MessageType } from "../../../../shared/const/MessageType.model";
+import { registerDonationPoint } from "../../../../../services/AdminDonationPointService";
+
+import "../../../../SharedCSS/LoginForms.css";
+import "../../../../SharedCSS/MenagePanels.css";
+
+import { PROVINCES } from "../../../../../constants/provinces";
+import { useNavigate } from "react-router-dom";
+
+import { useFormValidation } from "../../../../shared/utils/useFormValidation";
+import { validators } from "../../../../shared/utils/validators";
+import { fieldClass, shouldShowError } from "../../../../shared/utils/formValidation";
+
 
 export default function BloodPointRegister() {
-  const [submitting, setSubmitting] = useState(false);
-  const [submitAttempted, setSubmitAttempted] = useState(false);
-  const navigate = useNavigate();
-
   const [form, setForm] = useState({
     province: "",
     city: "",
@@ -42,79 +39,34 @@ export default function BloodPointRegister() {
     gender: "K",
   });
 
-  const today = getTodayDate();
+  const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   function handleChange(e) {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
   }
 
-  const emailValid = !form.email || /\S+@\S+\.\S+/.test(form.email);
-  const peselValid = !form.pesel || /^\d{11}$/.test(form.pesel);
-  const phoneValid =
-    !form.phone || /^\d{9}$/.test(form.phone.replace(/\s+/g, ""));
-  const contactPhoneValid =
-    !form.contactPhone ||
-    /^\d{9}$/.test(form.contactPhone.replace(/\s+/g, ""));
-  const zipValid = !form.zipCode || /^\d{2}-\d{3}$/.test(form.zipCode);
-  const firstNameValid = !form.firstName || form.firstName.trim().length > 0;
-  const lastNameValid = !form.lastName || form.lastName.trim().length > 0;
-  const cityValid = !form.city || form.city.trim().length > 0;
-  const streetValid = !form.street || form.street.trim().length > 0;
-  const genderValid =
-    !form.gender || form.gender === "K" || form.gender === "M";
+  const rules = {
+    province: [validators.required],
+    city: [validators.required],
+    zipCode: [validators.required, validators.zip],
+    street: [validators.required],
+    phone: [validators.required, validators.phone],
+    latitude: [validators.required, validators.latitude],
+    longitude: [validators.required, validators.longitude],
+    firstName: [validators.required],
+    lastName: [validators.required],
+    email: [validators.required, validators.email],
+    contactPhone: [validators.required, validators.phone],
+    pesel: [validators.required, validators.pesel],
+    birthDate: [validators.required, validators.birthDate],
+    gender: [validators.required, validators.gender],
+  };
 
-  const birthDateValid =
-    !form.birthDate
-      ? true
-      : /^\d{4}-\d{2}-\d{2}$/.test(form.birthDate) &&
-        form.birthDate >= EARLIEST_BIRTH_DATE &&
-        form.birthDate <= today;
-
-  function isValidLat(val) {
-    if (!val) return false;
-    const num = Number(String(val).replace(",", "."));
-    return !Number.isNaN(num) && num >= -90 && num <= 90;
-  }
-
-  function isValidLng(val) {
-    if (!val) return false;
-    const num = Number(String(val).replace(",", "."));
-    return !Number.isNaN(num) && num >= -180 && num <= 180;
-  }
-
-  const latValid = isValidLat(form.latitude);
-  const lngValid = isValidLng(form.longitude);
-
-
-  const canSubmit =
-    form.province &&
-    form.city.trim() &&
-    form.zipCode.trim() &&
-    form.street.trim() &&
-    form.phone.trim() &&
-    form.latitude &&
-    form.longitude &&
-    form.firstName.trim() &&
-    form.lastName.trim() &&
-    form.email.trim() &&
-    form.contactPhone.trim() &&
-    form.pesel.trim() &&
-    form.birthDate &&
-    form.gender &&
-    emailValid &&
-    peselValid &&
-    phoneValid &&
-    contactPhoneValid &&
-    zipValid &&
-    genderValid &&
-    birthDateValid &&
-    firstNameValid &&
-    lastNameValid &&
-    cityValid &&
-    streetValid &&
-    latValid &&
-    lngValid;
+  const { fields, isValid } = useFormValidation(form, rules);
+  const canSubmit = isValid;
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -129,47 +81,43 @@ export default function BloodPointRegister() {
 
     try {
       const payload = {
-      province: form.province,
-      city: form.city.trim(),
-      zipCode: form.zipCode.trim(),
-      street: form.street.trim(),
-      phone: form.phone.replace(/\s+/g, "").trim(),
-      latitude: Number(String(form.latitude).replace(",", ".")),
-      longitude: Number(String(form.longitude).replace(",", ".")),
-      firstName: form.firstName.trim(),
-      lastName: form.lastName.trim(),
-      email: form.email.trim().toLowerCase(),
-      contactPhone: form.contactPhone.replace(/\s+/g, "").trim(),
-      pesel: form.pesel.trim(),
-      birthDate: form.birthDate || null,
-      gender: form.gender,
-    };
+        province: form.province,
+        city: form.city.trim(),
+        zipCode: form.zipCode.trim(),
+        street: form.street.trim(),
+        phone: form.phone.replace(/\s+/g, "").trim(),
+        latitude: Number(String(form.latitude).replace(",", ".")),
+        longitude: Number(String(form.longitude).replace(",", ".")),
+        firstName: form.firstName.trim(),
+        lastName: form.lastName.trim(),
+        email: form.email.trim().toLowerCase(),
+        contactPhone: form.contactPhone.replace(/\s+/g, "").trim(),
+        pesel: form.pesel.trim(),
+        birthDate: form.birthDate || null,
+        gender: form.gender,
+      };
 
-    const res = await registerDonationPoint(payload);
+      const res = await registerDonationPoint(payload);
 
-    const messages = Array.isArray(res?.messages) ? res.messages : [];
+      const messages = Array.isArray(res?.messages) ? res.messages : [];
+      if (messages.length > 0) {
+        showMessages(
+          messages.map((m) => ({
+            msg: m.msg,
+            type: MessageType[m.type] || MessageType.INFO,
+          }))
+        );
+      }
 
-    if (messages.length > 0) {
-      showMessages(
-        messages.map((m) => ({
-          msg: m.msg,
-          type: MessageType[m.type] || MessageType.INFO,
-        }))
-      );
+      const hasError = messages.some((m) => m.type === "ERROR");
+      if (!hasError) {
+        setTimeout(() => navigate("/admin/panel/punkt-krwiodawstwa"), 3000);
+      }
+    } catch {
+      showError("Nie udało się zarejestrować punktu krwiodawstwa.");
+    } finally {
+      setSubmitting(false);
     }
-
-    const hasError = messages.some((m) => m.type === "ERROR");
-
-    if (!hasError) {
-      setTimeout(() => {
-        navigate("/admin/panel/punkt-krwiodawstwa");
-      }, 3000);
-    }
-  } catch (err) {
-    showError("Nie udało się zarejestrować punktu krwiodawstwa.");
-  } finally {
-    setSubmitting(false);
-  }
   }
 
   return (
@@ -177,131 +125,235 @@ export default function BloodPointRegister() {
       <Header />
       <main className="bp-section">
         <div className="bp-container">
-          <BackButton
-            to="/admin/panel/punkt-krwiodawstwa"
-            label="Powrót do panelu Punktu Krwiodawstwa"
-          />
+          <BackButton to="/admin/panel/punkt-krwiodawstwa" label="Powrót do panelu Punktu Krwiodawstwa" />
           <div className="auth-page-center">
             <article className="bp-card auth-card auth-card--wide">
               <div className="auth-card-cap" aria-hidden="true" />
-              <h2 className="auth-card-title">
-                Zarejestruj Punkt Krwiodawstwa
-              </h2>
+              <h2 className="auth-card-title">Zarejestruj Punkt Krwiodawstwa</h2>
 
               <form className="auth-form" onSubmit={handleSubmit} noValidate>
 
+                <h3 className="auth-section-title">Dane punktu</h3>
+
                 <div className="form-field">
-                  <label className="label">Województwo</label>
-                  <select
-                    name="province"
-                    className="select"
-                    value={form.province}
-                    onChange={handleChange}
-                  >
-                    <option value="">Wybierz województwo</option>
-                    {PROVINCES.map((p) => (
-                      <option key={p} value={p}>{p}</option>
-                    ))}
-                  </select>
-                  {!form.province && submitAttempted && (
+                  <label className="label" htmlFor="province">Województwo</label>
+                  <div className="select-wrap">
+                    <select
+                      id="province"
+                      name="province"
+                      className={fieldClass(fields.province, submitAttempted, "select")}
+                      value={form.province}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="" disabled>Wybierz województwo</option>
+                      {PROVINCES.map((p) => (
+                        <option key={p} value={p}>{p}</option>
+                      ))}
+                    </select>
+                  </div>
+                  {shouldShowError(fields.province, submitAttempted, form.province) && (
                     <div className="field-error">Wybierz województwo.</div>
                   )}
                 </div>
 
                 <div className="form-field">
-                  <label className="label">Miasto</label>
-                  <input name="city" className="input" value={form.city} onChange={handleChange} />
-                  {!cityValid && (form.city || submitAttempted) && (
+                  <label className="label" htmlFor="city">Miasto</label>
+                  <input
+                    id="city"
+                    name="city"
+                    className={fieldClass(fields.city, submitAttempted)}
+                    value={form.city}
+                    onChange={handleChange}
+                    required
+                  />
+                  {shouldShowError(fields.city, submitAttempted, form.city) && (
                     <div className="field-error">Podaj poprawne miasto.</div>
                   )}
                 </div>
 
                 <div className="form-field">
-                  <label className="label">Kod pocztowy</label>
-                  <input name="zipCode" className="input" value={form.zipCode} onChange={handleChange} />
-                  {!zipValid && (form.zipCode || submitAttempted) && (
+                  <label className="label" htmlFor="zipCode">Kod pocztowy</label>
+                  <input
+                    id="zipCode"
+                    name="zipCode"
+                    className={fieldClass(fields.zipCode, submitAttempted)}
+                    value={form.zipCode}
+                    onChange={handleChange}
+                    required
+                  />
+                  {shouldShowError(fields.zipCode, submitAttempted, form.zipCode) && (
                     <div className="field-error">Kod pocztowy w formacie 00-000.</div>
                   )}
                 </div>
 
                 <div className="form-field">
-                  <label className="label">Ulica</label>
-                  <input name="street" className="input" value={form.street} onChange={handleChange} />
-                  {!streetValid && (form.street || submitAttempted) && (
+                  <label className="label" htmlFor="street">Ulica</label>
+                  <input
+                    id="street"
+                    name="street"
+                    className={fieldClass(fields.street, submitAttempted)}
+                    value={form.street}
+                    onChange={handleChange}
+                    required
+                  />
+                  {shouldShowError(fields.street, submitAttempted, form.street) && (
                     <div className="field-error">Podaj poprawną ulicę.</div>
                   )}
                 </div>
 
                 <div className="form-field">
-                  <label className="label">Telefon</label>
-                  <input name="phone" className="input" value={form.phone} onChange={handleChange} />
-                  {!phoneValid && (form.phone || submitAttempted) && (
+                  <label className="label" htmlFor="phone">Telefon</label>
+                  <input
+                    id="phone"
+                    name="phone"
+                    className={fieldClass(fields.phone, submitAttempted)}
+                    value={form.phone}
+                    onChange={handleChange}
+                    required
+                  />
+                  {shouldShowError(fields.phone, submitAttempted, form.phone) && (
                     <div className="field-error">Telefon musi mieć 9 cyfr.</div>
                   )}
                 </div>
 
                 <div className="form-field">
-                  <label className="label">Latitude</label>
-                  <input name="latitude" className="input" value={form.latitude} onChange={handleChange} />
-                  {!latValid && (form.latitude || submitAttempted) && (
-                    <div className="field-error">Latitude -90 do 90.</div>
+                  <label className="label" htmlFor="latitude">Szerokość geograficzna</label>
+                  <input
+                    id="latitude"
+                    name="latitude"
+                    className={fieldClass(fields.latitude, submitAttempted)}
+                    value={form.latitude}
+                    onChange={handleChange}
+                    required
+                  />
+                  {shouldShowError(fields.latitude, submitAttempted, form.latitude) && (
+                    <div className="field-error">Szerokość geograficzna musi być w przedziale od -90 do 90.</div>
                   )}
                 </div>
 
                 <div className="form-field">
-                  <label className="label">Longitude</label>
-                  <input name="longitude" className="input" value={form.longitude} onChange={handleChange} />
-                  {!lngValid && (form.longitude || submitAttempted) && (
-                    <div className="field-error">Longitude -180 do 180.</div>
+                  <label className="label" htmlFor="longitude">Długość geograficzna</label>
+                  <input
+                    id="longitude"
+                    name="longitude"
+                    className={fieldClass(fields.longitude, submitAttempted)}
+                    value={form.longitude}
+                    onChange={handleChange}
+                    required
+                  />
+                  {shouldShowError(fields.longitude, submitAttempted, form.longitude) && (
+                    <div className="field-error">Długość geograficzna musi być w przedziale od -180 do 180.</div>
+                  )}
+                </div>
+
+                <h3 className="auth-section-title">Dane manadzera</h3>
+
+                <div className="form-field">
+                  <label className="label" htmlFor="firstName">Imię</label>
+                  <input
+                    id="firstName"
+                    name="firstName"
+                    className={fieldClass(fields.firstName, submitAttempted)}
+                    value={form.firstName}
+                    onChange={handleChange}
+                    required
+                  />
+                  {shouldShowError(fields.firstName, submitAttempted, form.firstName) && (
+                    <div className="field-error">Podaj poprawne imię.</div>
                   )}
                 </div>
 
                 <div className="form-field">
-                  <label className="label">Imię</label>
-                  <input name="firstName" className="input" value={form.firstName} onChange={handleChange} />
-                  {!firstNameValid && (form.firstName || submitAttempted) && (
-                    <div className="field-error">Podaj imię.</div>
+                  <label className="label" htmlFor="lastName">Nazwisko</label>
+                  <input
+                    id="lastName"
+                    name="lastName"
+                    className={fieldClass(fields.lastName, submitAttempted)}
+                    value={form.lastName}
+                    onChange={handleChange}
+                    required
+                  />
+                  {shouldShowError(fields.lastName, submitAttempted, form.lastName) && (
+                    <div className="field-error">Podaj poprawne nazwisko.</div>
                   )}
                 </div>
 
                 <div className="form-field">
-                  <label className="label">Nazwisko</label>
-                  <input name="lastName" className="input" value={form.lastName} onChange={handleChange} />
-                  {!lastNameValid && (form.lastName || submitAttempted) && (
-                    <div className="field-error">Podaj nazwisko.</div>
+                  <label className="label" htmlFor="email">E-mail</label>
+                  <input
+                    id="email"
+                    name="email"
+                    className={fieldClass(fields.email, submitAttempted)}
+                    value={form.email}
+                    onChange={handleChange}
+                    required
+                  />
+                  {shouldShowError(fields.email, submitAttempted, form.email) && (
+                    <div className="field-error">Podaj poprawny adres e-mail.</div>
                   )}
                 </div>
 
                 <div className="form-field">
-                  <label className="label">E-mail</label>
-                  <input name="email" className="input" value={form.email} onChange={handleChange} />
-                  {!emailValid && (form.email || submitAttempted) && (
-                    <div className="field-error">Niepoprawny e-mail.</div>
-                  )}
-                </div>
-
-                <div className="form-field">
-                  <label className="label">Telefon managera</label>
-                  <input name="contactPhone" className="input" value={form.contactPhone} onChange={handleChange} />
-                  {!contactPhoneValid && (form.contactPhone || submitAttempted) && (
+                  <label className="label" htmlFor="contactPhone">Telefon manadzera</label>
+                  <input
+                    id="contactPhone"
+                    name="contactPhone"
+                    className={fieldClass(fields.contactPhone, submitAttempted)}
+                    value={form.contactPhone}
+                    onChange={handleChange}
+                    required
+                  />
+                  {shouldShowError(fields.contactPhone, submitAttempted, form.contactPhone) && (
                     <div className="field-error">Telefon musi mieć 9 cyfr.</div>
                   )}
                 </div>
 
                 <div className="form-field">
-                  <label className="label">PESEL</label>
-                  <input name="pesel" className="input" value={form.pesel} onChange={handleChange} />
-                  {!peselValid && (form.pesel || submitAttempted) && (
-                    <div className="field-error">PESEL = 11 cyfr.</div>
+                  <label className="label" htmlFor="pesel">PESEL</label>
+                  <input
+                    id="pesel"
+                    name="pesel"
+                    className={fieldClass(fields.pesel, submitAttempted)}
+                    value={form.pesel}
+                    onChange={handleChange}
+                    required
+                  />
+                  {shouldShowError(fields.pesel, submitAttempted, form.pesel) && (
+                    <div className="field-error">PESEL musi zawierać 11 cyfr.</div>
                   )}
-            
                 </div>
 
                 <div className="form-field">
-                  <label className="label">Data urodzenia</label>
-                  <input type="date" name="birthDate" className="input" value={form.birthDate} onChange={handleChange} />
-                  {!birthDateValid && (form.birthDate || submitAttempted) && (
-                    <div className="field-error">Niepoprawna data.</div>
+                  <label className="label" htmlFor="birthDate">Data urodzenia</label>
+                  <input
+                    type="date"
+                    id="birthDate"
+                    name="birthDate"
+                    className={fieldClass(fields.birthDate, submitAttempted)}
+                    value={form.birthDate}
+                    onChange={handleChange}
+                    required
+                  />
+                  {shouldShowError(fields.birthDate, submitAttempted, form.birthDate) && (
+                    <div className="field-error">Niepoprawna data urodzenia.</div>
+                  )}
+                </div>
+
+                <div className="form-field">
+                  <label className="label" htmlFor="gender">Płeć</label>
+                  <select
+                    id="gender"
+                    name="gender"
+                    className={fieldClass(fields.gender, submitAttempted, "input")}
+                    value={form.gender}
+                    onChange={handleChange}
+                  >
+                    <option value="K">Kobieta</option>
+                    <option value="M">Mężczyzna</option>
+                  </select>
+                  {shouldShowError(fields.gender, submitAttempted, form.gender) && (
+                    <div className="field-error">Wybierz poprawną płeć.</div>
                   )}
                 </div>
 
@@ -318,7 +370,6 @@ export default function BloodPointRegister() {
                     Formularz zawiera błędy — popraw zaznaczone pola.
                   </div>
                 )}
-
               </form>
             </article>
           </div>

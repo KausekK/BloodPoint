@@ -270,6 +270,22 @@ strong {
   width: 100%;
   height: 420px;
 }
+.bp-card form.bp-form {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.bp-card form.bp-form .form-actions {
+  margin-top: 12px;
+}
+
+.bp-card form.bp-form .field-error {
+  display: block;
+  width: 100%;
+  color: #b71c1c;
+  font-size: 1.1rem;
+  margin-top: 8px;
+}
 
 @media (max-width: 700px) {
   .bp-form {
