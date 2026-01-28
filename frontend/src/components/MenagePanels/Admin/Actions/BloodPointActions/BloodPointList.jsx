@@ -8,12 +8,16 @@ import "../../../../SharedCSS/MenagePanels.css";
 import { getPoints } from "../../../../../services/BloodDonationPointService";
 import { getStaffByPoint, createEmployee } from "../../../../../services/StaffService";
 import {
-  showError,
-  showMessage,
-  showMessages,
+  showError, 
+  showMessages, 
+  showMessage 
 } from "../../../../shared/services/MessageService";
 import { MessageType } from "../../../../shared/const/MessageType.model";
 import { STAFF_POSITION_OPTIONS } from "../../../../../constants/staffPositions";
+
+import { useFormValidation } from "../../../../shared/utils/useFormValidation";
+import { validators } from "../../../../shared/utils/validators";
+import { fieldClass, shouldShowError } from "../../../../shared/utils/formValidation";
 
 const INITIAL_NEW_STAFF = {
   firstName: "",
@@ -30,15 +34,13 @@ export default function BloodPointList() {
   const [points, setPoints] = useState([]);
   const [loadingPoints, setLoadingPoints] = useState(true);
   const [errorPoints, setErrorPoints] = useState("");
-  const [filters, setFilters] = useState({
-    city: "",
-    street: "",
-  });
+  const [filters, setFilters] = useState({ city: "", street: "" });
 
   const [expandedPointId, setExpandedPointId] = useState(null);
   const [staffState, setStaffState] = useState({});
   const [newStaff, setNewStaff] = useState(INITIAL_NEW_STAFF);
   const [creatingStaff, setCreatingStaff] = useState(false);
+  const [submitAttempted, setSubmitAttempted] = useState(false);
 
   useEffect(() => {
     async function loadPoints() {
@@ -46,32 +48,24 @@ export default function BloodPointList() {
       setErrorPoints("");
       try {
         const data = await getPoints();
-        if (Array.isArray(data)) {
-          setPoints(data);
-        } else if (data && Array.isArray(data.resultDTO)) {
-          setPoints(data.resultDTO);
-        } else {
+        if (Array.isArray(data)) setPoints(data);
+        else if (data?.resultDTO) setPoints(data.resultDTO);
+        else {
           setPoints([]);
           setErrorPoints("Niepoprawna odpowiedź z serwera.");
         }
       } catch (err) {
-        const msg =
-          err?.response?.data?.message ||
-          err?.response?.data?.error ||
-          err?.message ||
-          "Nie udało się pobrać listy punktów krwiodawstwa.";
-        setErrorPoints(msg);
-        setPoints([]);
+        setErrorPoints(err?.message || "Nie udało się pobrać listy punktów krwiodawstwa.");
       } finally {
         setLoadingPoints(false);
       }
     }
-
     loadPoints();
   }, []);
 
   useEffect(() => {
     setNewStaff(INITIAL_NEW_STAFF);
+    setSubmitAttempted(false);
   }, [expandedPointId]);
 
   function handleFilterChange(e) {
@@ -83,23 +77,13 @@ export default function BloodPointList() {
     setFilters({ city: "", street: "" });
   }
 
-  const cityOptions = [];
-  points.forEach((p) => {
-    if (p.city && !cityOptions.includes(p.city)) {
-      cityOptions.push(p.city);
-    }
-  });
-  cityOptions.sort((a, b) => a.localeCompare(b, "pl"));
-
-  const streetFilter = filters.street.trim().toLowerCase();
+  const cityOptions = [...new Set(points.map((p) => p.city).filter(Boolean))].sort((a, b) =>
+    a.localeCompare(b, "pl")
+  );
 
   const filteredPoints = points.filter((p) => {
     const matchCity = !filters.city || p.city === filters.city;
-
-    const matchStreet =
-      !streetFilter ||
-      (p.street && p.street.toLowerCase().includes(streetFilter));
-
+    const matchStreet = !filters.street || (p.street && p.street.toLowerCase().includes(filters.street.toLowerCase()));
     return matchCity && matchStreet;
   });
 
@@ -108,12 +92,9 @@ export default function BloodPointList() {
       setExpandedPointId(null);
       return;
     }
-
     setExpandedPointId(pointId);
 
-    if (staffState[pointId]?.rows) {
-      return;
-    }
+    if (staffState[pointId]?.rows) return;
 
     setStaffState((prev) => ({
       ...prev,
@@ -122,36 +103,15 @@ export default function BloodPointList() {
 
     try {
       const data = await getStaffByPoint(pointId);
-      const list = Array.isArray(data)
-        ? data
-        : data && Array.isArray(data.resultDTO)
-        ? data.resultDTO
-        : [];
-
-      if (!Array.isArray(list)) {
-        setStaffState((prev) => ({
-          ...prev,
-          [pointId]: {
-            loading: false,
-            error: "Niepoprawna odpowiedź z serwera podczas pobierania pracowników.",
-            rows: [],
-          },
-        }));
-      } else {
-        setStaffState((prev) => ({
-          ...prev,
-          [pointId]: { loading: false, error: "", rows: list },
-        }));
-      }
-    } catch (e) {
-      const msg =
-        e?.response?.data?.message ||
-        e?.response?.data?.error ||
-        e?.message ||
-        "Nie udało się pobrać listy pracowników.";
+      const list = Array.isArray(data) ? data : data?.resultDTO || [];
       setStaffState((prev) => ({
         ...prev,
-        [pointId]: { loading: false, error: msg, rows: [] },
+        [pointId]: { loading: false, error: "", rows: list },
+      }));
+    } catch (e) {
+      setStaffState((prev) => ({
+        ...prev,
+        [pointId]: { loading: false, error: e?.message || "Nie udało się pobrać listy pracowników.", rows: [] },
       }));
     }
   }
@@ -161,125 +121,63 @@ export default function BloodPointList() {
     setNewStaff((s) => ({ ...s, [name]: value }));
   }
 
-  const emailValid =
-    !newStaff.email || /\S+@\S+\.\S+/.test(newStaff.email);
+  const rules = {
+    firstName: [validators.required],
+    lastName: [validators.required],
+    email: [validators.required, validators.email],
+    phone: [validators.required, validators.phone],
+    pesel: [validators.required, validators.pesel],
+    birthDate: [validators.required, validators.birthDate],
+    gender: [validators.required, validators.gender],
+    position: [validators.required],
+  };
 
-  const peselValid =
-    !newStaff.pesel || /^\d{11}$/.test(newStaff.pesel);
-
-  const phoneValid =
-    !newStaff.phone || /^\d{9}$/.test(newStaff.phone.replace(/\s+/g, ""));
-
-  const firstNameValid =
-    !newStaff.firstName || newStaff.firstName.trim().length > 0;
-
-  const lastNameValid =
-    !newStaff.lastName || newStaff.lastName.trim().length > 0;
-
-  const positionValid =
-    !newStaff.position || newStaff.position.trim().length > 0;
-
-  const genderValid =
-    !newStaff.gender ||
-    newStaff.gender === "K" ||
-    newStaff.gender === "M";
-
-  const birthDateValid =
-    !newStaff.birthDate || newStaff.birthDate.trim().length > 0;
-
-  const canCreateStaff =
-    expandedPointId &&
-    newStaff.firstName.trim() &&
-    newStaff.lastName.trim() &&
-    newStaff.email.trim() &&
-    newStaff.phone.trim() &&
-    newStaff.pesel.trim() &&
-    newStaff.birthDate &&
-    newStaff.gender &&
-    newStaff.position &&
-    emailValid &&
-    peselValid &&
-    phoneValid &&
-    firstNameValid &&
-    lastNameValid &&
-    positionValid &&
-    genderValid &&
-    birthDateValid;
+  const { fields, isValid } = useFormValidation(newStaff, rules);
+  const canCreateStaff = isValid;
 
   async function handleCreateStaff(e) {
     e.preventDefault();
+    setSubmitAttempted(true);
     if (!expandedPointId || creatingStaff || !canCreateStaff) return;
 
     setCreatingStaff(true);
-
     try {
       const payload = {
-        firstName: newStaff.firstName.trim(),
-        lastName: newStaff.lastName.trim(),
-        email: newStaff.email.trim(),
+        ...newStaff,
         phone: newStaff.phone.replace(/\s+/g, "").trim(),
-        pesel: newStaff.pesel.trim(),
         birthDate: newStaff.birthDate || null,
-        gender: newStaff.gender,
-        position: newStaff.position,
       };
 
       const res = await createEmployee(expandedPointId, payload);
 
-      const backendMessages = res?.messages;
-      if (Array.isArray(backendMessages) && backendMessages.length > 0) {
+      const backendMessages = Array.isArray(res?.messages) ? res.messages : [];
+      if (backendMessages.length > 0) {
         showMessages(
-          backendMessages.map((m) => ({
-            msg: m.msg,
-            type: MessageType[m.type] || MessageType.INFO,
-          }))
+          backendMessages.map((m) => ({ msg: m.msg, type: MessageType[m.type] || MessageType.INFO }))
         );
       } else {
         showMessage(
-          "Pracownik został zarejestrowany. Tymczasowe hasło zostało wygenerowane i wysłane mailem.",
+          "Pracownik został zarejestrowany. Tymczasowe hasło zostało wysłane mailem.",
           MessageType.SUCCESS
         );
       }
 
-      const created = res?.resultDTO || null;
-
+      const created = res?.resultDTO;
       setStaffState((prev) => {
-        const prevState = prev[expandedPointId] || {
-          loading: false,
-          error: "",
-          rows: [],
-        };
-        return {
-          ...prev,
-          [expandedPointId]: {
-            ...prevState,
-            rows: created
-              ? [...(prevState.rows || []), created]
-              : prevState.rows,
-          },
-        };
+        const prevState = prev[expandedPointId] || { rows: [] };
+        return { ...prev, [expandedPointId]: { ...prevState, rows: created ? [...prevState.rows, created] : prevState.rows } };
       });
 
       setNewStaff(INITIAL_NEW_STAFF);
+      setSubmitAttempted(false);
     } catch (err) {
-      const backendData = err?.response?.data;
-      const backendMessages = backendData?.messages;
-
+      const backendMessages = err?.response?.data?.messages;
       if (Array.isArray(backendMessages) && backendMessages.length > 0) {
         showMessages(
-          backendMessages.map((m) => ({
-            msg: m.msg,
-            type: MessageType[m.type] || MessageType.INFO,
-          }))
+          backendMessages.map((m) => ({ msg: m.msg, type: MessageType[m.type] || MessageType.INFO }))
         );
       } else {
-        const status = err?.response?.status;
-        const msg =
-          backendData?.message ||
-          backendData?.error ||
-          err?.message ||
-          `Nie udało się zarejestrować pracownika (status ${status || "?"}).`;
-        showError(msg);
+        showError(err?.message || "Nie udało się zarejestrować pracownika.");
       }
     } finally {
       setCreatingStaff(false);
@@ -291,65 +189,30 @@ export default function BloodPointList() {
       <Header />
       <main className="bp-section">
         <div className="bp-container">
-        <BackButton to="/admin/panel/punkt-krwiodawstwa" label="Powrót do panelu Punktu Krwiodawstwa"/>
+          <BackButton to="/admin/panel/punkt-krwiodawstwa" label="Powrót do panelu Punktu Krwiodawstwa" />
           <article className="bp-card">
             <div className="dashboard-head">
-              <h2 className="dashboard-title">
-                Lista Punktów Krwiodawstwa
-              </h2>
-              <p className="dashboard-lead">
-                Poniżej znajduje się lista wszystkich zarejestrowanych punktów.
-              </p>
+              <h2 className="dashboard-title">Lista Punktów Krwiodawstwa</h2>
+              <p className="dashboard-lead">Poniżej znajduje się lista wszystkich zarejestrowanych punktów.</p>
             </div>
 
             {!loadingPoints && points.length > 0 && (
-              <form
-                className="bp-form staff-search"
-                onSubmit={(e) => e.preventDefault()}
-              >
+              <form className="bp-form staff-search" onSubmit={(e) => e.preventDefault()}>
                 <div className="form-field">
-                  <label className="label" htmlFor="cityFilter">
-                    Miasto
-                  </label>
-                  <select
-                    id="cityFilter"
-                    name="city"
-                    className="select"
-                    value={filters.city}
-                    onChange={handleFilterChange}
-                  >
+                  <label className="label" htmlFor="cityFilter">Miasto</label>
+                  <select id="cityFilter" name="city" className="select" value={filters.city} onChange={handleFilterChange}>
                     <option value="">Wszystkie</option>
-                    {cityOptions.map((c) => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
-                    ))}
+                    {cityOptions.map((c) => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
 
                 <div className="form-field">
-                  <label className="label" htmlFor="streetFilter">
-                    Ulica
-                  </label>
-                  <input
-                    id="streetFilter"
-                    name="street"
-                    className="input"
-                    type="text"
-                    placeholder="Filtruj po ulicy"
-                    value={filters.street}
-                    onChange={handleFilterChange}
-                  />
+                  <label className="label" htmlFor="streetFilter">Ulica</label>
+                  <input id="streetFilter" name="street" className="input" value={filters.street} onChange={handleFilterChange} placeholder="Filtruj po ulicy"/>
                 </div>
 
                 <div className="form-actions">
-                  <button
-                    type="button"
-                    className="bp-btn bp-btn--ghost"
-                    onClick={clearFilters}
-                  >
-                    Wyczyść filtry
-                  </button>
+                  <button type="button" className="bp-btn bp-btn--ghost" onClick={clearFilters}>Wyczyść filtry</button>
                 </div>
               </form>
             )}
@@ -359,13 +222,9 @@ export default function BloodPointList() {
             ) : errorPoints ? (
               <div className="bp-state error">{errorPoints}</div>
             ) : !points.length ? (
-              <div className="bp-state">
-                Brak zarejestrowanych punktów krwiodawstwa.
-              </div>
+              <div className="bp-state">Brak zarejestrowanych punktów krwiodawstwa.</div>
             ) : !filteredPoints.length ? (
-              <div className="bp-state">
-                Brak wyników dla wybranych filtrów.
-              </div>
+              <div className="bp-state">Brak wyników dla wybranych filtrów.</div>
             ) : (
               <div className="table-wrap">
                 <table className="bp-table">
@@ -381,11 +240,7 @@ export default function BloodPointList() {
                   <tbody>
                     {filteredPoints.map((p) => {
                       const isExpanded = expandedPointId === p.id;
-                      const staff = staffState[p.id] || {
-                        loading: false,
-                        error: "",
-                        rows: [],
-                      };
+                      const staff = staffState[p.id] || { loading: false, error: "", rows: [] };
 
                       return (
                         <FragmentWithKey key={p.id}>
@@ -395,14 +250,8 @@ export default function BloodPointList() {
                             <td data-label="Kod pocztowy">{p.zipCode}</td>
                             <td data-label="Telefon">{p.phone}</td>
                             <td data-label="Akcje">
-                              <button
-                                type="button"
-                                className="bp-btn"
-                                onClick={() => togglePoint(p.id)}
-                              >
-                                {isExpanded
-                                  ? "Zwiń pracowników"
-                                  : "Pokaż pracowników"}
+                              <button type="button" className="bp-btn" onClick={() => togglePoint(p.id)}>
+                                {isExpanded ? "Zwiń pracowników" : "Pokaż pracowników"}
                               </button>
                             </td>
                           </tr>
@@ -411,23 +260,14 @@ export default function BloodPointList() {
                             <tr>
                               <td colSpan={5}>
                                 <section className="bp-subcard">
-                                  <h3 className="dashboard-subtitle">
-                                    Pracownicy punktu
-                                  </h3>
+                                  <h3 className="dashboard-subtitle">Pracownicy punktu</h3>
 
                                   {staff.loading ? (
-                                    <div className="bp-state">
-                                      Ładowanie pracowników...
-                                    </div>
+                                    <div className="bp-state">Ładowanie pracowników...</div>
                                   ) : staff.error ? (
-                                    <div className="bp-state error">
-                                      {staff.error}
-                                    </div>
+                                    <div className="bp-state error">{staff.error}</div>
                                   ) : !staff.rows.length ? (
-                                    <div className="bp-state">
-                                      Brak zarejestrowanych pracowników
-                                      w tym punkcie.
-                                    </div>
+                                    <div className="bp-state">Brak zarejestrowanych pracowników w tym punkcie.</div>
                                   ) : (
                                     <div className="table-wrap">
                                       <table className="bp-table bp-table--inner">
@@ -443,19 +283,9 @@ export default function BloodPointList() {
                                         <tbody>
                                           {staff.rows.map((s) => (
                                             <tr key={s.userId}>
-                                              <td>
-                                                {s.firstName} {s.lastName}
-                                              </td>
+                                              <td>{s.firstName} {s.lastName}</td>
                                               <td>{s.position || "—"}</td>
-                                              <td>
-                                                {s.employmentStartDay
-                                                  ? new Date(
-                                                      s.employmentStartDay
-                                                    ).toLocaleDateString(
-                                                      "pl-PL"
-                                                    )
-                                                  : "—"}
-                                              </td>
+                                              <td>{s.employmentStartDay ? new Date(s.employmentStartDay).toLocaleDateString("pl-PL") : "—"}</td>
                                               <td>{s.email}</td>
                                               <td>{s.pesel}</td>
                                             </tr>
@@ -466,201 +296,140 @@ export default function BloodPointList() {
                                   )}
 
                                   <div className="staff-form-wrapper">
-                                    <form
-                                      className="bp-form staff-form staff-form--narrow"
-                                      onSubmit={handleCreateStaff}
-                                      noValidate
-                                    >
-                                      <h4 className="auth-section-title staff-form-title">
-                                        Dodaj nowego pracownika
-                                      </h4>
+                                    <form className="bp-form staff-form staff-form--narrow" onSubmit={handleCreateStaff} noValidate>
+                                      <h4 className="auth-section-title staff-form-title">Dodaj nowego pracownika</h4>
 
                                       <div className="form-field">
-                                        <label className="label" htmlFor="newStaffFirstName">
-                                          Imię
-                                        </label>
+                                        <label htmlFor="firstName">Imię</label>
                                         <input
-                                          id="newStaffFirstName"
+                                          id="firstName"
                                           name="firstName"
-                                          className="input"
-                                          type="text"
+                                          className={fieldClass(fields.firstName, submitAttempted)}
                                           value={newStaff.firstName}
                                           onChange={handleNewStaffChange}
-                                          required
                                         />
-                                        {!firstNameValid && newStaff.firstName && (
-                                          <div className="field-error">
-                                            Podaj poprawne imię.
-                                          </div>
+                                        {shouldShowError(fields.firstName, submitAttempted, newStaff.firstName) && (
+                                          <div className="field-error">Podaj poprawne imię.</div>
                                         )}
                                       </div>
 
                                       <div className="form-field">
-                                        <label className="label" htmlFor="newStaffLastName">
-                                          Nazwisko
-                                        </label>
+                                        <label htmlFor="lastName">Nazwisko</label>
                                         <input
-                                          id="newStaffLastName"
+                                          id="lastName"
                                           name="lastName"
-                                          className="input"
-                                          type="text"
+                                          className={fieldClass(fields.lastName, submitAttempted)}
                                           value={newStaff.lastName}
                                           onChange={handleNewStaffChange}
-                                          required
                                         />
-                                        {!lastNameValid && newStaff.lastName && (
-                                          <div className="field-error">
-                                            Podaj poprawne nazwisko.
-                                          </div>
+                                        {shouldShowError(fields.lastName, submitAttempted, newStaff.lastName) && (
+                                          <div className="field-error">Podaj poprawne nazwisko.</div>
                                         )}
                                       </div>
 
                                       <div className="form-field">
-                                        <label className="label" htmlFor="newStaffEmail">
-                                          E-mail (login)
-                                        </label>
+                                        <label htmlFor="email">E-mail</label>
                                         <input
-                                          id="newStaffEmail"
+                                          id="email"
                                           name="email"
-                                          className="input"
-                                          type="email"
+                                          className={fieldClass(fields.email, submitAttempted)}
                                           value={newStaff.email}
                                           onChange={handleNewStaffChange}
-                                          required
                                         />
-                                        {!emailValid && newStaff.email && (
-                                          <div className="field-error">
-                                            Podaj poprawny adres e-mail.
-                                          </div>
+                                        {shouldShowError(fields.email, submitAttempted, newStaff.email) && (
+                                          <div className="field-error">Podaj poprawny adres e-mail.</div>
                                         )}
                                       </div>
 
                                       <div className="form-field">
-                                        <label className="label" htmlFor="newStaffPhone">
-                                          Telefon
-                                        </label>
+                                        <label htmlFor="phone">Telefon</label>
                                         <input
-                                          id="newStaffPhone"
+                                          id="phone"
                                           name="phone"
-                                          className="input"
-                                          type="tel"
+                                          className={fieldClass(fields.phone, submitAttempted)}
                                           value={newStaff.phone}
                                           onChange={handleNewStaffChange}
-                                          required
                                         />
-                                        {!phoneValid && newStaff.phone && (
-                                          <div className="field-error">
-                                            Numer telefonu musi mieć 9 cyfr.
-                                          </div>
+                                        {shouldShowError(fields.phone, submitAttempted, newStaff.phone) && (
+                                          <div className="field-error">Numer telefonu musi mieć 9 cyfr.</div>
                                         )}
                                       </div>
 
                                       <div className="form-field">
-                                        <label className="label" htmlFor="newStaffPesel">
-                                          PESEL
-                                        </label>
+                                        <label htmlFor="pesel">PESEL</label>
                                         <input
-                                          id="newStaffPesel"
+                                          id="pesel"
                                           name="pesel"
-                                          className="input"
-                                          type="text"
-                                          maxLength={11}
+                                          className={fieldClass(fields.pesel, submitAttempted)}
                                           value={newStaff.pesel}
                                           onChange={handleNewStaffChange}
-                                          required
                                         />
-                                        {!peselValid && newStaff.pesel && (
-                                          <div className="field-error">
-                                            PESEL musi składać się z 11 cyfr.
-                                          </div>
+                                        {shouldShowError(fields.pesel, submitAttempted, newStaff.pesel) && (
+                                          <div className="field-error">PESEL musi zawierać 11 cyfr.</div>
                                         )}
                                       </div>
 
                                       <div className="form-field">
-                                        <label className="label" htmlFor="newStaffBirthDate">
-                                          Data urodzenia
-                                        </label>
+                                        <label htmlFor="birthDate">Data urodzenia</label>
                                         <input
-                                          id="newStaffBirthDate"
+                                          id="birthDate"
                                           name="birthDate"
-                                          className="input"
                                           type="date"
+                                          className={fieldClass(fields.birthDate, submitAttempted)}
                                           value={newStaff.birthDate}
                                           onChange={handleNewStaffChange}
                                           max={new Date().toISOString().split("T")[0]}
-                                          required
                                         />
-                                        {!birthDateValid && newStaff.birthDate && (
-                                          <div className="field-error">
-                                            Podaj datę urodzenia.
-                                          </div>
+                                        {shouldShowError(fields.birthDate, submitAttempted, newStaff.birthDate) && (
+                                          <div className="field-error">Niepoprawna data urodzenia.</div>
                                         )}
                                       </div>
 
                                       <div className="form-field">
-                                        <label className="label" htmlFor="newStaffGender">
-                                          Płeć
-                                        </label>
+                                        <label htmlFor="gender">Płeć</label>
                                         <select
-                                          id="newStaffGender"
+                                          id="gender"
                                           name="gender"
-                                          className="input"
+                                          className={fieldClass(fields.gender, submitAttempted, "input")}
                                           value={newStaff.gender}
                                           onChange={handleNewStaffChange}
-                                          required
                                         >
                                           <option value="K">Kobieta</option>
                                           <option value="M">Mężczyzna</option>
                                         </select>
-                                        {!genderValid && newStaff.gender && (
-                                          <div className="field-error">
-                                            Wybierz poprawną płeć.
-                                          </div>
+                                        {shouldShowError(fields.gender, submitAttempted, newStaff.gender) && (
+                                          <div className="field-error">Wybierz poprawną płeć.</div>
                                         )}
                                       </div>
 
                                       <div className="form-field">
-                                        <label className="label" htmlFor="newStaffPosition">
-                                          Stanowisko
-                                        </label>
+                                        <label htmlFor="position">Stanowisko</label>
                                         <select
-                                          id="newStaffPosition"
+                                          id="position"
                                           name="position"
-                                          className="select"
+                                          className={fieldClass(fields.position, submitAttempted, "select")}
                                           value={newStaff.position}
                                           onChange={handleNewStaffChange}
-                                          required
                                         >
                                           <option value="">— wybierz —</option>
                                           {STAFF_POSITION_OPTIONS.map((opt) => (
-                                            <option key={opt.value} value={opt.value}>
-                                              {opt.label}
-                                            </option>
+                                            <option key={opt.value} value={opt.value}>{opt.label}</option>
                                           ))}
                                         </select>
-                                        {!positionValid && newStaff.position && (
-                                          <div className="field-error">
-                                            Wybierz stanowisko.
-                                          </div>
+                                        {shouldShowError(fields.position, submitAttempted, newStaff.position) && (
+                                          <div className="field-error">Wybierz stanowisko.</div>
                                         )}
                                       </div>
 
-                                      <div className="form-actions staff-form-actions">
-                                        <button
-                                          type="submit"
-                                          className="bp-btn"
-                                          disabled={creatingStaff || !canCreateStaff}
-                                        >
-                                          {creatingStaff
-                                            ? "Zapisywanie..."
-                                            : "Dodaj pracownika"}
+                                      <div className="form-actions">
+                                        <button type="submit" className="bp-btn">
+                                          {creatingStaff ? "Zapisywanie..." : "Dodaj pracownika"}
                                         </button>
                                       </div>
 
-                                      {!canCreateStaff && (
-                                        <div className="auth-note staff-form-note">
-                                          Uzupełnij poprawnie wszystkie wymagane pola, w tym dane
-                                          kontaktowe, PESEL oraz stanowisko.
+                                      {!canCreateStaff && submitAttempted && (
+                                        <div className="auth-note">
+                                          Uzupełnij poprawnie wszystkie wymagane pola.
                                         </div>
                                       )}
                                     </form>

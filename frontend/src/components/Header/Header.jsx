@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { NavLink, Link, useLocation, useNavigate } from "react-router-dom";
 import CTA from "../CTA/CTA";
-import "./header.css";
+import "./Header.css";
 import headerContent from "../../content/Header/Header.json";
 import authService from "../../services/AuthenticationService";
 import { showMessage } from "../shared/services/MessageService";

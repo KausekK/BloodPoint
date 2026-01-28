@@ -3,24 +3,29 @@ import CTA from "../../../components/CTA/CTA";
 import "../../SharedCSS/LoginForms.css";
 import authService from "../../../services/AuthenticationService";
 import {
-  showMessage,
-  showError,
-  showMessages,
+  showMessages, 
+  showError 
 } from "../../shared/services/MessageService";
-const DONOR_ROLE = 'DAWCA';
+
+const DONOR_ROLE = "DAWCA";
 
 import { MessageType } from "../../shared/const/MessageType.model";
+import { EARLIEST_BIRTH_DATE, getTodayDate } from "../../shared/const/dateLimits";
 
-import {
-  EARLIEST_BIRTH_DATE,
-  getTodayDate,
-} from "../../shared/const/dateLimits";
+import { useFormValidation } from "../../shared/utils/useFormValidation";
+import { validators } from "../../shared/utils/validators";
+import { fieldClass, shouldShowError } from "../../shared/utils/formValidation";
+
+
 
 export default function DonorAuthCard() {
+  const today = getTodayDate();
+
   const [mode, setMode] = useState("register");
   const [submitting, setSubmitting] = useState(false);
+  const [submitAttempted, setSubmitAttempted] = useState(false);
 
-  const [reg, setReg] = useState({
+  const [form, setForm] = useState({
     firstName: "",
     lastName: "",
     pesel: "",
@@ -33,57 +38,9 @@ export default function DonorAuthCard() {
 
   const [pwd, setPwd] = useState({ pass1: "", pass2: "" });
 
-  const today = getTodayDate();
-
-  const emailValid = !reg.email || /\S+@\S+\.\S+/.test(reg.email);
-
-  const peselValid = !reg.pesel || /^\d{11}$/.test(reg.pesel);
-
-  const phoneValid =
-  !reg.phone || /^\d{9,}$/.test(reg.phone.replace(/\s+/g, ""));
-
-  const firstNameValid =
-  !reg.firstName || reg.firstName.trim().length > 0;
-
-  const lastNameValid =
-  !reg.lastName || reg.lastName.trim().length > 0;
-
-  const genderValid =
-  !reg.gender || reg.gender === "K" || reg.gender === "M";
-
-  const birthDateValid =
-  !reg.birthDate
-    ? true
-    : /^\d{4}-\d{2}-\d{2}$/.test(reg.birthDate) &&
-      reg.birthDate >= EARLIEST_BIRTH_DATE &&
-      reg.birthDate <= today;
-
-
-
-  const canGoNext =
-  reg.firstName.trim() &&
-  reg.lastName.trim() &&
-  reg.pesel.trim() &&
-  reg.phone.trim() &&
-  reg.email.trim() &&
-  reg.gender &&
-  reg.birthDate &&
-  reg.agree &&
-  emailValid &&
-  peselValid &&
-  phoneValid &&
-  genderValid &&
-  birthDateValid;
-
-
-  const passwordsOk = useMemo(
-    () => pwd.pass1.length >= 6 && pwd.pass1 === pwd.pass2,
-    [pwd]
-  );
-
-  function handleRegChange(e) {
+  function handleChange(e) {
     const { name, value, type, checked } = e.target;
-    setReg((v) => ({ ...v, [name]: type === "checkbox" ? checked : value }));
+    setForm((f) => ({ ...f, [name]: type === "checkbox" ? checked : value }));
   }
 
   function handlePwdChange(e) {
@@ -91,81 +48,98 @@ export default function DonorAuthCard() {
     setPwd((v) => ({ ...v, [name]: value }));
   }
 
-  function goSetPassword(e) {
-    e.preventDefault();
-    if (canGoNext) setMode("setPassword");
-  }
+  const rules = {
+    firstName: [validators.required],
+    lastName: [validators.required],
+    pesel: [validators.required, validators.pesel],
+    phone: [validators.required, validators.phone],
+    email: [validators.required, validators.email],
+    gender: [validators.required, validators.gender],
+    birthDate: [validators.required, validators.birthDate],
+    agree: [(v) => v === true],
+  };
+
+  const { fields, isValid } = useFormValidation(form, rules);
+  const canGoNext = isValid;
+
+  const passwordsOk = useMemo(() => pwd.pass1.length >= 6 && pwd.pass1 === pwd.pass2, [pwd]);
 
   async function submitRegistration(e) {
-  e.preventDefault();
-  if (!passwordsOk || submitting) return;
+    e.preventDefault();
+    if (!passwordsOk || submitting) return;
 
-  setSubmitting(true);
-  try {
-    const data = await authService.register({
-      firstName: reg.firstName.trim(),
-      lastName: reg.lastName.trim(),
-      email: reg.email.trim().toLowerCase(),
-      pesel: reg.pesel.trim(),
-      phone: reg.phone.trim(),
-      gender: reg.gender,
-      birthDate: reg.birthDate,
-      role: DONOR_ROLE,
-      password: pwd.pass1,
-    });
-
-    const messages = Array.isArray(data?.messages) ? data.messages : [];
-
-    showMessages(
-      messages.map((m) => ({
-        msg: m.msg,
-        type: MessageType[m.type] || MessageType.INFO,
-      }))
-    );
-
-    const hasError = messages.some((m) => m.type === "ERROR");
-
-    if (!hasError) {
-      setReg({
-        firstName: "",
-        lastName: "",
-        pesel: "",
-        phone: "",
-        email: "",
-        gender: "",
-        birthDate: "",
-        agree: false,
+    setSubmitting(true);
+    try {
+      const data = await authService.register({
+        firstName: form.firstName.trim(),
+        lastName: form.lastName.trim(),
+        email: form.email.trim().toLowerCase(),
+        pesel: form.pesel.trim(),
+        phone: form.phone.trim(),
+        gender: form.gender,
+        birthDate: form.birthDate,
+        role: DONOR_ROLE,
+        password: pwd.pass1,
       });
-      setPwd({ pass1: "", pass2: "" });
-      setMode("register");
 
-      setTimeout(() => {
-        window.location.assign("/login");
-      }, 1000);
-    }
-  } catch (err) {
-    const backendData = err?.response?.data;
-    const backendMessages = backendData?.messages;
+      const messages = Array.isArray(data?.messages) ? data.messages : [];
 
-    if (Array.isArray(backendMessages) && backendMessages.length > 0) {
       showMessages(
-        backendMessages.map((m) => ({
+        messages.map((m) => ({
           msg: m.msg,
           type: MessageType[m.type] || MessageType.INFO,
         }))
       );
-    } else {
-      showError(
-        backendData?.message ||
-          backendData?.error ||
-          err?.message ||
-          "Rejestracja nie powiodła się."
-      );
+
+      const hasError = messages.some((m) => m.type === "ERROR");
+
+      if (!hasError) {
+        setForm({
+          firstName: "",
+          lastName: "",
+          pesel: "",
+          phone: "",
+          email: "",
+          gender: "",
+          birthDate: "",
+          agree: false,
+        });
+        setPwd({ pass1: "", pass2: "" });
+        setMode("register");
+
+        setTimeout(() => {
+          window.location.assign("/login");
+        }, 1000);
+      }
+    } catch (err) {
+      const backendData = err?.response?.data;
+      const backendMessages = backendData?.messages;
+
+      if (Array.isArray(backendMessages) && backendMessages.length > 0) {
+        showMessages(
+          backendMessages.map((m) => ({
+            msg: m.msg,
+            type: MessageType[m.type] || MessageType.INFO,
+          }))
+        );
+      } else {
+        showError(
+          backendData?.message ||
+            backendData?.error ||
+            err?.message ||
+            "Rejestracja nie powiodła się."
+        );
+      }
+    } finally {
+      setSubmitting(false);
     }
-  } finally {
-    setSubmitting(false);
   }
-}
+
+  function goSetPassword(e) {
+    e.preventDefault();
+    setSubmitAttempted(true);
+    if (canGoNext) setMode("setPassword");
+  }
 
   return (
     <div className="donor-auth">
@@ -177,126 +151,101 @@ export default function DonorAuthCard() {
           <form className="auth-form" onSubmit={goSetPassword} noValidate>
             <div className="form-field">
               <input
-                className="input"
                 name="firstName"
                 placeholder="Imię"
-                value={reg.firstName}
-                onChange={handleRegChange}
-                required
+                value={form.firstName}
+                onChange={handleChange}
+                className={fieldClass(fields.firstName, submitAttempted)}
               />
-              {!firstNameValid && reg.firstName && (
+              {shouldShowError(fields.firstName, submitAttempted, form.firstName) && (
                 <div className="field-error">Podaj poprawne imię.</div>
               )}
             </div>
 
             <div className="form-field">
               <input
-                className="input"
                 name="lastName"
                 placeholder="Nazwisko"
-                value={reg.lastName}
-                onChange={handleRegChange}
-                required
+                value={form.lastName}
+                onChange={handleChange}
+                className={fieldClass(fields.lastName, submitAttempted)}
               />
-              {!lastNameValid && reg.lastName && (
+              {shouldShowError(fields.lastName, submitAttempted, form.lastName) && (
                 <div className="field-error">Podaj poprawne nazwisko.</div>
               )}
             </div>
 
             <div className="form-field">
               <input
-                className="input"
                 name="pesel"
                 placeholder="PESEL"
                 maxLength={11}
-                value={reg.pesel}
-                onChange={handleRegChange}
-                required
-                inputMode="numeric"
+                value={form.pesel}
+                onChange={handleChange}
+                className={fieldClass(fields.pesel, submitAttempted)}
               />
-              {!peselValid && reg.pesel && (
-                <div className="field-error">
-                  PESEL musi składać się z 11 cyfr.
-                </div>
+              {shouldShowError(fields.pesel, submitAttempted, form.pesel) && (
+                <div className="field-error">PESEL musi składać się z 11 cyfr.</div>
               )}
             </div>
 
             <div className="form-field">
               <input
-                className="input"
                 name="phone"
                 placeholder="Numer telefonu"
-                value={reg.phone}
-                onChange={handleRegChange}
-                inputMode="tel"
-                required
+                value={form.phone}
+                onChange={handleChange}
+                className={fieldClass(fields.phone, submitAttempted)}
               />
-              {!phoneValid && reg.phone && (
-                <div className="field-error">
-                  Numer telefonu musi mieć 9 cyfr.
-                </div>
+              {shouldShowError(fields.phone, submitAttempted, form.phone) && (
+                <div className="field-error">Numer telefonu musi mieć 9 cyfr.</div>
               )}
             </div>
 
             <div className="form-field">
               <input
-                className="input"
                 name="email"
                 type="email"
                 placeholder="E-mail"
-                value={reg.email}
-                onChange={handleRegChange}
-                required
+                value={form.email}
+                onChange={handleChange}
+                className={fieldClass(fields.email, submitAttempted)}
               />
-              {!emailValid && reg.email && (
+              {shouldShowError(fields.email, submitAttempted, form.email) && (
                 <div className="field-error">Podaj poprawny adres e-mail.</div>
               )}
             </div>
 
             <div className="form-field">
-              <div className="select-wrap">
-                <select
-                  id="gender"
-                  name="gender"
-                  className="select"
-                  value={reg.gender}
-                  onChange={handleRegChange}
-                  required
-                >
-                  <option value="" disabled>
-                    Wybierz płeć
-                  </option>
-                  <option value="K">Kobieta</option>
-                  <option value="M">Mężczyzna</option>
-                </select>
-              </div>
-              {!genderValid && reg.gender && (
+              <select
+                name="gender"
+                value={form.gender}
+                onChange={handleChange}
+                className={fieldClass(fields.gender, submitAttempted, "select")}
+              >
+                <option value="" disabled>
+                  Wybierz płeć
+                </option>
+                <option value="K">Kobieta</option>
+                <option value="M">Mężczyzna</option>
+              </select>
+              {shouldShowError(fields.gender, submitAttempted, form.gender) && (
                 <div className="field-error">Wybierz poprawną płeć.</div>
               )}
             </div>
 
             <div className="form-field">
-              <label className="field-label" htmlFor="birthDate">
-                Data urodzenia
-              </label>
-
               <input
-                className="input"
-                id="birthDate"
                 name="birthDate"
                 type="date"
-                value={reg.birthDate}
-                onChange={handleRegChange}
+                value={form.birthDate}
+                onChange={handleChange}
                 min={EARLIEST_BIRTH_DATE}
                 max={today}
-                aria-describedby="birthDateHelp"
-                required
+                className={fieldClass(fields.birthDate, submitAttempted)}
               />
-              {!birthDateValid && reg.birthDate && (
-                <div className="field-error">
-                  Podaj poprawną datę urodzenia (nie wcześniej niż 1910 r. i nie
-                  w przyszłości).
-                </div>
+              {shouldShowError(fields.birthDate, submitAttempted, form.birthDate) && (
+                <div className="field-error">Podaj poprawną datę urodzenia.</div>
               )}
             </div>
 
@@ -304,35 +253,22 @@ export default function DonorAuthCard() {
               <input
                 type="checkbox"
                 name="agree"
-                checked={reg.agree}
-                onChange={handleRegChange}
-                required
+                checked={form.agree}
+                onChange={handleChange}
               />
-              <span>
-                Oświadczam, że wszystkie podane informacje są zgodne z prawdą.
-              </span>
+              <span>Oświadczam, że wszystkie podane informacje są zgodne z prawdą.</span>
             </label>
 
             <div className="form-actions">
               <CTA label="Dalej" type="submit" />
             </div>
+
+            {!canGoNext && submitAttempted && (
+              <div className="auth-note">
+                Uzupełnij wszystkie wymagane pola i popraw błędy.
+              </div>
+            )}
           </form>
-
-          <div
-            className="auth-switch"
-            style={{ textAlign: "center", marginTop: 8 }}
-          >
-            <a className="auth-link" href="/login">
-              Masz już konto? Zaloguj się
-            </a>
-          </div>
-
-          {!canGoNext && (
-            <div className="auth-note">
-              Uzupełnij wymagane pola, wybierz płeć, podaj poprawną datę
-              urodzenia i dane kontaktowe.
-            </div>
-          )}
         </article>
       )}
 
@@ -344,7 +280,6 @@ export default function DonorAuthCard() {
           <form className="auth-form" onSubmit={submitRegistration} noValidate>
             <div className="form-field">
               <input
-                className="input"
                 type="password"
                 name="pass1"
                 placeholder="Hasło (min. 6 znaków)"
@@ -352,12 +287,12 @@ export default function DonorAuthCard() {
                 onChange={handlePwdChange}
                 minLength={6}
                 required
+                className={fieldClass(passwordsOk, false)}
               />
             </div>
 
             <div className="form-field">
               <input
-                className="input"
                 type="password"
                 name="pass2"
                 placeholder="Powtórz hasło"
@@ -365,15 +300,15 @@ export default function DonorAuthCard() {
                 onChange={handlePwdChange}
                 minLength={6}
                 required
+                className={fieldClass(passwordsOk, false)}
               />
             </div>
 
-            <div
-              className={`auth-note ${passwordsOk ? "hidden" : ""}`}
-              aria-live="polite"
-            >
-              Hasła muszą być takie same i mieć co najmniej 6 znaków.
-            </div>
+            {!passwordsOk && (
+              <div className="auth-note" aria-live="polite">
+                Hasła muszą być takie same i mieć co najmniej 6 znaków.
+              </div>
+            )}
 
             <div className="form-actions">
               <CTA
@@ -383,10 +318,7 @@ export default function DonorAuthCard() {
               />
             </div>
 
-            <div
-              className="auth-switch"
-              style={{ textAlign: "center", marginTop: 8 }}
-            >
+            <div className="auth-switch" style={{ textAlign: "center", marginTop: 8 }}>
               <button
                 type="button"
                 className="auth-link"

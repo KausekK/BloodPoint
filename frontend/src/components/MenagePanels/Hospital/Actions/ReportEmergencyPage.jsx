@@ -20,6 +20,7 @@ export default function ReportEmergencyPage() {
   const [err, setErr] = useState("");
   const [msg, setMsg] = useState("");
   const hospitalId = authService.getHospitalId();
+  const [formErr, setFormErr] = useState("");
 
   const [form, setForm] = useState({
     bloodTypeId: "",
@@ -62,7 +63,7 @@ export default function ReportEmergencyPage() {
     e.preventDefault();
     const v = validate(form);
     if (v) {
-      setErr(v);
+      setFormErr(v);
       showError(v);
       return;
     }
@@ -155,6 +156,7 @@ export default function ReportEmergencyPage() {
                     {submitting ? "Wysyłanie…" : "Zgłoś zapotrzebowanie"}
                   </button>
                 </div>
+                {formErr && <div className="field-error">{formErr}</div>}
               </form>
             )}
           </section>
