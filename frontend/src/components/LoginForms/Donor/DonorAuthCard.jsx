@@ -20,6 +20,7 @@ import { fieldClass, shouldShowError } from "../../shared/utils/formValidation";
 
 export default function DonorAuthCard() {
   const [mode, setMode] = useState("register");
+  console.log("RENDER DonorAuthCard", mode);
   const [submitting, setSubmitting] = useState(false);
   const [submitAttempted, setSubmitAttempted] = useState(false);
   
@@ -106,6 +107,7 @@ export default function DonorAuthCard() {
         });
         setPwd({ pass1: "", pass2: "" });
         setMode("register");
+        
 
         setTimeout(() => {
           window.location.assign("/login");

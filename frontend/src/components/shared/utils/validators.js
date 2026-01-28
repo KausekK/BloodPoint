@@ -34,7 +34,7 @@ export const validators = {
     if (birth < earliest) return "TOO_OLD";
     if (birth > minAgeDate) return "TOO_YOUNG";
 
-    return null;
+    return true;
   },
 };
 
