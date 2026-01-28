@@ -57,6 +57,7 @@
 
 .bp-btn:hover {
   background: #a83224;
+  color: #fff;
   transform: translateY(-1px);
 }
 
@@ -65,6 +66,7 @@
   cursor: not-allowed;
 }
 
+
 .bp-btn--ghost {
   background: #fff;
   color: var(--color-primary, #c0392b);
@@ -72,7 +74,7 @@
 }
 
 .bp-btn--ghost:hover {
-  background: #fdf2f2;
+  background: #db6c6c;
 }
 
 .bp-form {
