@@ -4,6 +4,7 @@ import Footer from "../../../../Footer/Footer";
 import CTA from "../../../../CTA/CTA";
 import BackButton from "../../../../BackButton/BackButton";
 
+
 import { 
   showMessages, 
   showError } from "../../../../shared/services/MessageService";
@@ -19,6 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { useFormValidation } from "../../../../shared/utils/useFormValidation";
 import { validators } from "../../../../shared/utils/validators";
 import { fieldClass, shouldShowError } from "../../../../shared/utils/formValidation";
+import { EARLIEST_BIRTH_DATE, getTodayDate  } from "../../../../shared/const/dateLimits";
 
 
 export default function BloodPointRegister() {
@@ -67,6 +69,7 @@ export default function BloodPointRegister() {
 
   const { fields, isValid } = useFormValidation(form, rules);
   const canSubmit = isValid;
+  const birthDateError = validators.birthDate(form.birthDate);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -330,15 +333,26 @@ export default function BloodPointRegister() {
                     type="date"
                     id="birthDate"
                     name="birthDate"
+                    max={getTodayDate()}
+                    min={EARLIEST_BIRTH_DATE}
                     className={fieldClass(fields.birthDate, submitAttempted)}
                     value={form.birthDate}
                     onChange={handleChange}
                     required
                   />
-                  {shouldShowError(fields.birthDate, submitAttempted, form.birthDate) && (
-                    <div className="field-error">Niepoprawna data urodzenia.</div>
+                  {submitAttempted && birthDateError === "REQUIRED" && (
+                    <div className="field-error">Podaj datę urodzenia.</div>
                   )}
-                </div>
+                  {submitAttempted && birthDateError === "TOO_YOUNG" && (
+                    <div className="field-error">Osoba musi mieć co najmniej 18 lat.</div>
+                  )}
+                  {submitAttempted && birthDateError === "TOO_OLD" && (
+                    <div className="field-error">Wybrana data jest zbyt odległa w przeszłość.</div>
+                  )}
+                  {submitAttempted && birthDateError === "FUTURE_DATE" && (
+                    <div className="field-error">Data nie może być w przyszłości.</div>
+                  )}
+                  </div>
 
                 <div className="form-field">
                   <label className="label" htmlFor="gender">Płeć</label>

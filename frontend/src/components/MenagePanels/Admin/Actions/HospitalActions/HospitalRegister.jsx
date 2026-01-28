@@ -21,7 +21,7 @@ import { useFormValidation } from "../../../../shared/utils/useFormValidation";
 import { validators } from "../../../../shared/utils/validators";
 import { fieldClass, shouldShowError } from "../../../../shared/utils/formValidation";
 
-import { getTodayDate } from "../../../../shared/const/dateLimits";
+import { EARLIEST_BIRTH_DATE, getTodayDate  } from "../../../../shared/const/dateLimits";
 
 export default function HospitalRegister() {
   const [form, setForm] = useState({
@@ -70,6 +70,8 @@ export default function HospitalRegister() {
   const { fields, isValid } = useFormValidation(form, rules);
   const canSubmit = isValid;
 
+  const birthDateError = validators.birthDate(form.birthDate);
+  
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -305,12 +307,23 @@ export default function HospitalRegister() {
                     type="date"
                     id="birthDate"
                     name="birthDate"
+                    max={getTodayDate()}
+                    min={EARLIEST_BIRTH_DATE}
                     className={fieldClass(fields.birthDate, submitAttempted)}
                     value={form.birthDate}
                     onChange={handleChange}
                   />
-                  {shouldShowError(fields.birthDate, submitAttempted, form.birthDate) && (
-                    <div className="field-error">Podaj poprawną datę urodzenia.</div>
+                  {submitAttempted && birthDateError === "REQUIRED" && (
+                    <div className="field-error">Podaj datę urodzenia.</div>
+                  )}
+                  {submitAttempted && birthDateError === "TOO_YOUNG" && (
+                    <div className="field-error">Osoba musi mieć co najmniej 18 lat.</div>
+                  )}
+                  {submitAttempted && birthDateError === "TOO_OLD" && (
+                    <div className="field-error">Wybrana data jest zbyt odległa w przeszłość.</div>
+                  )}
+                  {submitAttempted && birthDateError === "FUTURE_DATE" && (
+                    <div className="field-error">Data nie może być w przyszłości.</div>
                   )}
                 </div>
 
