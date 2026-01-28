@@ -23,13 +23,18 @@ export const validators = {
     return !isNaN(n) && n >= -180 && n <= 180;
   },
   birthDate: (v) => {
-    if (!v) return false;
+    if (!v) return "REQUIRED";
+
     const birth = new Date(v);
     const earliest = new Date(EARLIEST_BIRTH_DATE);
     const today = new Date(getTodayDate());
-
     const minAgeDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
 
-    return birth >= earliest && birth <= minAgeDate;
-  }
+    if (birth > today) return "FUTURE_DATE";
+    if (birth < earliest) return "TOO_OLD";
+    if (birth > minAgeDate) return "TOO_YOUNG";
+
+    return null;
+  },
 };
+

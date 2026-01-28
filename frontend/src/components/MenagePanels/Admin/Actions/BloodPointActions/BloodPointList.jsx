@@ -18,6 +18,7 @@ import { STAFF_POSITION_OPTIONS } from "../../../../../constants/staffPositions"
 import { useFormValidation } from "../../../../shared/utils/useFormValidation";
 import { validators } from "../../../../shared/utils/validators";
 import { fieldClass, shouldShowError } from "../../../../shared/utils/formValidation";
+import { EARLIEST_BIRTH_DATE, getTodayDate  } from "../../../../shared/const/dateLimits";
 
 const INITIAL_NEW_STAFF = {
   firstName: "",
@@ -134,6 +135,7 @@ export default function BloodPointList() {
 
   const { fields, isValid } = useFormValidation(newStaff, rules);
   const canCreateStaff = isValid;
+  const birthDateError = validators.birthDate(newStaff.birthDate);
 
   async function handleCreateStaff(e) {
     e.preventDefault();
@@ -374,16 +376,26 @@ export default function BloodPointList() {
                                         <input
                                           id="birthDate"
                                           name="birthDate"
+                                          max={getTodayDate()}
+                                          min={EARLIEST_BIRTH_DATE}
                                           type="date"
                                           className={fieldClass(fields.birthDate, submitAttempted)}
                                           value={newStaff.birthDate}
                                           onChange={handleNewStaffChange}
-                                          max={new Date().toISOString().split("T")[0]}
                                         />
-                                        {shouldShowError(fields.birthDate, submitAttempted, newStaff.birthDate) && (
-                                          <div className="field-error">Niepoprawna data urodzenia.</div>
+                                        {submitAttempted && birthDateError === "REQUIRED" && (
+                                          <div className="field-error">Podaj datę urodzenia.</div>
                                         )}
-                                      </div>
+                                        {submitAttempted && birthDateError === "TOO_YOUNG" && (
+                                          <div className="field-error">Pracownik musi mieć co najmniej 18 lat.</div>
+                                        )}
+                                        {submitAttempted && birthDateError === "TOO_OLD" && (
+                                          <div className="field-error">Wybrana data jest zbyt odległa w przeszłość.</div>
+                                        )}
+                                        {submitAttempted && birthDateError === "FUTURE_DATE" && (
+                                          <div className="field-error">Data nie może być w przyszłości.</div>
+                                        )}
+                                        </div>
 
                                       <div className="form-field">
                                         <label htmlFor="gender">Płeć</label>

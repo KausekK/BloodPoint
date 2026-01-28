@@ -19,11 +19,10 @@ import { fieldClass, shouldShowError } from "../../shared/utils/formValidation";
 
 
 export default function DonorAuthCard() {
-  const today = getTodayDate();
-
   const [mode, setMode] = useState("register");
   const [submitting, setSubmitting] = useState(false);
   const [submitAttempted, setSubmitAttempted] = useState(false);
+  
 
   const [form, setForm] = useState({
     firstName: "",
@@ -47,6 +46,7 @@ export default function DonorAuthCard() {
     const { name, value } = e.target;
     setPwd((v) => ({ ...v, [name]: value }));
   }
+  const birthDateError = validators.birthDate(form.birthDate);
 
   const rules = {
     firstName: [validators.required],
@@ -241,11 +241,20 @@ export default function DonorAuthCard() {
                 value={form.birthDate}
                 onChange={handleChange}
                 min={EARLIEST_BIRTH_DATE}
-                max={today}
+                max={getTodayDate()}
                 className={fieldClass(fields.birthDate, submitAttempted)}
               />
-              {shouldShowError(fields.birthDate, submitAttempted, form.birthDate) && (
-                <div className="field-error">Podaj poprawną datę urodzenia.</div>
+              {submitAttempted && birthDateError === "REQUIRED" && (
+                <div className="field-error">Podaj datę urodzenia.</div>
+              )}
+              {submitAttempted && birthDateError === "TOO_YOUNG" && (
+                <div className="field-error">Musisz mieć co najmniej 18 lat.</div>
+              )}
+              {submitAttempted && birthDateError === "TOO_OLD" && (
+                <div className="field-error">Wybrana data jest zbyt odległa w przeszłość.</div>
+              )}
+              {submitAttempted && birthDateError === "FUTURE_DATE" && (
+                <div className="field-error">Data nie może być w przyszłości.</div>
               )}
             </div>
 
